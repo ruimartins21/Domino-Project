@@ -14,7 +14,7 @@
  *
  */
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 
     srand((unsigned) time(NULL));
 
@@ -49,23 +49,28 @@ int main(int argc, char *argv[]){
             {0, 0}
     };
 
-    int matriz1[6][MAX2] = {
-            {6, 0},
-            {2, 1},
-            {1, 2},
-            {2, 3},
-            {3, 4},
-            {6, 5}
-    };
+//    int matriz1[6][MAX2] = {
+//            {6, 0},
+//            {2, 1},
+//            {1, 2},
+//            {2, 3},
+//            {3, 4},
+//            {6, 5}
+//    };
+
+    int hand[LINES][MAX2] = {};
 
 //    printmat(matriz1, 6);
-//    printf("\n\n");
 
 
-//    gerateRandomHand(matriz, 14, game);
+    generateRandomHand(matriz, hand, 7, 3);
 
-    compressMatriz(matriz1, 6, 2);
-    printmat(matriz1, 6);
+    printmat(hand, 28);
+
+//    printf("\n--------------\n");
+
+//    compressMatrix(matriz1, 6, 2);
+//    printmat(matriz1, 6);
 
 
 
