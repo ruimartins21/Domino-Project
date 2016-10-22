@@ -16,7 +16,7 @@
 
 int main(int argc, char *argv[]) {
     srand((unsigned) time(NULL));
-    //    SMALL_RECT windowSize = {0 , 0 , 75 , 70}; //change the values
+//    SMALL_RECT windowSize = {0 , 0 , 75 , 70}; //change the values
 //    SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &windowSize);
     int handSize = 1, choice, numberOfHands, validated = 0, maxSize = 0, path = 0, l = 0, c = 0;
     int pieces[28][MAX2] = {};
