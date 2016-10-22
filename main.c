@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 //            {6,6},
 //    };
 
-    // Generate game matrix automatically
+// Generate game matrix automatically
 //    for (l = 0; l < 28; l++) {
 //        for (c = 0; c <= 6; c++) {
 //            pieces[l][0] = c;
