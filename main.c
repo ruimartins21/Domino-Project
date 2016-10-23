@@ -15,11 +15,12 @@
  */
 
 int main(int argc, char *argv[]) {
-    srand((unsigned) time(NULL));
 //    SMALL_RECT windowSize = {0 , 0 , 75 , 70}; //change the values
 //    SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &windowSize);
-    int handSize = 1, choice, numberOfHands, validated = 0, maxSize = 0, path = 0, l = 0, c = 0;
-    int pieces[28][MAX2] = {};
+    int handSize = 1, choice, numberOfHands, validated = 0, maxSize = 0, path = 0, l = 0, c = 0, lin = 0;
+    srand((unsigned) time(NULL));
+    int pieces[LINES][MAX2] = {};
+    int hand[LINES][MAX2] = {};
 //    int pieces[28][MAX2] = {
 //            {0,0},
 //            {0,1},
@@ -51,16 +52,9 @@ int main(int argc, char *argv[]) {
 //            {6,6},
 //    };
 
-// Generate game matrix automatically
-//    for (l = 0; l < 28; l++) {
-//        for (c = 0; c <= 6; c++) {
-//            pieces[l][0] = c;
-//            pieces[l][1] = c;
-//        }
-//    }
-//    for (l = 0; l < 28; l++) {
-//        printf("%d %d\n", pieces[l][0], pieces[l][1]);
-//    }
+    // Generate game matrix
+    getGame(pieces);
+//    printMat(pieces, 28);
 
     // First iteration of the menu asks for the number of hands the users wants the program to use
     numberOfHands = printMenu(0);
@@ -96,9 +90,12 @@ int main(int argc, char *argv[]) {
         }
 
     }
+    generateRandomHand(pieces, hand, handSize, numberOfHands);
+    printf(" ### Matrix of Hands ###\n");
+    printMat(hand, handSize*numberOfHands);
     for(l = 0; l < numberOfHands; l++){
         printf("\t### Hand %d ###\n", l+1);
-        printHandHorizontally(handSize);
+        printHandHorizontally(hand, handSize, l);
         printf("\n");
     }
 

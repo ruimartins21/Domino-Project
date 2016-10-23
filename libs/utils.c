@@ -8,6 +8,23 @@
 ///
 
 /**
+ * generate initial game matrix
+ * @param pieces => matrix to store the generated numbers
+ * @return => default (0): filled matrix is stored via its addresses so it isn't needed to return anything
+ */
+int getGame(int pieces[][MAX2]){
+    int l = 0, c = 0, lin = 0;
+    for (l = 0; l <= 6; l++) {
+        for (c = l; c <= 6; c++) {
+            pieces[lin][0] = l;
+            pieces[lin][1] = c;
+            lin += 1;
+        }
+    }
+    return 0;
+}
+
+/**
 * Print the various menus that are needed
 * @param path => tells the function at wich part of the menu it is
 * @param choice => choice the user made, that together with the path given gives the function the proper infos to display
@@ -82,18 +99,23 @@ void printHandVertically(int size){
 
 /**
  * Print a hand of the game horizontally
+ * @param hand => matrix where the hands are saved
  * @param size => size of the hand
+ * @param index => position of the hand to print
  */
-void printHandHorizontally(int size){
+void printHandHorizontally(int hand[][MAX2], int size, int index){
     int i = 0, j = 0, block = 3;
+    // move the first position to print according to the index
+    index = (index == 0 ? index : index * size);
+//    printf("index = %d\n", index);
     for (i = 0; i < block; i++) {
         if(i%2 == 0){
-            for (j = 0; j < size; j++) {
+            for (j = index; j < index+size; j++) {
                 printf("+---+---+ ");
             }
         }else{
-            for (j = 0; j < size; j++) {
-                printf("| 1 | 1 | ");
+            for (j = index; j < index+size; j++) {
+                printf("| %d | %d | ", hand[j][0], hand[j][1]);
             }
         }
 
@@ -194,7 +216,7 @@ void defineHand(){
 }
 
 
-void printmat(int matrix[][MAX2], int lines) {
+void printMat(int matrix[][MAX2], int lines) {
     int l = 0;
 
     for (l = 0; l < lines; l++) {
