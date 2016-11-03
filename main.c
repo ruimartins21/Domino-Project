@@ -52,7 +52,23 @@ int main(int argc, char *argv[]) {
 //            {6,6},
 //    };
 
-    // Generate game matrix
+    int mao[4][MAX2] = {
+            {0, 0},
+            {1, 0},
+            {3, 2},
+            {0, 3}
+    };
+    int sequence[][MAX2] = {};
+    handSize = 4;
+
+    printf("----------------\n\n");
+    invertBlock(mao, 1);
+    printf("consitence: %d\n",isConsistent(mao, 1) );
+//    generateSequence(mao, handSize, sequence, 0);
+//    printMat(sequence, 28);
+    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
+
+   /* // Generate game matrix
     getGame(pieces);
 //    printMat(pieces, 28);
 
@@ -97,7 +113,8 @@ int main(int argc, char *argv[]) {
         printf("\t### Hand %d ###\n", l+1);
         printHandHorizontally(hand, handSize, l);
         printf("\n");
-    }
+    }*/
+
 
     return 0;
 }

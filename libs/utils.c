@@ -12,7 +12,7 @@
  * @param pieces => matrix to store the generated numbers
  * @return => default (0): filled matrix is stored via its addresses so it isn't needed to return anything
  */
-int getGame(int pieces[][MAX2]){
+int getGame(int pieces[][MAX2]) {
     int l = 0, c = 0, lin = 0;
     for (l = 0; l <= 6; l++) {
         for (c = l; c <= 6; c++) {
@@ -29,10 +29,10 @@ int getGame(int pieces[][MAX2]){
 * @param path => tells the function at wich part of the menu it is
 * @param choice => choice the user made, that together with the path given gives the function the proper infos to display
 */
-int printMenu(int path){
+int printMenu(int path) {
 
     int choiceMade = 0;
-    switch(path){
+    switch (path) {
 
         case 0:
             printf("\t\t\t\t# # # # # # # # # #\n");
@@ -40,10 +40,10 @@ int printMenu(int path){
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\tNumber of Hands: ");
             scanf("%d", &choiceMade);
-            if(choiceMade < 1 || choiceMade > 28) {
+            if (choiceMade < 1 || choiceMade > 28) {
                 printf("!!! Please choose a number between 1 & 28. !!!\n");
                 return printMenu(path);
-            }else{
+            } else {
                 return choiceMade;
             }
 
@@ -55,10 +55,10 @@ int printMenu(int path){
             printf("\t\t\t\t2 - Create Hand(s) manually\n");
             printf("\t\t\t\tChoice: ");
             scanf("%d", &choiceMade);
-            if(choiceMade < 1 || choiceMade > 2) {
+            if (choiceMade < 1 || choiceMade > 2) {
                 printf("!!! Please choose a number between 1 & 2. !!!\n");
                 return printMenu(path);
-            }else{
+            } else {
                 return choiceMade;
             }
 
@@ -69,7 +69,8 @@ int printMenu(int path){
             printf("\t\t\t\tNumber of pieces on each hand: ");
             scanf("%d", &choiceMade);
             return choiceMade;
-        default: break;
+        default:
+            break;
     }
 
     return 0;
@@ -80,14 +81,14 @@ int printMenu(int path){
  * Print a hand of the game vertically
  * @param size => size of the hand
  */
-void printHandVertically(int size){
+void printHandVertically(int size) {
     int i = 0, j = 0, block = 5;
     for (i = 0; i < block; i++) {
-        if(i%2 == 0){
+        if (i % 2 == 0) {
             for (j = 0; j < size; j++) {
                 printf("+---+  ");
             }
-        }else{
+        } else {
             for (j = 0; j < size; j++) {
                 printf("| 1 |  ");
             }
@@ -103,18 +104,18 @@ void printHandVertically(int size){
  * @param size => size of the hand
  * @param index => position of the hand to print
  */
-void printHandHorizontally(int hand[][MAX2], int size, int index){
+void printHandHorizontally(int hand[][MAX2], int size, int index) {
     int i = 0, j = 0, block = 3;
     // move the first position to print according to the index
     index = (index == 0 ? index : index * size);
 //    printf("index = %d\n", index);
     for (i = 0; i < block; i++) {
-        if(i%2 == 0){
-            for (j = index; j < index+size; j++) {
+        if (i % 2 == 0) {
+            for (j = index; j < index + size; j++) {
                 printf("+---+---+ ");
             }
-        }else{
-            for (j = index; j < index+size; j++) {
+        } else {
+            for (j = index; j < index + size; j++) {
                 printf("| %d | %d | ", hand[j][0], hand[j][1]);
             }
         }
@@ -127,7 +128,7 @@ void printHandHorizontally(int hand[][MAX2], int size, int index){
  * Print a hand of the game but not the pieces, only a vector with its numbers
  * @param size => size of the hand
  */
-void printHand_uglify(int size){
+void printHand_uglify(int size) {
     int i = 0;
     for (i = 0; i < size; i++) {
         printf("[ 1 , 1 ] ");
@@ -161,7 +162,6 @@ void generateRandomHand(int matrix[][MAX2], int hand[][MAX2], int linesHand, int
 //            printf("lineCount: %d\n", linesCount);
             hand[linesCount][0] = matrix[randValue][0];
             hand[linesCount][1] = matrix[randValue][1];
-
 
 
             compressMatrix(matrix, LINES - linesCount, randValue);
@@ -200,8 +200,8 @@ void compressMatrix(int matrix[][MAX2], int lines, int index) {
 
 //        printf("%d  %d\n", matrix[index][0], matrix[index][1]);
     }
-    matrix[index-1][0] = -1;
-    matrix[index-1][1] = -1;
+    matrix[index - 1][0] = -1;
+    matrix[index - 1][1] = -1;
 }
 
 
@@ -211,9 +211,6 @@ void compressMatrix(int matrix[][MAX2], int lines, int index) {
 /**
  * pega na matriz com as varias maos criadas e identificar as maos (array ao auxiliar, que diz mao 1, com as pecas de 0 ate 10, exemplo)
  */
-void defineHand(){
-
-}
 
 
 void printMat(int matrix[][MAX2], int lines) {
@@ -224,4 +221,65 @@ void printMat(int matrix[][MAX2], int lines) {
         printf("%d %d\n", matrix[l][0], matrix[l][1]);
     }
 
+}
+
+//void shiftMatrix(int matrix[][MAX2], int handSize, int index) {
+//    int i = 0, j = 0, aux[2];
+//
+//    aux[0] = matrix[0][0];
+//    aux[1] = matrix[0][1];
+//
+//    for (i = 0; i < handSize; i++) {
+//        for (j = 0; j < MAX2; j++) {
+//            matrix[i][j] = matrix[i + 1][j];
+//        }
+//    }
+//    matrix[i - 1][0] = aux[0];
+//    matrix[i - 1][1] = aux[1];
+//}
+
+
+int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int inserted) {
+    int i, result;
+    if (inserted == handSize) {
+        return 1;
+    }
+
+    for (i = 0; i < handSize; i++) {
+        sequence[i][0] = matrix[i][0];
+        sequence[i][1] = matrix[i][1];
+        if (isConsistent(sequence, i) == 1) {
+            inserted++;
+            result = generateSequence(matrix, handSize, sequence, inserted);
+            if (result == 1) {
+                return 1;
+            }
+        } else {
+//            mandar handSize - inserted
+//            compressMatrix(); aperfeicoar de forma a trocar a peca atual para o fim, movendo as restantes pecas para cima
+            i--;
+        }
+    }
+    return 0;
+}
+
+int isConsistent(int sequence[][MAX2], int index) {
+    if(index == 0){
+        return  1;
+    }
+    if (sequence[index - 1][1] == sequence[index][0]) {
+        return 1;
+    } else if (sequence[index - 1][1] == sequence[index][1]) {
+        invertBlock(sequence, index);
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+void invertBlock(int block[][MAX2], int index) {
+    int aux;
+    aux = block[index][1];
+    block[index][1] = block[index][0];
+    block[index][0] = aux;
 }

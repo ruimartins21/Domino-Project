@@ -17,4 +17,8 @@ void generateRandomHand(int matrix[][MAX2], int hand[][MAX2], int linesHand, int
 void compressMatrix(int matrix[][MAX2], int lines, int index);
 void printMat(int matrix[][MAX2], int lines);
 
+int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int inserted) ;
+int isConsistent(int sequence[][MAX2], int index);
+void invertBlock(int sequence[][MAX2], int index);
+
 #endif //DOMINO_PROJECT_UTILS_H
