@@ -1,7 +1,8 @@
 
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "utils.h"
+#include <strings.h>
 
 ///
 ///
@@ -30,11 +31,24 @@ int getGame(int pieces[][MAX2]) {
 * @param choice => choice the user made, that together with the path given gives the function the proper infos to display
 */
 int printMenu(int path) {
-
     int choiceMade = 0;
     switch (path) {
-
         case 0:
+            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\t\t\t\t#     M E N U     #\n");
+            printf("\t\t\t\t# # # # # # # # # #\n\n");
+            printf("\t\t\t\t1 - New Game\n");
+            printf("\t\t\t\t2 - Load Game from file\n");
+            printf("\t\t\t\tChoice: ");
+            scanf("%d", &choiceMade);
+            if (choiceMade < 1 || choiceMade > 2) {
+                printf("!!! Please choose a number between 1 & 2. !!!\n");
+                return printMenu(path);
+            } else {
+                return choiceMade;
+            }
+
+        case 1:
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
@@ -47,7 +61,7 @@ int printMenu(int path) {
                 return choiceMade;
             }
 
-        case 1:
+        case 2:
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
@@ -62,19 +76,32 @@ int printMenu(int path) {
                 return choiceMade;
             }
 
-        case 2:
+        case 3:
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\tNumber of pieces on each hand: ");
             scanf("%d", &choiceMade);
             return choiceMade;
+
+        case 4:
+            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\t\t\t\t#     M E N U     #\n");
+            printf("\t\t\t\t# # # # # # # # # #\n\n");
+            printf("\t\t\t\t1 - Load game from text file\n");
+            printf("\t\t\t\t2 - Load game from binary file\n");
+            printf("\t\t\t\tChoice: ");
+            scanf("%d", &choiceMade);
+            if (choiceMade < 1 || choiceMade > 2) {
+                printf("!!! Please choose a number between 1 & 2. !!!\n");
+                return printMenu(path);
+            } else {
+                return choiceMade;
+            }
+
         default:
-            break;
+            return -1;
     }
-
-    return 0;
-
 }
 
 /**
@@ -105,7 +132,7 @@ void printHandVertically(int size) {
  * @param index => position of the hand to print
  */
 void printHandHorizontally(int hand[][MAX2], int size, int index) {
-    int i = 0, j = 0, block = 3;
+    int i, j, block = 3;
     // move the first position to print according to the index
     index = (index == 0 ? index : index * size);
 //    printf("index = %d\n", index);
@@ -128,10 +155,12 @@ void printHandHorizontally(int hand[][MAX2], int size, int index) {
  * Print a hand of the game but not the pieces, only a vector with its numbers
  * @param size => size of the hand
  */
-void printHand_uglify(int size) {
-    int i = 0;
-    for (i = 0; i < size; i++) {
-        printf("[ 1 , 1 ] ");
+void printHand_uglify(int hand[][MAX2], int size, int index) {
+    int i;
+    // move the first position to print according to the index
+    index = (index == 0 ? index : index * size);
+    for (i = index; i < index + size; i++) {
+        printf("[ %d , %d ] ", hand[i][0], hand[i][1]);
     }
 }
 
@@ -292,28 +321,24 @@ int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int
                 return 1;
             }
         } else {
-//
-            printf("\naux[0]= %d, aux[1]= %d\n", aux[0], aux[1]);
             printf("Matriz no else:\n");
             printMat(matrix, handSize);
             printf("\n");
 
-            aux[0] = matrix[inserted][0];
-            aux[1] = matrix[inserted][1];
+            aux[0] = matrix[i][0];
+            aux[1] = matrix[i][1];
 //            printMat(matrix, handSize);
 
             printf("\naux[0]= %d, aux[1]= %d\n", aux[0], aux[1]);
             for (j = i; j < handSize; j++) {
-                matrix[i][0] = matrix[i + 1][0];
-                matrix[i][1] = matrix[i + 1][1];
-
+                matrix[j][0] = matrix[j + 1][0];
+                matrix[j][1] = matrix[j + 1][1];
             }
-//            printMat(matrix, handSize);
+            matrix[j-1][0] = aux[0];
+            matrix[j-1][1] = aux[1];
 
-            matrix[i][0] = aux[0];
-            matrix[i][1] = aux[1];
-
-//            printMat(matrix, handSize);
+            printf("\nMatriz depois de deslocada:\n");
+            printMat(matrix, handSize);
             i--;
         }
     }
@@ -352,4 +377,70 @@ void invertBlock(int block[][MAX2], int index) {
 //    printf(" ---->Invertido: [%d] [%d]\n", block[index][0], block[index][1]);
 //    printMat(block, index);
 
+}
+
+/**
+ * Function to check the existence of a file (currently not needed)
+ */
+//int fileExists(const char *filename)
+//{
+//    FILE *fp = fopen(filename, "r");
+//    if (fp != NULL){
+//        fclose(fp);
+//    }
+//    return (fp != NULL);
+//}
+
+/**
+ * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
+ * @param type => type = 1 means it's a text file, type = 2 means it's a binary file
+ * @param aux => array where will be stored the contents of the file opened
+ * @param lines => size of the final array after it's extracted
+ * @return
+ */
+    void openFile(int type, int aux[LINES][MAX2], int *numberOfHands, int *handSize) {
+        FILE *file;
+        int i = 0;
+        char fileName[50], fOut[200];
+        switch (type){
+            // Text files
+            case 1:
+                // printf("\nFiles existing:\n");
+                // system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
+                printf("\nFile name: ");
+                scanf("%s", fileName);
+                // if the user didn't add ".txt" at the end of the file name it will be needed to add it
+                if(strstr(fileName, ".txt") == NULL){ // searches the substring ".txt" in the filename the user inputted
+                    strcat(fileName, ".txt");
+                }
+                file = fopen(fileName, "r"); // opens the file with permissions to read only
+                if(file == NULL)
+                {
+                    printf("\nxx Error: Impossible to open the file '%s' xx\n", fileName);
+                    openFile(type, aux, numberOfHands, handSize);
+                }else{
+                    printf("\n** Success: File '%s' opened **\n", fileName);
+                    while(fgets(fOut, 29, file))
+                    {
+//                    printf("%s", fOut); // imprime todos os conteudos do ficheiro
+                        // first line of the file, to extract the size of each hand and how many hands there are
+                        if(i == 0){
+                            *numberOfHands = fOut[0] - '0';
+                            *handSize      = fOut[1] - '0';
+                        }else{
+                            aux[i-1][0] = fOut[0] - '0';
+                            aux[i-1][1] = fOut[1] - '0';
+                        }
+                        i++;
+                    }
+                }
+                break;
+
+                // Binary files
+            case 2:
+
+                break;
+
+            default: break;
+        }
 }
