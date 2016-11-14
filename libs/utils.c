@@ -223,6 +223,17 @@ void printMat(int matrix[][MAX2], int lines) {
 
 }
 
+void inittMat(int m[][MAX2], int lines) {
+    int l = 0;
+
+    for (l = 0; l < lines; l++) {
+
+        m[l][0] = 0;
+        m[l][1] = 0;
+    }
+
+}
+
 //void shiftMatrix(int matrix[][MAX2], int handSize, int index) {
 //    int i = 0, j = 0, aux[2];
 //
@@ -240,23 +251,69 @@ void printMat(int matrix[][MAX2], int lines) {
 
 
 int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int inserted) {
-    int i, result;
+    int i, result, j;
+    int aux[2] = {0,0};
+
+//    printf("Matriz sequence main:\n");
+//    printMat(sequence, handSize);
+//    printf("\n");
     if (inserted == handSize) {
         return 1;
     }
 
-    for (i = 0; i < handSize; i++) {
+//    printf("\nantes do for:\n");
+//    printMat(matrix, handSize);
+    for (i = inserted; i < handSize; i++) {
         sequence[i][0] = matrix[i][0];
         sequence[i][1] = matrix[i][1];
+        inserted++;
+
+        printf("\nIteracao (%d): \nPeça em jogo: [%d][%d]\nPeças inseridas: %d\n", i, sequence[i][0],
+               sequence[i][1], inserted);
+//        printf("Matriz no if:\n");
+        printMat(sequence, inserted);
+        printf("\n");
+
+//        printf("Matriz sequence main:\n");
+//        printMat(sequence, inserted);
+//        printf("\n");
+
         if (isConsistent(sequence, i) == 1) {
-            inserted++;
+//            inserted++;
+//            printf("Sequencias: \n");
+//            printMat(sequence,inserted);
+//            printf("\n antes de enviar como recursivo\n");
+//            printMat(matrix, handSize);
+            printf("Matriz no if:\n");
+            printMat(matrix, handSize);
+            printf("\n");
             result = generateSequence(matrix, handSize, sequence, inserted);
             if (result == 1) {
                 return 1;
             }
         } else {
-//            mandar handSize - inserted
-//            compressMatrix(); aperfeicoar de forma a trocar a peca atual para o fim, movendo as restantes pecas para cima
+//
+            printf("\naux[0]= %d, aux[1]= %d\n", aux[0], aux[1]);
+            printf("Matriz no else:\n");
+            printMat(matrix, handSize);
+            printf("\n");
+
+            aux[0] = matrix[inserted][0];
+            aux[1] = matrix[inserted][1];
+//            printMat(matrix, handSize);
+
+            printf("\naux[0]= %d, aux[1]= %d\n", aux[0], aux[1]);
+            for (j = i; j < handSize; j++) {
+                matrix[i][0] = matrix[i + 1][0];
+                matrix[i][1] = matrix[i + 1][1];
+
+            }
+//            printMat(matrix, handSize);
+
+            matrix[i][0] = aux[0];
+            matrix[i][1] = aux[1];
+
+//            printMat(matrix, handSize);
             i--;
         }
     }
@@ -264,12 +321,17 @@ int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int
 }
 
 int isConsistent(int sequence[][MAX2], int index) {
-    if(index == 0){
-        return  1;
+//    printf("\n (isConsistent)\n");
+//    printMat(sequence, 4);
+    if (index == 0) {
+        return 1;
     }
     if (sequence[index - 1][1] == sequence[index][0]) {
         return 1;
     } else if (sequence[index - 1][1] == sequence[index][1]) {
+//        printf("index: %d", index);
+//        printf("\nmatriz sequencia (isConsistent)\n");
+//        printMat(sequence, 4);
         invertBlock(sequence, index);
         return 1;
     } else {
@@ -278,8 +340,16 @@ int isConsistent(int sequence[][MAX2], int index) {
 }
 
 void invertBlock(int block[][MAX2], int index) {
-    int aux;
+    int aux = 0;
+//    printf("\n-----\n");
+//    printMat(block,4);
     aux = block[index][1];
+//    printMat(block, index);
+//    printf("aux: %d\n", aux);
     block[index][1] = block[index][0];
     block[index][0] = aux;
+
+//    printf(" ---->Invertido: [%d] [%d]\n", block[index][0], block[index][1]);
+//    printMat(block, index);
+
 }

@@ -52,68 +52,76 @@ int main(int argc, char *argv[]) {
 //            {6,6},
 //    };
 
-    int mao[4][MAX2] = {
+    int mao[5][MAX2] = {
             {0, 0},
             {1, 0},
             {3, 2},
-            {0, 3}
+            {0, 3},
+            {1, 3}
     };
     int sequence[][MAX2] = {};
-    handSize = 4;
+    handSize = 5;
+
+//    printf("\nMatriz sequence main:\n");
+//    printMat(mao, handSize);
+//    inittMat(sequence, handSize);
+//    printMat(sequence, handSize);
+//    printf("\n\n");
 
     printf("----------------\n\n");
-    invertBlock(mao, 1);
-    printf("consitence: %d\n",isConsistent(mao, 1) );
-//    generateSequence(mao, handSize, sequence, 0);
+//    invertBlock(mao, 1);
+//    printf("consitence: %d\n",isConsistent(mao, 1) );
 //    printMat(sequence, 28);
-    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
+//    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
 
-   /* // Generate game matrix
-    getGame(pieces);
-//    printMat(pieces, 28);
+    generateSequence(mao, handSize, sequence, 0);
 
-    // First iteration of the menu asks for the number of hands the users wants the program to use
-    numberOfHands = printMenu(0);
-    printf("Hands = %d\n", numberOfHands);
+    /* // Generate game matrix
+     getGame(pieces);
+ //    printMat(pieces, 28);
 
-    path += 1;
-    // The second iteration is to choose a game made randomly or manually (where the user chooses the number of blocks on each hand)
-    choice = printMenu(path);
-    printf("Random = 1 & Manual = 2 => %d\n", choice);
+     // First iteration of the menu asks for the number of hands the users wants the program to use
+     numberOfHands = printMenu(0);
+     printf("Hands = %d\n", numberOfHands);
 
-    path += 1;
-    if(choice == 1){
+     path += 1;
+     // The second iteration is to choose a game made randomly or manually (where the user chooses the number of blocks on each hand)
+     choice = printMenu(path);
+     printf("Random = 1 & Manual = 2 => %d\n", choice);
 
-        // Generate the hands by calculating the ammount of blocks on each hand
-        /// (if numberOfHands < 4 use 7 blocks for each hand)
+     path += 1;
+     if(choice == 1){
 
-    }else if(choice == 2){
+         // Generate the hands by calculating the ammount of blocks on each hand
+         /// (if numberOfHands < 4 use 7 blocks for each hand)
 
-        while(!validated){
-            handSize = printMenu(path);
-            printf("HandSize = %d\n", handSize);
-            // algorithm to check if the number of blocks to use on each hands is according to the number of blocks on the game
-            // all hands have the same number of blocks
-            printf("Number of blocks used = %d\n", numberOfHands*handSize);
-            // distribute the number of blocks chosen by the number of hands and it can't exceed 28 (total blocks existing)
-            if(numberOfHands * handSize > 28){
-                // tells the user what is the max size each hand can have to use all the blocks
-                maxSize = 28 / numberOfHands;
-                printf("!!! Size too large! To use %d hands each one can have %d pieces maximum. !!!\n", numberOfHands, maxSize);
-            }else{
-                validated = 1;
-            }
-        }
+     }else if(choice == 2){
 
-    }
-    generateRandomHand(pieces, hand, handSize, numberOfHands);
-    printf(" ### Matrix of Hands ###\n");
-    printMat(hand, handSize*numberOfHands);
-    for(l = 0; l < numberOfHands; l++){
-        printf("\t### Hand %d ###\n", l+1);
-        printHandHorizontally(hand, handSize, l);
-        printf("\n");
-    }*/
+         while(!validated){
+             handSize = printMenu(path);
+             printf("HandSize = %d\n", handSize);
+             // algorithm to check if the number of blocks to use on each hands is according to the number of blocks on the game
+             // all hands have the same number of blocks
+             printf("Number of blocks used = %d\n", numberOfHands*handSize);
+             // distribute the number of blocks chosen by the number of hands and it can't exceed 28 (total blocks existing)
+             if(numberOfHands * handSize > 28){
+                 // tells the user what is the max size each hand can have to use all the blocks
+                 maxSize = 28 / numberOfHands;
+                 printf("!!! Size too large! To use %d hands each one can have %d pieces maximum. !!!\n", numberOfHands, maxSize);
+             }else{
+                 validated = 1;
+             }
+         }
+
+     }
+     generateRandomHand(pieces, hand, handSize, numberOfHands);
+     printf(" ### Matrix of Hands ###\n");
+     printMat(hand, handSize*numberOfHands);
+     for(l = 0; l < numberOfHands; l++){
+         printf("\t### Hand %d ###\n", l+1);
+         printHandHorizontally(hand, handSize, l);
+         printf("\n");
+     }*/
 
 
     return 0;

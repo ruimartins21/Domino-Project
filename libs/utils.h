@@ -16,6 +16,7 @@ int printMenu(int path);
 void generateRandomHand(int matrix[][MAX2], int hand[][MAX2], int linesHand, int qtSet);
 void compressMatrix(int matrix[][MAX2], int lines, int index);
 void printMat(int matrix[][MAX2], int lines);
+void inittMat(int m[][MAX2], int lines);
 
 int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int inserted) ;
 int isConsistent(int sequence[][MAX2], int index);
