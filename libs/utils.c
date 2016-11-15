@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <string.h>
 
 ///
 ///
@@ -234,12 +235,7 @@ void compressMatrix(int matrix[][MAX2], int lines, int index) {
 }
 
 
-//funcao de dividir o array pela quantidade de maos
 
-//funcao de consistencia para verificar se as peças batem certo para a sequencia
-/**
- * pega na matriz com as varias maos criadas e identificar as maos (array ao auxiliar, que diz mao 1, com as pecas de 0 ate 10, exemplo)
- */
 
 
 void printMat(int matrix[][MAX2], int lines) {
@@ -247,12 +243,13 @@ void printMat(int matrix[][MAX2], int lines) {
 
     for (l = 0; l < lines; l++) {
 
-        printf("%d %d\n", matrix[l][0], matrix[l][1]);
+        printf("[%d %d] ", matrix[l][0], matrix[l][1]);
+//        printf("%d %d\n", matrix[l][0], matrix[l][1]);
     }
 
 }
 
-void inittMat(int m[][MAX2], int lines) {
+/*void inittMat(int m[][MAX2], int lines) {
     int l = 0;
 
     for (l = 0; l < lines; l++) {
@@ -261,102 +258,92 @@ void inittMat(int m[][MAX2], int lines) {
         m[l][1] = 0;
     }
 
-}
-
-//void shiftMatrix(int matrix[][MAX2], int handSize, int index) {
-//    int i = 0, j = 0, aux[2];
-//
-//    aux[0] = matrix[0][0];
-//    aux[1] = matrix[0][1];
-//
-//    for (i = 0; i < handSize; i++) {
-//        for (j = 0; j < MAX2; j++) {
-//            matrix[i][j] = matrix[i + 1][j];
-//        }
-//    }
-//    matrix[i - 1][0] = aux[0];
-//    matrix[i - 1][1] = aux[1];
-//}
-
-
+}*/
+/**
+ * funcao para gerar sequencia a partir de uma mao
+ *  -> verifica se peça inserida na matriz sequencia é consistente, se for consistente tenta inserir a proxima peça da mao
+ *  ->  caso nao seja consistente tenta ver se as proximas peas da mao sao consistentes com a ultima peça inserida na matriz sequencia. Quando
+ *  encontra a peça que é consistente coloca a mesma na matriz sequencia, e ainda modifica a matriz mao trocando a peça encontrada pela peca que não foi
+ *  consistente no inicio. Permintindo dessa forma, da proxima vez que no ciclo for verificar as peças que são consistentes com as peças inseridas na matriz
+ *  verifique a peça que anteriormente não foi consistente, podendo desta vez ser ou não consistente
+ *
+ * @param matrix Initial Matrix (with the number of blocks existing at the time)
+ * @param handSize size of the hand
+ * @param sequence matriz sequencia de pecas consistentes
+ * @param inserted number of blocks inserted in matrix sequence
+ * @return
+ */
 int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int inserted) {
-    int i, result, j;
-    int aux[2] = {0,0};
+    int i, result;
 
-//    printf("Matriz sequence main:\n");
-//    printMat(sequence, handSize);
-//    printf("\n");
+    printf("\nMao:");
+    printMat(matrix, handSize);
+    printf("\n");
+    printf("Sequencia:");
+    printMat(sequence, inserted);
+    printf("\n");
     if (inserted == handSize) {
         return 1;
     }
 
-//    printf("\nantes do for:\n");
-//    printMat(matrix, handSize);
     for (i = inserted; i < handSize; i++) {
-        sequence[i][0] = matrix[i][0];
-        sequence[i][1] = matrix[i][1];
-        inserted++;
+        sequence[inserted][0] = matrix[i][0];
+        sequence[inserted][1] = matrix[i][1];
 
-        printf("\nIteracao (%d): \nPeça em jogo: [%d][%d]\nPeças inseridas: %d\n", i, sequence[i][0],
-               sequence[i][1], inserted);
-//        printf("Matriz no if:\n");
-        printMat(sequence, inserted);
-        printf("\n");
+        printf("Iteracao (%d): \nPeça em jogo: [%d][%d]\n",i+1, sequence[inserted][0], sequence[inserted][1]);
 
-//        printf("Matriz sequence main:\n");
-//        printMat(sequence, inserted);
-//        printf("\n");
+        if (isConsistent(sequence, inserted) == 1) {
+            printf("\nValor do I: %d\n", i);
 
-        if (isConsistent(sequence, i) == 1) {
-//            inserted++;
-//            printf("Sequencias: \n");
-//            printMat(sequence,inserted);
-//            printf("\n antes de enviar como recursivo\n");
-//            printMat(matrix, handSize);
-            printf("Matriz no if:\n");
-            printMat(matrix, handSize);
-            printf("\n");
+            if (i != inserted) {
+                changeBlock(matrix, i, inserted);
+            }
+
+            inserted++;
+            printf("Peças inseridas: %d", inserted);
             result = generateSequence(matrix, handSize, sequence, inserted);
             if (result == 1) {
                 return 1;
             }
-        } else {
-            printf("Matriz no else:\n");
-            printMat(matrix, handSize);
-            printf("\n");
-
-            aux[0] = matrix[i][0];
-            aux[1] = matrix[i][1];
-//            printMat(matrix, handSize);
-
-            printf("\naux[0]= %d, aux[1]= %d\n", aux[0], aux[1]);
-            for (j = i; j < handSize; j++) {
-                matrix[j][0] = matrix[j + 1][0];
-                matrix[j][1] = matrix[j + 1][1];
-            }
-            matrix[j-1][0] = aux[0];
-            matrix[j-1][1] = aux[1];
-
-            printf("\nMatriz depois de deslocada:\n");
-            printMat(matrix, handSize);
-            i--;
         }
     }
     return 0;
 }
 
+/***
+ * Mudar peça de lugar: coloca a peça que se encontra num determinado index noutro index
+ *
+ * @param mat Initial Matrix (with the number of blocks existing at the time)
+ * @param index posicao da peça a ser mudada
+ * @param inserted posicao para onde a peça ira ser mudada
+ */
+void changeBlock(int mat[][MAX2], int index, int inserted) {
+    int i, j;
+    i = mat[index][0];
+    j = mat[index][1];
+    mat[index][0] = mat[inserted][0];
+    mat[index][1] = mat[inserted][1];
+    mat[inserted][0] = i;
+    mat[inserted][1] = j;
+}
+
+
+/***
+ * verifica se uma determinada peça é consistente com a ultima peça colocada na matriz
+ *  -> só é consitenten se um dos numeros da peça a ser colocada for igual ao numero da ultima peça do lado direiro
+ *      -> [0 3] [3 2]
+ *
+ * @param sequence matriz sequencia de pecas consistentes
+ * @param index posicao da peça a ser inserida
+ * @return 1 se consistente
+ */
 int isConsistent(int sequence[][MAX2], int index) {
-//    printf("\n (isConsistent)\n");
-//    printMat(sequence, 4);
     if (index == 0) {
         return 1;
     }
     if (sequence[index - 1][1] == sequence[index][0]) {
         return 1;
     } else if (sequence[index - 1][1] == sequence[index][1]) {
-//        printf("index: %d", index);
-//        printf("\nmatriz sequencia (isConsistent)\n");
-//        printMat(sequence, 4);
         invertBlock(sequence, index);
         return 1;
     } else {
@@ -364,18 +351,20 @@ int isConsistent(int sequence[][MAX2], int index) {
     }
 }
 
+
+/***
+ *
+ * funcao que inverte a peça, isto é, roda a peça
+ *  -> [0 1] fica [1 0]
+ *
+ * @param block matriz sequencia de pecas consistentes
+ * @param index indice da peça a ser invertida
+ */
 void invertBlock(int block[][MAX2], int index) {
     int aux = 0;
-//    printf("\n-----\n");
-//    printMat(block,4);
     aux = block[index][1];
-//    printMat(block, index);
-//    printf("aux: %d\n", aux);
     block[index][1] = block[index][0];
     block[index][0] = aux;
-
-//    printf(" ---->Invertido: [%d] [%d]\n", block[index][0], block[index][1]);
-//    printMat(block, index);
 
 }
 
@@ -398,49 +387,48 @@ void invertBlock(int block[][MAX2], int index) {
  * @param lines => size of the final array after it's extracted
  * @return
  */
-    void openFile(int type, int aux[LINES][MAX2], int *numberOfHands, int *handSize) {
-        FILE *file;
-        int i = 0;
-        char fileName[50], fOut[200];
-        switch (type){
-            // Text files
-            case 1:
-                // printf("\nFiles existing:\n");
-                // system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
-                printf("\nFile name: ");
-                scanf("%s", fileName);
-                // if the user didn't add ".txt" at the end of the file name it will be needed to add it
-                if(strstr(fileName, ".txt") == NULL){ // searches the substring ".txt" in the filename the user inputted
-                    strcat(fileName, ".txt");
-                }
-                file = fopen(fileName, "r"); // opens the file with permissions to read only
-                if(file == NULL)
-                {
-                    printf("\nxx Error: Impossible to open the file '%s' xx\n", fileName);
-                    openFile(type, aux, numberOfHands, handSize);
-                }else{
-                    printf("\n** Success: File '%s' opened **\n", fileName);
-                    while(fgets(fOut, 29, file))
-                    {
+void openFile(int type, int aux[LINES][MAX2], int *numberOfHands, int *handSize) {
+    FILE *file;
+    int i = 0;
+    char fileName[50], fOut[200];
+    switch (type) {
+        // Text files
+        case 1:
+            // printf("\nFiles existing:\n");
+            // system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
+            printf("\nFile name: ");
+            scanf("%s", fileName);
+            // if the user didn't add ".txt" at the end of the file name it will be needed to add it
+            if (strstr(fileName, ".txt") == NULL) { // searches the substring ".txt" in the filename the user inputted
+                strcat(fileName, ".txt");
+            }
+            file = fopen(fileName, "r"); // opens the file with permissions to read only
+            if (file == NULL) {
+                printf("\nxx Error: Impossible to open the file '%s' xx\n", fileName);
+                openFile(type, aux, numberOfHands, handSize);
+            } else {
+                printf("\n** Success: File '%s' opened **\n", fileName);
+                while (fgets(fOut, 29, file)) {
 //                    printf("%s", fOut); // imprime todos os conteudos do ficheiro
-                        // first line of the file, to extract the size of each hand and how many hands there are
-                        if(i == 0){
-                            *numberOfHands = fOut[0] - '0';
-                            *handSize      = fOut[1] - '0';
-                        }else{
-                            aux[i-1][0] = fOut[0] - '0';
-                            aux[i-1][1] = fOut[1] - '0';
-                        }
-                        i++;
+                    // first line of the file, to extract the size of each hand and how many hands there are
+                    if (i == 0) {
+                        *numberOfHands = fOut[0] - '0';
+                        *handSize = fOut[1] - '0';
+                    } else {
+                        aux[i - 1][0] = fOut[0] - '0';
+                        aux[i - 1][1] = fOut[1] - '0';
                     }
+                    i++;
                 }
-                break;
+            }
+            break;
 
-                // Binary files
-            case 2:
+            // Binary files
+        case 2:
 
-                break;
+            break;
 
-            default: break;
-        }
+        default:
+            break;
+    }
 }

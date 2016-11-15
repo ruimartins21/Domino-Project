@@ -21,6 +21,7 @@ void inittMat(int m[][MAX2], int lines);
 int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int inserted) ;
 int isConsistent(int sequence[][MAX2], int index);
 void invertBlock(int sequence[][MAX2], int index);
+void changeBlock(int mat[][MAX2], int index, int inserted);
 
 //int fileExists(const char *filename);
 void openFile(int type, int aux[LINES][MAX2], int *numberOfHands, int *handSize);
