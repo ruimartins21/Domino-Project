@@ -387,10 +387,10 @@ void invertBlock(int block[][MAX2], int index) {
  * @param lines => size of the final array after it's extracted
  * @return
  */
-void openFile(int type, int aux[LINES][MAX2], int *numberOfHands, int *handSize) {
+void openFile(int type, int content[LINES][MAX2], int *numberOfHands, int *handSize) {
     FILE *file;
     int i = 0;
-    char fileName[50], fOut[200];
+    char fileName[40], fOut[30];
     switch (type) {
         // Text files
         case 1:
@@ -398,25 +398,28 @@ void openFile(int type, int aux[LINES][MAX2], int *numberOfHands, int *handSize)
             // system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
             printf("\nFile name: ");
             scanf("%s", fileName);
-            // if the user didn't add ".txt" at the end of the file name it will be needed to add it
-            if (strstr(fileName, ".txt") == NULL) { // searches the substring ".txt" in the filename the user inputted
-                strcat(fileName, ".txt");
-            }
+            checkExtension(fileName);
             file = fopen(fileName, "r"); // opens the file with permissions to read only
             if (file == NULL) {
                 printf("\nxx Error: Impossible to open the file '%s' xx\n", fileName);
-                openFile(type, aux, numberOfHands, handSize);
+                openFile(type, content, numberOfHands, handSize);
             } else {
                 printf("\n** Success: File '%s' opened **\n", fileName);
                 while (fgets(fOut, 29, file)) {
 //                    printf("%s", fOut); // imprime todos os conteudos do ficheiro
                     // first line of the file, to extract the size of each hand and how many hands there are
                     if (i == 0) {
+                        // arithmetic to get the first 2 digits of the first line from char to int type (correspondent to the number of hands)
                         *numberOfHands = fOut[0] - '0';
-                        *handSize = fOut[1] - '0';
+                        *numberOfHands *= 10;
+                        *numberOfHands += (fOut[1] - '0');
+                        // arithmetic to get the second 2 digits of the first line from char to int type (correspondent to the hands size)
+                        *handSize = fOut[2] - '0';
+                        *handSize *= 10;
+                        *handSize += (fOut[3] - '0');
                     } else {
-                        aux[i - 1][0] = fOut[0] - '0';
-                        aux[i - 1][1] = fOut[1] - '0';
+                        content[i - 1][0] = fOut[0] - '0';
+                        content[i - 1][1] = fOut[1] - '0';
                     }
                     i++;
                 }
@@ -430,5 +433,38 @@ void openFile(int type, int aux[LINES][MAX2], int *numberOfHands, int *handSize)
 
         default:
             break;
+    }
+}
+
+void createGameFile(int content[LINES][MAX2], int numberOfHands, int handSize){
+    FILE *file;
+    int i = 0;
+    char fileName[40];
+    // create txt file
+    printf("\nFile name: ");
+    scanf("%s", fileName);
+    checkExtension(fileName);
+    file = fopen(fileName, "w");
+    if (file == NULL) {
+        printf("\nxx Error: Impossible to create the file '%s' xx\n", fileName);
+        createGameFile(content, numberOfHands, handSize);
+    } else {
+        // guardar numberOfHands e handSize
+        for (i = 0; i < (numberOfHands*handSize)+1; i++) {
+            fprintf(file, "%d%d", content[i][0],content[i][1]);
+            fprintf(file, "\n");
+        }
+        fclose(file);
+    }
+    // verificar nomes repetidos para evitar rewrite
+}
+
+/**
+ * checks the filename the user inputted for the extension and if it doesn't exist adds it at the end
+ * @param fileName name of the file requested by the user
+ */
+void checkExtension(char *fileName){
+    if (strstr(fileName, ".txt") == NULL) { // searches the substring ".txt" in the filename the user inputted
+        strcat(fileName, ".txt");
     }
 }

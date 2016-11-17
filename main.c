@@ -74,13 +74,12 @@ int main(int argc, char *argv[])
 //    printMat(sequence, 28);
 //    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
 
-    generateSequence(mao, handSize, sequence, 0);
-    return 0;
+//    generateSequence(mao, handSize, sequence, 0);
+//    return 0;
 
     /**
      *  Inicio do programa, para tras são testes
      */
-
 
     // Generate game matrix
     getGame(pieces);
@@ -96,7 +95,7 @@ int main(int argc, char *argv[])
         path += 1;
         if(choice == 1){
             // Generate the hands by calculating the maximum amount of blocks possible on each hand
-            handSize = 28 / numberOfHands;
+            handSize = LINES / numberOfHands;
             // Defining a max number of blocks per hand (7)
             if(handSize > 7){
                 handSize = 7;
@@ -116,29 +115,23 @@ int main(int argc, char *argv[])
             }
         }
         generateRandomHand(pieces, hand, handSize, numberOfHands);
+        // GUARDAR NUM FICHEIRO (pedir nome para ficheiro) a matriz das maos juntamente com nº de maos e nº de peças por mao)
+        createGameFile(hand, numberOfHands, handSize);
     }else if(choice == 2){
         typeOfFile = printMenu(4); // choose between text file or binary file
         openFile(typeOfFile, hand, &numberOfHands, &handSize);
+        printf("\nnumberOfHands = %d | handSize = %d\n", numberOfHands, handSize);
     }
 
-    printf(" ### Matrix of Hands ###\n");
-    printMat(hand, handSize*numberOfHands);
+//    printf(" ### Matrix of Hands ###\n");
+//    printMat(hand, handSize*numberOfHands);
     for(l = 0; l < numberOfHands; l++){
 //        printf("\t### Hand %d ###\n", l+1);
 //        printHandHorizontally(hand, handSize, l);
-        printf("Hand %d: ", l+1);
+        printf("\nHand %d: ", l+1);
         printHand_uglify(hand, handSize, l);
-        // print uglify ajeitar funçao
         printf("\n");
     }
 
     return 0;
 }
-
-// mudar 2 coisas no algoritmo das rainhas
-// transformar array das maos em ints, uma peça guardar o index dela
-// mudar pesquisa de consistencia, "a peça nº X (no index 0 e no index 1) encaixa na peça nº Y?" nao encaixa, volta pa tras
-
-// funcionar com indices e nao com as peças
-
-// usar uma mao FIXA para debug, ja sabemos o que devia acontecer

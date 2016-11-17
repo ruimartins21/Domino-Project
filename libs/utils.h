@@ -25,5 +25,7 @@ void changeBlock(int mat[][MAX2], int index, int inserted);
 
 //int fileExists(const char *filename);
 void openFile(int type, int aux[LINES][MAX2], int *numberOfHands, int *handSize);
+void createGameFile(int content[LINES][MAX2], int numberOfHands, int handSize);
+void checkExtension(char *fileName);
 
 #endif //DOMINO_PROJECT_UTILS_H
