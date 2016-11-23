@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <string.h>
+#include <sys/time.h>
 
 ///
 ///
@@ -14,7 +15,7 @@
  * @param pieces => matrix to store the generated numbers
  * @return => default (0): filled matrix is stored via its addresses so it isn't needed to return anything
  */
-int getGame(int pieces[][MAX2]) {
+int getGame(int pieces[][MAX3]) {
     int l = 0, c = 0, lin = 0;
     for (l = 0; l <= 6; l++) {
         for (c = l; c <= 6; c++) {
@@ -132,7 +133,7 @@ void printHandVertically(int size) {
  * @param size => size of the hand
  * @param index => position of the hand to print
  */
-void printHandHorizontally(int hand[][MAX2], int size, int index) {
+void printHandHorizontally(int hand[][MAX3], int size, int index) {
     int i, j, block = 3;
     // move the first position to print according to the index
     index = (index == 0 ? index : index * size);
@@ -156,7 +157,7 @@ void printHandHorizontally(int hand[][MAX2], int size, int index) {
  * Print a hand of the game but not the pieces, only a vector with its numbers
  * @param size => size of the hand
  */
-void printHand_uglify(int hand[][MAX2], int size, int index) {
+void printHand_uglify(int hand[][MAX3], int size, int index) {
     int i;
     // move the first position to print according to the index
     index = (index == 0 ? index : index * size);
@@ -177,7 +178,7 @@ void printHand_uglify(int hand[][MAX2], int size, int index) {
  * @param linesHand Matrix lines of the player hand
  * @param qtSet Number of hands to generate
  */
-void generateRandomHand(int matrix[][MAX2], int hand[][MAX2], int linesHand, int qtSet) {
+void generateRandomHand(int matrix[][MAX3], int hand[][MAX3], int linesHand, int qtSet) {
     int l = 0, j = 0, randValue = 0, linesCount = 0, limit = 0;
     limit = LINES / linesHand;
     if (qtSet < limit)
@@ -221,7 +222,7 @@ void generateRandomHand(int matrix[][MAX2], int hand[][MAX2], int linesHand, int
  * @param lines Number of lines existing at the previous matrix
  * @param index Position of the block to be withdrawn to the player hand
  */
-void compressMatrix(int matrix[][MAX2], int lines, int index) {
+void compressMatrix(int matrix[][MAX3], int lines, int index) {
     int l = 0, c = 0, aux = index + 1;
     for (; index < lines; index++) {
 
@@ -235,10 +236,7 @@ void compressMatrix(int matrix[][MAX2], int lines, int index) {
 }
 
 
-
-
-
-void printMat(int matrix[][MAX2], int lines) {
+void printMat(int matrix[][MAX3], int lines) {
     int l = 0;
 
     for (l = 0; l < lines; l++) {
@@ -249,16 +247,65 @@ void printMat(int matrix[][MAX2], int lines) {
 
 }
 
-/*void inittMat(int m[][MAX2], int lines) {
-    int l = 0;
+void printMatDefault(int matrix[][MAX57], int lines, int cols) {
+    int l = 0, c = 0;
 
     for (l = 0; l < lines; l++) {
-
-        m[l][0] = 0;
-        m[l][1] = 0;
+        for (c = 0; c < cols && matrix[l][c] != -1; c++) {
+            printf("%d ", matrix[l][c]);
+        }
+        printf("\n");
     }
 
-}*/
+}
+
+void initMat(int m[][MAX57], int lines, int cols) {
+    int l = 0, c = 0;
+
+    for (l = 0; l < lines; l++) {
+        for (c = 0; c < cols; c++) {
+            m[l][c] = -1;
+        }
+    }
+
+}
+
+void initArray(int array[MAX57]) {
+    int i = 0;
+    for (i = 0; i < MAX57; i++) {
+        array[i] = -1;
+    }
+}
+
+void printArray(int *a, int N) {
+    int i;
+    for (i = 0; i < N; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+}
+
+/***
+ * funcao usala pelo quick sort
+ * @param a
+ * @param b
+ * @return
+ */
+int compareIntValues(const void *a, const void *b) {
+    return (*(int *) a - *(int *) b);
+}
+
+/**
+ *  Sort int arrays using quick sort from the C library
+ *
+ *  @param v integer array to sort
+ *  @param n size of the array
+ */
+void sortIntArray(int *v, int n) {
+    qsort(v, n, sizeof(int), compareIntValues);
+}
+
+
 /**
  * funcao para gerar sequencia a partir de uma mao
  *  -> verifica se peça inserida na matriz sequencia é consistente, se for consistente tenta inserir a proxima peça da mao
@@ -267,14 +314,16 @@ void printMat(int matrix[][MAX2], int lines) {
  *  consistente no inicio. Permintindo dessa forma, da proxima vez que no ciclo for verificar as peças que são consistentes com as peças inseridas na matriz
  *  verifique a peça que anteriormente não foi consistente, podendo desta vez ser ou não consistente
  *
+ *  o index 2 de cada linha é o estado da peca (1 - disponivel 0 -indisponivel) Inicialmente estão todas disponiveis
+ *
  * @param matrix Initial Matrix (with the number of blocks existing at the time)
  * @param handSize size of the hand
  * @param sequence matriz sequencia de pecas consistentes
  * @param inserted number of blocks inserted in matrix sequence
  * @return
  */
-int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int inserted) {
-    int i, result;
+int generateSequence(int matrix[][MAX3], int handSize, int sequence[][MAX3], int allSequences[][MAX57], int inserted) {
+    int i = 0;
 
     printf("\nMao:");
     printMat(matrix, handSize);
@@ -282,71 +331,162 @@ int generateSequence(int matrix[][MAX2], int handSize, int sequence[][MAX2], int
     printf("Sequencia:");
     printMat(sequence, inserted);
     printf("\n");
-    if (inserted == handSize) {
-        return 1;
-    }
 
-    for (i = inserted; i < handSize; i++) {
-        sequence[inserted][0] = matrix[i][0];
-        sequence[inserted][1] = matrix[i][1];
 
-        printf("Iteracao (%d): \nPeça em jogo: [%d][%d]\n",i+1, sequence[inserted][0], sequence[inserted][1]);
+    for (i = 0; i < handSize; i++) {
 
-        if (isConsistent(sequence, inserted) == 1) {
-            printf("\nValor do I: %d\n", i);
+//        se peca disponivel
+        if (matrix[i][2] == 1) {
 
-            if (i != inserted) {
-                changeBlock(matrix, i, inserted);
-            }
+            sequence[inserted][0] = matrix[i][0];
+            sequence[inserted][1] = matrix[i][1];
 
-            inserted++;
-            printf("Peças inseridas: %d", inserted);
-            result = generateSequence(matrix, handSize, sequence, inserted);
-            if (result == 1) {
-                return 1;
+            printf("Iteracao (%d): \nPeça em jogo: [%d %d]\n", i, sequence[inserted][0], sequence[inserted][1]);
+
+            if (isConsistent(sequence, inserted) == 1) {
+                printf("Valor do I: %d\n", i);
+
+                inserted++;
+                matrix[i][2] = 0; // peca fica indisponivel
+                saveSequence(sequence, allSequences, inserted * 2);
+                printf("Peças inseridas: %d\n", inserted);
+
+                generateSequence(matrix, handSize, sequence, allSequences, inserted);
+
+
+                matrix[i][2] = 1; // colocar a peça que não deu na sequencia novamente disponivel
+                inserted--;
             }
         }
     }
+
     return 0;
 }
 
+
 /***
- * Mudar peça de lugar: coloca a peça que se encontra num determinado index noutro index
- *
- * @param mat Initial Matrix (with the number of blocks existing at the time)
- * @param index posicao da peça a ser mudada
- * @param inserted posicao para onde a peça ira ser mudada
+ * funcao responsavel por guardar numa matriz sequencias cada sub-sequencia / sequencia gerada
+ * Coloca no index 0 de cada linha o tamanho da sequencia em questão
+ * os valores que estoa para alem da sequencia estão inicializados a -1
+ * @param sequence Matriz da sequencia a ser guardada
+ * @param allSequences Matriz com todas as sequencias guardadas
+ * @param sizeOfSequence Tamanho da sequencia a ser guardada
  */
-void changeBlock(int mat[][MAX2], int index, int inserted) {
-    int i, j;
-    i = mat[index][0];
-    j = mat[index][1];
-    mat[index][0] = mat[inserted][0];
-    mat[index][1] = mat[inserted][1];
-    mat[inserted][0] = i;
-    mat[inserted][1] = j;
+void saveSequence(int sequence[][MAX3], int allSequences[][MAX57], int sizeOfSequence) {
+    int i = 0, j = 0, k = 0;
+
+//    procuro ate encontrar o primiero -1, que sera a primeira linha livre para guardar a sequencia em questao
+    while (allSequences[i][0] != -1) {
+        i++; // incremento primeiro pois a proxima linha pode ser a disponivel para guardar a sequencia
+        if (allSequences[i][0] == -1) {
+            allSequences[i][0] = sizeOfSequence;
+            for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
+                allSequences[i][j] = sequence[k][0];
+                allSequences[i][j + 1] = sequence[k][1];
+            }
+            break;
+        }
+
+    }
+//    se for a primeira insiro na primeira linha ele nem vai entrar no clico while de cima por isso insiro a sequencia
+    if (i == 0) {
+        allSequences[i][0] = sizeOfSequence;
+        for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
+            allSequences[i][j] = sequence[k][0];
+            allSequences[i][j + 1] = sequence[k][1];
+        }
+    }
+}
+
+/***
+ * Funcao responsavel por odernar  de forma decrescente por tamanho a matriz de todas as sequencias
+ * Ordena a partir de uma array ordenado (o conteudo desse array corresponde ao index 0 de cada linha que contem o tamanho de cada sequencia)
+ * @param allSequences Matriz com todas as sequencias e sub sequencias do jogo
+ */
+void sortAllSequences(int allSequences[][MAX57]) {
+    int numberOfSequences = 0, j = 0, k = 0, l = 0, m = 0, arraySorted[MAX57], auxMatrix[500][MAX57];
+//    criar array com index 0 de cada linha
+    while (allSequences[numberOfSequences][0] != -1) {
+        arraySorted[numberOfSequences] = allSequences[numberOfSequences][0];
+        numberOfSequences++;
+
+    }
+//    ordenar o array por ordem decrescente -> usado quick sort
+    sortIntArray(arraySorted, numberOfSequences);
+    printf("\nAux sorted:");
+    printArray(arraySorted, numberOfSequences);
+    printf("\n");
+
+    printf("allSequences for sort:\n");
+    printMatDefault(allSequences, numberOfSequences, 56);
+    printf("\n");
+
+//    start auxiliar matrix the -1
+    initMat(auxMatrix, 500, 57);
+
+    k = numberOfSequences - 1;
+
+    for (j = 0; j < numberOfSequences; j++) {
+        if (arraySorted[k] == allSequences[j][0]) {
+            for (l = 0; l <= allSequences[j][0]; l++) {
+                auxMatrix[m][l] = allSequences[j][l];
+            }
+            allSequences[j][0] = -1;
+            m++; // usado para guarda numa nova linha da matrix auxiliar
+            k--; // ir para valor seguinte do arraySorted
+            j = -1; // when this cycle ends it restarts the outer cycle so it starts searching the next sequence from the beginning (-1 because the cycle will still increment after this)
+        }
+    }
+    // copy back to allSequences matrix
+    for (j = 0; j < numberOfSequences; j++) {
+        for (l = 0; l <= auxMatrix[j][0]; l++) {
+            allSequences[j][l] = auxMatrix[j][l];
+        }
+        allSequences[j][l] = -1;
+
+    }
+    printf("allSequences:\n");
+    printMatDefault(allSequences, numberOfSequences, 56);
+    printf("\n");
+
 }
 
 
 /***
- * verifica se uma determinada peça é consistente com a ultima peça colocada na matriz
- *  -> só é consitenten se um dos numeros da peça a ser colocada for igual ao numero da ultima peça do lado direiro
- *      -> [0 3] [3 2]
+ * verifica se uma determinada peça é consistente na sequencia de jogo
  *
  * @param sequence matriz sequencia de pecas consistentes
  * @param index posicao da peça a ser inserida
  * @return 1 se consistente
  */
-int isConsistent(int sequence[][MAX2], int index) {
+int isConsistent(int sequence[][MAX3], int index) {
+//    primeira peça é sempre consistente
     if (index == 0) {
         return 1;
     }
-    if (sequence[index - 1][1] == sequence[index][0]) {
+//    se o lado esquerdo da peça inserida for igual ao lado direito da peça anterior
+    else if (sequence[index - 1][1] == sequence[index][0]) {
         return 1;
-    } else if (sequence[index - 1][1] == sequence[index][1]) {
+    }
+//    se o lado direito da peça inserida for igual ao lado direito da peça anterior, então roda-se a peça
+    else if (sequence[index - 1][1] == sequence[index][1]) {
         invertBlock(sequence, index);
         return 1;
-    } else {
+    }
+//    se for a segunda peça a inserir e esta não for consistente com a primeira peça, então  testa-se com o lado esquerdo
+// da primeira peça com o lado esquerdo da segunda peça
+    else if (index == 1 && sequence[index - 1][0] == sequence[index][0]) {
+        invertBlock(sequence, index - 1);
+        return 1;
+    }
+//    se o lado esquerdo da primeira peça for igual lado direito da segunda peça
+    else if (index == 1 && sequence[index - 1][0] == sequence[index][1]) {
+        invertBlock(sequence, index - 1);
+        invertBlock(sequence, index);
+        return 1;
+    }
+//    se nao for consistente
+    else {
         return 0;
     }
 }
@@ -360,7 +500,7 @@ int isConsistent(int sequence[][MAX2], int index) {
  * @param block matriz sequencia de pecas consistentes
  * @param index indice da peça a ser invertida
  */
-void invertBlock(int block[][MAX2], int index) {
+void invertBlock(int block[][MAX3], int index) {
     int aux = 0;
     aux = block[index][1];
     block[index][1] = block[index][0];
@@ -387,7 +527,7 @@ void invertBlock(int block[][MAX2], int index) {
  * @param lines => size of the final array after it's extracted
  * @return
  */
-void openFile(int type, int content[LINES][MAX2], int *numberOfHands, int *handSize) {
+void openFile(int type, int content[LINES][MAX3], int *numberOfHands, int *handSize) {
     FILE *file;
     int i = 0;
     char fileName[40], fOut[30];
@@ -436,7 +576,7 @@ void openFile(int type, int content[LINES][MAX2], int *numberOfHands, int *handS
     }
 }
 
-void createGameFile(int content[LINES][MAX2], int numberOfHands, int handSize){
+void createGameFile(int content[LINES][MAX3], int numberOfHands, int handSize) {
     FILE *file;
     int i = 0;
     char fileName[40];
@@ -450,8 +590,8 @@ void createGameFile(int content[LINES][MAX2], int numberOfHands, int handSize){
         createGameFile(content, numberOfHands, handSize);
     } else {
         // guardar numberOfHands e handSize
-        for (i = 0; i < (numberOfHands*handSize)+1; i++) {
-            fprintf(file, "%d%d", content[i][0],content[i][1]);
+        for (i = 0; i < (numberOfHands * handSize) + 1; i++) {
+            fprintf(file, "%d%d", content[i][0], content[i][1]);
             fprintf(file, "\n");
         }
         fclose(file);
@@ -463,7 +603,7 @@ void createGameFile(int content[LINES][MAX2], int numberOfHands, int handSize){
  * checks the filename the user inputted for the extension and if it doesn't exist adds it at the end
  * @param fileName name of the file requested by the user
  */
-void checkExtension(char *fileName){
+void checkExtension(char *fileName) {
     if (strstr(fileName, ".txt") == NULL) { // searches the substring ".txt" in the filename the user inputted
         strcat(fileName, ".txt");
     }

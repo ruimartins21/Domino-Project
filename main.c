@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
 {
     int handSize = 7, choice, numberOfHands = 0, validated = 0, maxSize = 0, path = 0, l = 0, c = 0, lin = 0, typeOfFile = 0;
     srand((unsigned) time(NULL));
-    int pieces[LINES][MAX2] = {};
-    int hand[LINES][MAX2] = {};
-//    int pieces[28][MAX2] = {
+    int pieces[LINES][MAX3] = {};
+    int hand[LINES][MAX3] = {};
+//    int pieces[28][MAX3] = {
 //            {0,0},
 //            {0,1},
 //            {0,2},
@@ -52,15 +52,23 @@ int main(int argc, char *argv[])
 //            {6,6},
 //    };
 
-    int mao[5][MAX2] = {
-            {0, 0},
-            {1, 0},
-            {3, 2},
-            {0, 3},
-            {1, 3}
+
+
+
+    int mao[5][MAX3] = {
+            {0,0,1},
+            {1,0,1},
+            {3,2,1},
+            {0,3,1},
+            {1,3,1}
     };
-    int sequence[][MAX2] = {};
+
+
+    int sequence[LINES][MAX3] = {};
+    int allSequences[500][MAX57] = {};
     handSize = 5;
+
+    initMat(allSequences, 500, 57);
 
 //    printf("\nMatriz sequence main:\n");
 //    printMat(mao, handSize);
@@ -74,8 +82,10 @@ int main(int argc, char *argv[])
 //    printMat(sequence, 28);
 //    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
 
-//    generateSequence(mao, handSize, sequence, 0);
-//    return 0;
+    generateSequence(mao, handSize, sequence, allSequences , 0);
+
+    sortAllSequences(allSequences);
+    return 0;
 
     /**
      *  Inicio do programa, para tras são testes
