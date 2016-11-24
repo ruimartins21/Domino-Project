@@ -17,8 +17,8 @@
 int main(int argc, char *argv[])
 {
     int handSize, choice, numberOfHands = 0, validated = 0, maxSize = 0, path = 0, l = 0, c = 0, lin = 0, typeOfFile = 0, edited = 0;
-    int game[LINES][COLS] = {};
-    int hand[LINES][COLS] = {};
+    int game[LINES][MAX2] = {};
+    int hand[LINES][MAX3] = {};
     char fileName[40];
 //    int game[28][COLS] = {
 //            {0,0},
@@ -50,20 +50,65 @@ int main(int argc, char *argv[])
 //            {5,6},
 //            {6,6},
 //    };
-    int mao[5][MAX3] = {
+//    int mao[5][MAX3] = {
+//            {0,0,1},
+//            {1,0,1},
+//            {3,2,1},
+//            {0,3,1},
+//            {1,3,1}
+//    };
+
+    int mao[28][MAX3] = {
             {0,0,1},
-            {1,0,1},
-            {3,2,1},
+            {0,1,1},
+            {0,2,1},
             {0,3,1},
-            {1,3,1}
+            {0,4,1},
+            {0,5,1},
+            {0,6,1},
+            {1,1,1},
+            {1,2,1},
+            {1,3,1},
+            {1,4,1},
+            {1,5,1},
+            {1,6,1},
+            {2,2,1},
+            {2,3,1},
+            {2,4,1},
+            {2,5,1},
+            {2,6,1},
+            {3,3,1},
+            {3,4,1},
+            {3,5,1},
+            {3,6,1},
+            {4,4,1},
+            {4,5,1},
+            {4,6,1},
+            {5,5,1},
+            {5,6,1},
+            {6,6,1}
     };
 
+//    int mao[10][MAX3] = {
+//            {0,0,1},
+//            {0,1,1},
+//            {0,2,1},
+//            {0,3,1},
+//            {0,4,1},
+//            {0,5,1},
+//            {0,6,1},
+//            {1,1,1},
+//            {1,2,1},
+//            {6,6,1}
+//    };
 
-    int sequence[LINES][MAX3] = {};
-    int allSequences[500][MAX57] = {};
-    handSize = 5;
 
-    initMat(allSequences, 500, 57);
+
+    int sequence[LINES][MAX2] = {};
+    int allSequences[30000][MAX57] = {};
+    handSize = 10;
+
+    initMat(allSequences, 30000, 57);
 
 //    printf("\nMatriz sequence main:\n");
 //    printMat(mao, handSize);
@@ -77,15 +122,22 @@ int main(int argc, char *argv[])
 //    printMat(sequence, 28);
 //    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
 
-    generateRandomHand(pieces, hand, handSize, 1);
+//    generateRandomHand(game, hand, handSize, 1);
+//
+//    printf("\nMao:");
+//    printMat(hand, handSize);
+//    printf("\n");
 
-    printf("\nMao:");
-    printMat(hand, handSize);
+    generateSequence(mao, handSize, sequence, allSequences , 0);
+
+//    exit code 11 -> segmentation fault
+
+
+    printf("allSequences -------------------------------------------------------------------------------:\n");
+    printMatDefault(allSequences, 100, 57);
     printf("\n");
 
-//    generateSequence(mao, handSize, sequence, allSequences , 0);
-
-    sortAllSequences(allSequences);
+//    sortAllSequences(allSequences);
     return 0;
 
     /**
@@ -134,7 +186,7 @@ int main(int argc, char *argv[])
                 generateRandomHand(game, hand, handSize, numberOfHands);
             }else{
                 // choose the blocks manually
-                generateManualHand(game, hand, handSize, numberOfHands);
+//                generateManualHand(game, hand, handSize, numberOfHands);
             }
         }
     }else if(choice == 2){
@@ -145,33 +197,39 @@ int main(int argc, char *argv[])
         typeOfFile = printMenu(path); // choose between text file or binary file
         printf("\nFile name: ");
         scanf("%s", fileName);
-        openFile(fileName, typeOfFile, hand, game, &numberOfHands, &handSize);
+//        openFile(fileName, typeOfFile, hand, game, &numberOfHands, &handSize);
     }
     // if the game matrix is empty there's no blocks that can be edited
-    if(game[0][0] != -1){
+//    if(game[0][0] != -1){
         // Editing part: shows the user all the hands made before and asks if he wants to change anything
-        edited = editHands(game, hand, handSize, numberOfHands);
-    }
-    if(!edited && path == 5) {
-        // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
-    }else {
-        // loaded the game from file and edited? then edit the existing file
-        if(path == 5){
-            editFile(fileName, typeOfFile, hand, game, numberOfHands, handSize);
-        }else{
-            path = 6;
-            choice = printMenu(path);
-            if (choice) {
-                path += 1;
-                typeOfFile = printMenu(path);
-                createGameFile(typeOfFile, hand, game, numberOfHands, handSize);
-            }
-        }
-    }
+//        edited = editHands(game, hand, handSize, numberOfHands);
+//    }
+//    if(!edited && path == 5) {
+//        // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
+//    }else {
+//        // loaded the game from file and edited? then edit the existing file
+//        if(path == 5){
+////            editFile(fileName, typeOfFile, hand, game, numberOfHands, handSize);
+//        }else{
+//            path = 6;
+//            choice = printMenu(path);
+//            if (choice) {
+//                path += 1;
+//                typeOfFile = printMenu(path);
+////                createGameFile(typeOfFile, hand, game, numberOfHands, handSize);
+//            }
+//        }
+//    }
+    generateSequence(hand, handSize, sequence, allSequences , 0);
+    printf("------------------------------------------------------:\n");
+    printMatDefault(allSequences, 150, 56);
+    printf("\n");
+
+    sortAllSequences(allSequences);
 
 
     printf(" ### Matrix of Hands ###\n");
-    printMat(hand, handSize*numberOfHands);
+//    printMat(hand, handSize*numberOfHands);
     printf("\n ### Matrix of the Game ###\n");
     printMat(game, LINES);
 
