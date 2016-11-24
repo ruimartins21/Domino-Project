@@ -19,38 +19,37 @@ int main(int argc, char *argv[])
 {
     int handSize = 7, choice, numberOfHands = 0, validated = 0, maxSize = 0, path = 0, l = 0, c = 0, lin = 0, typeOfFile = 0;
     srand((unsigned) time(NULL));
-    int pieces[LINES][MAX3] = {};
     int hand[LINES][MAX3] = {};
-//    int pieces[28][MAX3] = {
-//            {0,0},
-//            {0,1},
-//            {0,2},
-//            {0,3},
-//            {0,4},
-//            {0,5},
-//            {0,6},
-//            {1,1},
-//            {1,2},
-//            {1,3},
-//            {1,4},
-//            {1,5},
-//            {1,6},
-//            {2,2},
-//            {2,3},
-//            {2,4},
-//            {2,5},
-//            {2,6},
-//            {3,3},
-//            {3,4},
-//            {3,5},
-//            {3,6},
-//            {4,4},
-//            {4,5},
-//            {4,6},
-//            {5,5},
-//            {5,6},
-//            {6,6},
-//    };
+    int pieces[28][MAX2] = {
+            {0,0},
+            {0,1},
+            {0,2},
+            {0,3},
+            {0,4},
+            {0,5},
+            {0,6},
+            {1,1},
+            {1,2},
+            {1,3},
+            {1,4},
+            {1,5},
+            {1,6},
+            {2,2},
+            {2,3},
+            {2,4},
+            {2,5},
+            {2,6},
+            {3,3},
+            {3,4},
+            {3,5},
+            {3,6},
+            {4,4},
+            {4,5},
+            {4,6},
+            {5,5},
+            {5,6},
+            {6,6},
+    };
 
 
 
@@ -81,6 +80,12 @@ int main(int argc, char *argv[])
 //    printf("consitence: %d\n",isConsistent(mao, 1) );
 //    printMat(sequence, 28);
 //    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
+
+//    generateRandomHand(pieces, hand, handSize, 1);
+
+    printf("\nMao:");
+    printMat(hand, handSize);
+    printf("\n");
 
     generateSequence(mao, handSize, sequence, allSequences , 0);
 

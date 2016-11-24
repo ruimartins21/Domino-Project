@@ -15,7 +15,7 @@
  * @param pieces => matrix to store the generated numbers
  * @return => default (0): filled matrix is stored via its addresses so it isn't needed to return anything
  */
-int getGame(int pieces[][MAX3]) {
+int getGame(int pieces[][MAX2]) {
     int l = 0, c = 0, lin = 0;
     for (l = 0; l <= 6; l++) {
         for (c = l; c <= 6; c++) {
@@ -133,7 +133,7 @@ void printHandVertically(int size) {
  * @param size => size of the hand
  * @param index => position of the hand to print
  */
-void printHandHorizontally(int hand[][MAX3], int size, int index) {
+void printHandHorizontally(int hand[][MAX2], int size, int index) {
     int i, j, block = 3;
     // move the first position to print according to the index
     index = (index == 0 ? index : index * size);
@@ -157,7 +157,7 @@ void printHandHorizontally(int hand[][MAX3], int size, int index) {
  * Print a hand of the game but not the pieces, only a vector with its numbers
  * @param size => size of the hand
  */
-void printHand_uglify(int hand[][MAX3], int size, int index) {
+void printHand_uglify(int hand[][MAX2], int size, int index) {
     int i;
     // move the first position to print according to the index
     index = (index == 0 ? index : index * size);
@@ -178,7 +178,8 @@ void printHand_uglify(int hand[][MAX3], int size, int index) {
  * @param linesHand Matrix lines of the player hand
  * @param qtSet Number of hands to generate
  */
-void generateRandomHand(int matrix[][MAX3], int hand[][MAX3], int linesHand, int qtSet) {
+//--------------------------------------------------------------------------------------------------------------------------------------
+void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int qtSet) {
     int l = 0, j = 0, randValue = 0, linesCount = 0, limit = 0;
     limit = LINES / linesHand;
     if (qtSet < limit)
@@ -197,10 +198,10 @@ void generateRandomHand(int matrix[][MAX3], int hand[][MAX3], int linesHand, int
 
             compressMatrix(matrix, LINES - linesCount, randValue);
             linesCount++;
-
+//
 //            printf("\n----------------\n");
 //            printf("\nantes----------Matriz geral\n");
-//            printmat(matrix, LINES);
+//            printMat(matrix, LINES);
 
 //        printf("%d \n", hand[l][0]);
 //        printf("%d \n", hand[l][1]);
@@ -209,6 +210,8 @@ void generateRandomHand(int matrix[][MAX3], int hand[][MAX3], int linesHand, int
 //        printf("\n--------------\n");
 //        printf("countLines: %d\n", linesCount);
     }
+
+
 }
 
 
@@ -222,7 +225,7 @@ void generateRandomHand(int matrix[][MAX3], int hand[][MAX3], int linesHand, int
  * @param lines Number of lines existing at the previous matrix
  * @param index Position of the block to be withdrawn to the player hand
  */
-void compressMatrix(int matrix[][MAX3], int lines, int index) {
+void compressMatrix(int matrix[][MAX2], int lines, int index) {
     int l = 0, c = 0, aux = index + 1;
     for (; index < lines; index++) {
 
@@ -349,6 +352,7 @@ int generateSequence(int matrix[][MAX3], int handSize, int sequence[][MAX3], int
                 inserted++;
                 matrix[i][2] = 0; // peca fica indisponivel
                 saveSequence(sequence, allSequences, inserted * 2);
+//                saveSequence(sequence, allSequences, inserted );
                 printf("Peças inseridas: %d\n", inserted);
 
                 generateSequence(matrix, handSize, sequence, allSequences, inserted);
@@ -372,7 +376,7 @@ int generateSequence(int matrix[][MAX3], int handSize, int sequence[][MAX3], int
  * @param allSequences Matriz com todas as sequencias guardadas
  * @param sizeOfSequence Tamanho da sequencia a ser guardada
  */
-void saveSequence(int sequence[][MAX3], int allSequences[][MAX57], int sizeOfSequence) {
+void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSequence) {
     int i = 0, j = 0, k = 0;
 
 //    procuro ate encontrar o primiero -1, que sera a primeira linha livre para guardar a sequencia em questao
@@ -425,6 +429,7 @@ void sortAllSequences(int allSequences[][MAX57]) {
     initMat(auxMatrix, 500, 57);
 
     k = numberOfSequences - 1;
+    printf("Number of Sequences generated: %d\n", numberOfSequences);
 
     for (j = 0; j < numberOfSequences; j++) {
         if (arraySorted[k] == allSequences[j][0]) {
@@ -459,7 +464,7 @@ void sortAllSequences(int allSequences[][MAX57]) {
  * @param index posicao da peça a ser inserida
  * @return 1 se consistente
  */
-int isConsistent(int sequence[][MAX3], int index) {
+int isConsistent(int sequence[][MAX2], int index) {
 //    primeira peça é sempre consistente
     if (index == 0) {
         return 1;
@@ -500,7 +505,7 @@ int isConsistent(int sequence[][MAX3], int index) {
  * @param block matriz sequencia de pecas consistentes
  * @param index indice da peça a ser invertida
  */
-void invertBlock(int block[][MAX3], int index) {
+void invertBlock(int block[][MAX2], int index) {
     int aux = 0;
     aux = block[index][1];
     block[index][1] = block[index][0];
@@ -527,7 +532,7 @@ void invertBlock(int block[][MAX3], int index) {
  * @param lines => size of the final array after it's extracted
  * @return
  */
-void openFile(int type, int content[LINES][MAX3], int *numberOfHands, int *handSize) {
+void openFile(int type, int content[LINES][MAX2], int *numberOfHands, int *handSize) {
     FILE *file;
     int i = 0;
     char fileName[40], fOut[30];
@@ -576,7 +581,7 @@ void openFile(int type, int content[LINES][MAX3], int *numberOfHands, int *handS
     }
 }
 
-void createGameFile(int content[LINES][MAX3], int numberOfHands, int handSize) {
+void createGameFile(int content[LINES][MAX2], int numberOfHands, int handSize) {
     FILE *file;
     int i = 0;
     char fileName[40];
