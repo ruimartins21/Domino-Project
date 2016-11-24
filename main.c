@@ -81,13 +81,13 @@ int main(int argc, char *argv[])
 //    printMat(sequence, 28);
 //    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
 
-//    generateRandomHand(pieces, hand, handSize, 1);
+    generateRandomHand(pieces, hand, handSize, 1);
 
     printf("\nMao:");
     printMat(hand, handSize);
     printf("\n");
 
-    generateSequence(mao, handSize, sequence, allSequences , 0);
+//    generateSequence(mao, handSize, sequence, allSequences , 0);
 
     sortAllSequences(allSequences);
     return 0;

@@ -194,6 +194,7 @@ void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int
 //            printf("lineCount: %d\n", linesCount);
             hand[linesCount][0] = matrix[randValue][0];
             hand[linesCount][1] = matrix[randValue][1];
+            hand[linesCount][2] = 1;
 
 
             compressMatrix(matrix, LINES - linesCount, randValue);
@@ -244,7 +245,7 @@ void printMat(int matrix[][MAX3], int lines) {
 
     for (l = 0; l < lines; l++) {
 
-        printf("[%d %d] ", matrix[l][0], matrix[l][1]);
+        printf("[%d %d %d] ", matrix[l][0], matrix[l][1], matrix[l][2]);
 //        printf("%d %d\n", matrix[l][0], matrix[l][1]);
     }
 
