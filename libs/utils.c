@@ -10,7 +10,6 @@
 ///
 ///
 ///
-
 /**
  * generate initial game matrix
  * @param pieces => matrix to store the generated numbers
@@ -35,7 +34,6 @@ int getGame(int pieces[][COLS]) {
 */
 int printMenu(int path) {
     int choiceMade = 0;
-    char choiceChar[2];
     switch (path) {
         case 0:
             printf("\t\t\t\t# # # # # # # # # #\n");
@@ -43,7 +41,7 @@ int printMenu(int path) {
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - New Game\n");
             printf("\t\t\t\t2 - Load Game from file\n");
-            printf("\t\t\t\tChoice: ");
+//            printf("\t\t\t\tChoice: ");
             scanf("%d", &choiceMade);
             if (choiceMade < 1 || choiceMade > 2) {
                 printf("!!! Please choose a number between 1 & 2. !!!\n");
@@ -113,19 +111,26 @@ int printMenu(int path) {
             }
 
         case 6:
-            fflush(stdin);
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\tSave game data in a file? (Y/N): ");
-            gets(choiceChar);
-            if(strcmp(choiceChar, "y") != 0 && strcmp(choiceChar, "Y") != 0 && strcmp(choiceChar, "n") != 0 && strcmp(choiceChar, "N") != 0){
+            getchar(); // avoids empty symbols like previous enters
+            choiceMade = getchar(); // gets the character needed to answer by its ASCII code
+            if(choiceMade != 'Y' && choiceMade != 'y' && choiceMade != 'N' && choiceMade != 'n'){
                 printf("!!! Invalid answer !!!\n");
                 return printMenu(path);
-            } else {
-                if(strcmp(choiceChar, "y") == 0 || strcmp(choiceChar, "Y") == 0) return 1;
+            }else{
+                if(choiceMade == 'Y' || choiceMade == 'y') return 1;
                 return 0;
             }
+//            if(strcmp(choiceChar, "y") != 0 && strcmp(choiceChar, "Y") != 0 && strcmp(choiceChar, "n") != 0 && strcmp(choiceChar, "N") != 0){
+//                printf("!!! Invalid answer !!!\n");
+//                return printMenu(path);
+//            } else {
+//                if(strcmp(choiceChar, "y") == 0 || strcmp(choiceChar, "Y") == 0) return 1;
+//                return 0;
+//            }
 
         case 7:
             printf("\t\t\t\t# # # # # # # # # #\n");
@@ -137,6 +142,24 @@ int printMenu(int path) {
             scanf("%d", &choiceMade);
             if (choiceMade < 1 || choiceMade > 2) {
                 printf("!!! Please choose a number between 1 & 2. !!!\n");
+                return printMenu(path);
+            } else {
+                return choiceMade;
+            }
+
+        case 8:
+            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\t\t\t\t#     M E N U     #\n");
+            printf("\t\t\t\t# # # # # # # # # #\n\n");
+            printf("\t\t\t\t1 - See the biggest sequence\n");
+            printf("\t\t\t\t2 - See all the sequences\n");
+            printf("\t\t\t\t3 - Search a sequence\n");
+            printf("\t\t\t\t4 - Search a pattern in the sequences\n");
+            printf("\t\t\t\t5 - Replace a pattern in the sequences\n");
+            printf("\t\t\t\tChoice: ");
+            scanf("%d", &choiceMade);
+            if (choiceMade < 1 || choiceMade > 5) {
+                printf("!!! Please choose a number between 1 & 5. !!!\n");
                 return printMenu(path);
             } else {
                 return choiceMade;
@@ -178,7 +201,6 @@ void printHandHorizontally(int hand[][COLS], int size, int index) {
     int i, j, block = 3;
     // move the first position to print according to the index
     index = (index == 0 ? index : index * size);
-//    printf("index = %d\n", index);
     for (i = 0; i < block; i++) {
         if (i % 2 == 0) {
             for (j = index; j < index + size; j++) {
@@ -282,7 +304,6 @@ void compressMatrix(int matrix[][COLS], int lines, int index) {
     }
 }
 
-
 void printMat(int matrix[][COLS], int lines) {
     int l = 0;
 //    for (l = 0; l < lines; l++) {
@@ -357,65 +378,60 @@ void generateManualHand(int matrix[][COLS], int hand[][COLS], int handSize, int 
  * @return returns 0 if the user doesn't want to edit anything and 1 if the user edited something
  */
 int editHands(int matrix[][COLS], int hand[][COLS], int handSize, int numberOfHands){
-    int i, j, handId, removeId, addId = 0, blocksLimit, edited = 0, validate = 0;
-    char choiceChar = 'y';
-    while(choiceChar != 'n'){
+    int i, j, handId = 0, removeId, addId = 0, blocksLimit, edited = 0, validate = 0, choice = 'y';
+    while(1){
         for(i = 0; i < numberOfHands; i++){
-            printf("\n\t#%2d = Hand %d: ", i+1, i+1);
+            printf("\n#%2d = Hand %d: ", i+1, i+1);
             printHand_uglify(hand, handSize, i);
         }
         while(!validate){
             printf("\nDo you wish to change anything before proceeding? (Y/N): ");
-            fflush(stdin);
-            scanf("%c", &choiceChar);
-            choiceChar = toLower(choiceChar);
-            validate = isValid(choiceChar, 2); // checks if the input is a character
+            getchar();
+            choice = getchar();
+            if(choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n'){
+                printf("!!! Invalid answer !!!\n");
+                validate = 0;
+                continue;
+            }
+            validate = 1;
         }
         validate = 0;
-        if(choiceChar != 'y' && choiceChar != 'n'){
-            printf("!!! Invalid answer !!!\n");
-            return editHands(matrix, hand, handSize, numberOfHands);
-        } else {
-            if(choiceChar == 'n'){
-                // if the user decided to not edit, since it's inside a loop, we need to check if he edited anything before
-                return edited;
-            }
-            if(numberOfHands > 1){
-                printf("\nEnter the id of the hand to edit: ");
-                scanf("%d", &handId);
-                handId -= 1;
-                handId = (handId == 0 ? handId : handId * handSize); // arithmetic to reach the desired hand on the matrix of hands
-            }else{
-                handId = 0;
-            }
-            for(i = 0, j = handId; i < handSize; i++, j++){
-                printf("\t#%2d = [%d|%d]", i+1, hand[j][0], hand[j][1]);
-            }
-            printf("\nWhich block do you want to change? ");
-            scanf("%d", &removeId);
-            removeId -= 1;
-            // to this removeId it's needed to add the previous handId index so we can reach the correct hand inside the hands matrix and then move the desired index
-            removeId += handId;
-            blocksLimit = blocksAvailable(matrix);
-            while(addId < 1 || addId > blocksLimit){
-                printf("\nChoose a block to insert from the available blocks above: ");
-                scanf("%d", &addId);
-            }
-            addId -= 1;
-            // swaps the block chosen from the game matrix with the block chosen on the hand
-            i = matrix[addId][0];
-            j = matrix[addId][1];
-            matrix[addId][0] = hand[removeId][0];
-            matrix[addId][1] = hand[removeId][1];
-            hand[removeId][0] = i;
-            hand[removeId][1] = j;
-            edited = 1;
-            // reset variables
-            addId = 0;
-            removeId = 0;
+        if(choice == 'n'){
+            // if the user decided to not edit, since it's inside a loop, we need to check if he edited anything before
+            return edited;
         }
+        if(numberOfHands > 1){
+            printf("\nEnter the id of the hand to edit: ");
+            scanf("%d", &handId);
+            handId -= 1;
+            handId = (handId == 0 ? handId : handId * handSize); // arithmetic to reach the desired hand on the matrix of hands
+        }
+        for(i = 0, j = handId; i < handSize; i++, j++){
+            printf(" #%2d = [%d|%d]", i+1, hand[j][0], hand[j][1]);
+        }
+        printf("\nWhich block do you want to change? ");
+        scanf("%d", &removeId);
+        removeId -= 1;
+        // to this removeId it's needed to add the previous handId index so we can reach the correct hand inside the hands matrix and then move the desired index
+        removeId += handId;
+        blocksLimit = blocksAvailable(matrix);
+        while(addId < 1 || addId > blocksLimit){
+            printf("\nChoose a block to insert from the available blocks above: ");
+            scanf("%d", &addId);
+        }
+        addId -= 1;
+        // swaps the block chosen from the game matrix with the block chosen on the hand
+        i = matrix[addId][0];
+        j = matrix[addId][1];
+        matrix[addId][0] = hand[removeId][0];
+        matrix[addId][1] = hand[removeId][1];
+        hand[removeId][0] = i;
+        hand[removeId][1] = j;
+        edited = 1;
+        // reset variables
+        addId = 0;
+        removeId = 0;
     }
-    return 0;
 }
 
 /*void inittMat(int m[][COLS], int lines) {
@@ -552,8 +568,8 @@ void openFile(char fileName[], int type, int handsMat[LINES][COLS], int gameMat[
     switch (type) {
         // Text files
         case 1:
-            // printf("\nFiles existing:\n");
-            // system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
+//            printf("\nFiles existing:\n");
+//            system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
             checkExtension(fileName, ".txt");
             if ((file = fopen(fileName, "r")) != NULL) {
                 while (fgets(fOut, 29, file)) {
@@ -823,38 +839,4 @@ int fileExists(char fileName[]){
     FILE *file = fopen(fileName, "r");
     if (file == NULL) return 0;
     return 1;
-}
-
-/**
- * Turns uppercase characters to lowercase
- * @param c character to change
- * @return returns the character changed (or not if it was already lowercase)
- */
-int toLower(char c){
-    if(c >= 'A' && c <= 'Z'){
-        return c + 'a'-'A';
-    }else{
-        return c;
-    }
-}
-
-/**
- * validates a certain input from the user to prevent errors and crashes
- * @param input the user input to validate
- * @param validationType can be integer or character validation
- * @return returns true if the input passes the condition or false if not
- */
-int isValid(int input, int validationType){
-    switch(validationType){
-        // if it's an integer
-        case 1:
-            if(input > 0 && input < 9) return 1;
-            return 0;
-        // if it's a character
-        case 2:
-            input = toLower(input);
-            if(input >= 'a' && input <= 'z') return 1;
-            return 0;
-        default: return 0;
-    }
 }

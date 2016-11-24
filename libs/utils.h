@@ -8,6 +8,8 @@
 #define COLS 2
 #define LINES 28
 
+void printMatDefault(int matrix[][57], int lines, int cols);
+
 int getGame(int pieces[][COLS]);
 void printHandVertically(int size);
 void printHandHorizontally(int hand[][COLS], int size, int index);
@@ -31,7 +33,5 @@ void editFile(char fileName[], int type, int handsMat[LINES][COLS], int gameMat[
 void createGameFile(int type, int handsMat[LINES][COLS], int gameMat[LINES][COLS], int numberOfHands, int handSize);
 void checkExtension(char fileName[], char extension[]);
 int fileExists(char fileName[]);
-int toLower(char c);
-int isValid(int input, int validationType);
 
 #endif //DOMINO_PROJECT_UTILS_H

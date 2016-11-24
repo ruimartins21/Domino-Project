@@ -16,7 +16,7 @@
 
 int main(int argc, char *argv[])
 {
-    int handSize, choice, numberOfHands = 0, validated = 0, maxSize = 0, path = 0, l = 0, c = 0, lin = 0, typeOfFile = 0, edited;
+    int handSize, choice, numberOfHands = 0, validated = 0, maxSize = 0, path = 0, l = 0, c = 0, lin = 0, typeOfFile = 0, edited = 0;
     int game[LINES][COLS] = {};
     int hand[LINES][COLS] = {};
     char fileName[40];
@@ -75,7 +75,6 @@ int main(int argc, char *argv[])
 //    printf("mao [0] %d %d \n", mao[1][0], mao[1][1]);
 
 //    generateSequence(mao, handSize, sequence, 0);
-
 //    return 0;
 
     /**
@@ -117,7 +116,7 @@ int main(int argc, char *argv[])
                 }
             }
             path += 1;
-            // asks the user if he wants to choose the blocks for each hand manually or automatically
+            // asks the user if he wants to choose the blocks for each hand randomly or manually
             choice = printMenu(path);
             if(choice == 1){
                 // choose the blocks randomly
@@ -130,13 +129,18 @@ int main(int argc, char *argv[])
     }else if(choice == 2){
         // load a game from file
         path = 5;
+//        printf("\nFiles existing:\n");
+//        system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
         typeOfFile = printMenu(path); // choose between text file or binary file
         printf("\nFile name: ");
         scanf("%s", fileName);
         openFile(fileName, typeOfFile, hand, game, &numberOfHands, &handSize);
     }
-    // Editing part: shows the user all the hands made before and asks if he wants to change anything
-    edited = editHands(game, hand, handSize, numberOfHands);
+    // if the game matrix is empty there's no blocks that can be edited
+    if(game[0][0] != -1){
+        // Editing part: shows the user all the hands made before and asks if he wants to change anything
+        edited = editHands(game, hand, handSize, numberOfHands);
+    }
     if(!edited && path == 5) {
         // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
     }else {
@@ -153,10 +157,13 @@ int main(int argc, char *argv[])
             }
         }
     }
+
+
     printf(" ### Matrix of Hands ###\n");
     printMat(hand, handSize*numberOfHands);
     printf("\n ### Matrix of the Game ###\n");
     printMat(game, LINES);
+
 //    for(l = 0; l < numberOfHands; l++){
 ////        printf("\t### Hand %d ###\n", l+1);
 ////        printHandHorizontally(hand, handSize, l);
