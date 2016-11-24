@@ -17,8 +17,8 @@
 int main(int argc, char *argv[])
 {
     int handSize, choice, numberOfHands = 0, validated = 0, maxSize = 0, path = 0, l = 0, c = 0, lin = 0, typeOfFile = 0, edited = 0;
-    int game[LINES][MAX2] = {};
-    int hand[LINES][MAX3] = {};
+    int game[MAX28][MAX2] = {};
+    int hand[MAX28][MAX3] = {};
     char fileName[40];
 //    int game[28][COLS] = {
 //            {0,0},
@@ -58,7 +58,38 @@ int main(int argc, char *argv[])
 //            {1,3,1}
 //    };
 
-    int mao[28][MAX3] = {
+//    int mao[28][MAX3] = {
+//            {0,0,1},
+//            {0,1,1},
+//            {0,2,1},
+//            {0,3,1},
+//            {0,4,1},
+//            {0,5,1},
+//            {0,6,1},
+//            {1,1,1},
+//            {1,2,1},
+//            {1,3,1},
+//            {1,4,1},
+//            {1,5,1},
+//            {1,6,1},
+//            {2,2,1},
+//            {2,3,1},
+//            {2,4,1},
+//            {2,5,1},
+//            {2,6,1},
+//            {3,3,1},
+//            {3,4,1},
+//            {3,5,1},
+//            {3,6,1},
+//            {4,4,1},
+//            {4,5,1},
+//            {4,6,1},
+//            {5,5,1},
+//            {5,6,1},
+//            {6,6,1}
+//    };
+
+    int mao[10][MAX3] = {
             {0,0,1},
             {0,1,1},
             {0,2,1},
@@ -68,25 +99,7 @@ int main(int argc, char *argv[])
             {0,6,1},
             {1,1,1},
             {1,2,1},
-            {1,3,1},
-            {1,4,1},
-            {1,5,1},
-            {1,6,1},
-            {2,2,1},
-            {2,3,1},
-            {2,4,1},
-            {2,5,1},
-            {2,6,1},
-            {3,3,1},
-            {3,4,1},
-            {3,5,1},
-            {3,6,1},
-            {4,4,1},
-            {4,5,1},
-            {4,6,1},
-            {5,5,1},
-            {5,6,1},
-            {6,6,1}
+            {1,3,1}
     };
 
 //    int mao[10][MAX3] = {
@@ -104,11 +117,12 @@ int main(int argc, char *argv[])
 
 
 
-    int sequence[LINES][MAX2] = {};
-    int allSequences[30000][MAX57] = {};
+    int sequence[MAX28][MAX2] = {};
+    int allSequences[MAX2000][MAX57] = {};
+//    handSize = 28;
     handSize = 10;
 
-    initMat(allSequences, 30000, 57);
+    initMat(allSequences, MAX2000, 57);
 
 //    printf("\nMatriz sequence main:\n");
 //    printMat(mao, handSize);
@@ -130,14 +144,12 @@ int main(int argc, char *argv[])
 
     generateSequence(mao, handSize, sequence, allSequences , 0);
 
-//    exit code 11 -> segmentation fault
-
 
     printf("allSequences -------------------------------------------------------------------------------:\n");
     printMatDefault(allSequences, 100, 57);
     printf("\n");
 
-//    sortAllSequences(allSequences);
+    sortAllSequences(allSequences);
     return 0;
 
     /**
@@ -158,7 +170,7 @@ int main(int argc, char *argv[])
         getGame(game);
         if(choice == 1){
             // Generate the hands by calculating the maximum amount of blocks possible on each hand
-            handSize = LINES / numberOfHands;
+            handSize = MAX28 / numberOfHands;
             // Defining a max number of blocks per hand (7)
             if(handSize > 7) {
                 handSize = 7;
@@ -231,7 +243,7 @@ int main(int argc, char *argv[])
     printf(" ### Matrix of Hands ###\n");
 //    printMat(hand, handSize*numberOfHands);
     printf("\n ### Matrix of the Game ###\n");
-    printMat(game, LINES);
+    printMat(game, MAX28);
 
 //    for(l = 0; l < numberOfHands; l++){
 ////        printf("\t### Hand %d ###\n", l+1);
