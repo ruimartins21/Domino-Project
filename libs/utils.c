@@ -5,6 +5,8 @@
 #include <strings.h>
 #include <string.h>
 #include <sys/time.h>
+#include <time.h>
+#include <ctype.h>
 
 ///
 ///
@@ -82,11 +84,20 @@ int printMenu(int path) {
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
-            printf("\t\t\t\tNumber of pieces on each hand: ");
+            printf("\t\t\t\tNumber of blocks on each hand: ");
             scanf("%d", &choiceMade);
             return choiceMade;
 
         case 4:
+            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\t\t\t\t#     M E N U     #\n");
+            printf("\t\t\t\t# # # # # # # # # #\n\n");
+            printf("\t\t\t\t1 - Choose the blocks randomly\n");
+            printf("\t\t\t\t2 - Choose the blocks manually\n");
+            scanf("%d", &choiceMade);
+            return choiceMade;
+
+        case 5:
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
@@ -96,6 +107,61 @@ int printMenu(int path) {
             scanf("%d", &choiceMade);
             if (choiceMade < 1 || choiceMade > 2) {
                 printf("!!! Please choose a number between 1 & 2. !!!\n");
+                return printMenu(path);
+            } else {
+                return choiceMade;
+            }
+
+        case 6:
+            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\t\t\t\t#     M E N U     #\n");
+            printf("\t\t\t\t# # # # # # # # # #\n\n");
+            printf("\t\t\t\tSave game data in a file? (Y/N): ");
+            getchar(); // avoids empty symbols like previous enters
+            choiceMade = getchar(); // gets the character needed to answer by its ASCII code
+            if(choiceMade != 'Y' && choiceMade != 'y' && choiceMade != 'N' && choiceMade != 'n'){
+                printf("!!! Invalid answer !!!\n");
+                return printMenu(path);
+            }else{
+                if(choiceMade == 'Y' || choiceMade == 'y') return 1;
+                return 0;
+            }
+//            if(strcmp(choiceChar, "y") != 0 && strcmp(choiceChar, "Y") != 0 && strcmp(choiceChar, "n") != 0 && strcmp(choiceChar, "N") != 0){
+//                printf("!!! Invalid answer !!!\n");
+//                return printMenu(path);
+//            } else {
+//                if(strcmp(choiceChar, "y") == 0 || strcmp(choiceChar, "Y") == 0) return 1;
+//                return 0;
+//            }
+
+        case 7:
+            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\t\t\t\t#     M E N U     #\n");
+            printf("\t\t\t\t# # # # # # # # # #\n\n");
+            printf("\t\t\t\t1 - Save game data in a text file\n");
+            printf("\t\t\t\t2 - Save game data in a binary file\n");
+            printf("\t\t\t\tChoice: ");
+            scanf("%d", &choiceMade);
+            if (choiceMade < 1 || choiceMade > 2) {
+                printf("!!! Please choose a number between 1 & 2. !!!\n");
+                return printMenu(path);
+            } else {
+                return choiceMade;
+            }
+
+        case 8:
+            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\t\t\t\t#     M E N U     #\n");
+            printf("\t\t\t\t# # # # # # # # # #\n\n");
+            printf("\t\t\t\t1 - See the biggest sequence\n");
+            printf("\t\t\t\t2 - See all the sequences\n");
+            printf("\t\t\t\t3 - Search a sequence\n");
+            printf("\t\t\t\t4 - Search a pattern in the sequences\n");
+            printf("\t\t\t\t5 - Replace a pattern in the sequences\n");
+            printf("\t\t\t\tChoice: ");
+            scanf("%d", &choiceMade);
+            if (choiceMade < 1 || choiceMade > 5) {
+                printf("!!! Please choose a number between 1 & 5. !!!\n");
                 return printMenu(path);
             } else {
                 return choiceMade;
@@ -137,7 +203,6 @@ void printHandHorizontally(int hand[][MAX2], int size, int index) {
     int i, j, block = 3;
     // move the first position to print according to the index
     index = (index == 0 ? index : index * size);
-//    printf("index = %d\n", index);
     for (i = 0; i < block; i++) {
         if (i % 2 == 0) {
             for (j = index; j < index + size; j++) {
@@ -196,7 +261,6 @@ void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int
             hand[linesCount][1] = matrix[randValue][1];
             hand[linesCount][2] = 1;
 
-
             compressMatrix(matrix, LINES - linesCount, randValue);
             linesCount++;
 //
@@ -224,31 +288,156 @@ void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int
  *
  * @param matrix Initial Matrix (with the number of blocks existing at the time)
  * @param lines Number of lines existing at the previous matrix
- * @param index Position of the block to be withdrawn to the player hand
+ * @param index Position of the block to be withdrawn to the player hand || if it's NULL it will get the lines given and "compress" the matrix to be that size only
  */
-void compressMatrix(int matrix[][MAX2], int lines, int index) {
-    int l = 0, c = 0, aux = index + 1;
-    for (; index < lines; index++) {
-
-        matrix[index][0] = matrix[index + 1][0];
-        matrix[index][1] = matrix[index + 1][1];
-
-//        printf("%d  %d\n", matrix[index][0], matrix[index][1]);
+void compressMatrix(int matrix[][COLS], int lines, int index) {
+    int i;
+    if(index == -1){
+        // it will compress the matrix to the size given from the lines parameter
+        // after the size given fills with -1 until the limit size (28)
+        for (i = lines; i < (lines+(28-lines)); i++) {
+            matrix[i][0] = -1;
+            matrix[i][1] = -1;
+        }
+    }else{
+        for (; index < lines; index++) {
+            matrix[index][0] = matrix[index + 1][0];
+            matrix[index][1] = matrix[index + 1][1];
+        }
+        matrix[index - 1][0] = -1;
+        matrix[index - 1][1] = -1;
     }
-    matrix[index - 1][0] = -1;
-    matrix[index - 1][1] = -1;
 }
 
 
 void printMat(int matrix[][MAX3], int lines) {
     int l = 0;
-
-    for (l = 0; l < lines; l++) {
-
-        printf("[%d %d %d] ", matrix[l][0], matrix[l][1], matrix[l][2]);
-//        printf("%d %d\n", matrix[l][0], matrix[l][1]);
+//    for (l = 0; l < lines; l++) {
+//
+//        printf("[%d %d] ", matrix[l][0], matrix[l][1]);
+////        printf("%d %d\n", matrix[l][0], matrix[l][1]);
+//    }
+    while(l < lines && (matrix[l][0] != -1 || matrix[l][1] != -1)){
+        printf("[%d %d] ", matrix[l][0], matrix[l][1]);
+        l++;
     }
+}
 
+/**
+ * shows the user all the blocks that are available to choose (this prevents out of bounds selections from the user)
+ * @param matrix game matrix that has the unused blocks
+ * @return returns the counter of blocks available to choose from for further conditioning from the user inputs
+ */
+int blocksAvailable(int matrix[][COLS]) {
+    int i = 0;
+    printf("\n\t\t\t\t### Available Blocks ###\n");
+    while (i < LINES && (matrix[i][0] != -1 || matrix[i][1] != -1)) {
+        printf("\t#%2d = [%d|%d]", i + 1, matrix[i][0], matrix[i][1]);
+        if ((i + 1) % 5 == 0 && i != 0) {
+            printf("\n");
+        }
+        i++;
+    }
+    return i;
+}
+
+/**
+ * The user chooses block by block wich ones he wants in each hand
+ * it's showed the game matrix so he can see the available blocks
+ * after each choice the game matrix goes through the compressMatrix because a block was "removed" from it and passed to the hands matrix
+ * @param matrix game matrix with the unused blocks
+ * @param hand matrix with all the hands generated
+ * @param handSize size of each hand
+ * @param numberOfHands number of hands existing
+ */
+void generateManualHand(int matrix[][COLS], int hand[][COLS], int handSize, int numberOfHands){
+    int i, j, k = 0, blocksLimit, blockId;
+    for (i = 0; i < numberOfHands; i++) {
+        printf("\n## %2d hand ##\n", i+1);
+        for (j = 0; j < handSize; j++) {
+            blocksLimit = blocksAvailable(matrix);
+            printf("\n%2d block: ", j+1);
+            scanf("%d", &blockId);
+            if(blockId < 1 || blockId > blocksLimit){
+                printf("!!! Choose a valid number !!!");
+                j--;
+                continue;
+            }
+            blockId -= 1;
+            // gets the block chosen in the game matrix and stores it in the hands matrix
+            hand[k][0] = matrix[blockId][0];
+            hand[k][1] = matrix[blockId][1];
+            // sends to compressMatrix to remove the block chosen from the game matrix
+            compressMatrix(matrix, blocksLimit, blockId);
+            k++;
+        }
+    }
+}
+
+/**
+ * Function that handles all the editing the user wishes to do on the generated hands
+ * It handles the changes of blocks between the hands matrix and the game matrix
+ * @param matrix game matrix with the unused blocks
+ * @param hand matrix with all the hands generated
+ * @param handSize size of each hand
+ * @param numberOfHands number of hands existing
+ * @return returns 0 if the user doesn't want to edit anything and 1 if the user edited something
+ */
+int editHands(int matrix[][COLS], int hand[][COLS], int handSize, int numberOfHands){
+    int i, j, handId = 0, removeId, addId = 0, blocksLimit, edited = 0, validate = 0, choice = 'y';
+    while(1){
+        for(i = 0; i < numberOfHands; i++){
+            printf("\n#%2d = Hand %d: ", i+1, i+1);
+            printHand_uglify(hand, handSize, i);
+        }
+        while(!validate){
+            printf("\nDo you wish to change anything before proceeding? (Y/N): ");
+            getchar();
+            choice = getchar();
+            if(choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n'){
+                printf("!!! Invalid answer !!!\n");
+                validate = 0;
+                continue;
+            }
+            validate = 1;
+        }
+        validate = 0;
+        if(choice == 'n'){
+            // if the user decided to not edit, since it's inside a loop, we need to check if he edited anything before
+            return edited;
+        }
+        if(numberOfHands > 1){
+            printf("\nEnter the id of the hand to edit: ");
+            scanf("%d", &handId);
+            handId -= 1;
+            handId = (handId == 0 ? handId : handId * handSize); // arithmetic to reach the desired hand on the matrix of hands
+        }
+        for(i = 0, j = handId; i < handSize; i++, j++){
+            printf(" #%2d = [%d|%d]", i+1, hand[j][0], hand[j][1]);
+        }
+        printf("\nWhich block do you want to change? ");
+        scanf("%d", &removeId);
+        removeId -= 1;
+        // to this removeId it's needed to add the previous handId index so we can reach the correct hand inside the hands matrix and then move the desired index
+        removeId += handId;
+        blocksLimit = blocksAvailable(matrix);
+        while(addId < 1 || addId > blocksLimit){
+            printf("\nChoose a block to insert from the available blocks above: ");
+            scanf("%d", &addId);
+        }
+        addId -= 1;
+        // swaps the block chosen from the game matrix with the block chosen on the hand
+        i = matrix[addId][0];
+        j = matrix[addId][1];
+        matrix[addId][0] = hand[removeId][0];
+        matrix[addId][1] = hand[removeId][1];
+        hand[removeId][0] = i;
+        hand[removeId][1] = j;
+        edited = 1;
+        // reset variables
+        addId = 0;
+        removeId = 0;
+    }
 }
 
 void printMatDefault(int matrix[][MAX57], int lines, int cols) {
@@ -515,44 +704,25 @@ void invertBlock(int block[][MAX2], int index) {
 }
 
 /**
- * Function to check the existence of a file (currently not needed)
- */
-//int fileExists(const char *filename)
-//{
-//    FILE *fp = fopen(filename, "r");
-//    if (fp != NULL){
-//        fclose(fp);
-//    }
-//    return (fp != NULL);
-//}
-
-/**
  * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
- * @param type => type = 1 means it's a text file, type = 2 means it's a binary file
- * @param aux => array where will be stored the contents of the file opened
- * @param lines => size of the final array after it's extracted
- * @return
+ * @param type type = 1 means it's a text file, type = 2 means it's a binary file
+ * @param handsMat matrix where will be stored the hands stored in the file
+ * @param gameMat matrix where will be stored the game stored in the file (the game that doesn't have the blocks used in the hands)
+ * @param numberOfHands number of hands in the hands matrix
+ * @param handSize size of each hand
  */
-void openFile(int type, int content[LINES][MAX2], int *numberOfHands, int *handSize) {
-    FILE *file;
-    int i = 0;
-    char fileName[40], fOut[30];
+void openFile(char fileName[], int type, int handsMat[LINES][COLS], int gameMat[LINES][COLS], int *numberOfHands, int *handSize) {
+    FILE *file = NULL;
+    int i = 0, auxInt, j = 0;
+    char fOut[30];
     switch (type) {
         // Text files
         case 1:
-            // printf("\nFiles existing:\n");
-            // system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
-            printf("\nFile name: ");
-            scanf("%s", fileName);
-            checkExtension(fileName);
-            file = fopen(fileName, "r"); // opens the file with permissions to read only
-            if (file == NULL) {
-                printf("\nxx Error: Impossible to open the file '%s' xx\n", fileName);
-                openFile(type, content, numberOfHands, handSize);
-            } else {
-                printf("\n** Success: File '%s' opened **\n", fileName);
+//            printf("\nFiles existing:\n");
+//            system("dir/b *.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
+            checkExtension(fileName, ".txt");
+            if ((file = fopen(fileName, "r")) != NULL) {
                 while (fgets(fOut, 29, file)) {
-//                    printf("%s", fOut); // imprime todos os conteudos do ficheiro
                     // first line of the file, to extract the size of each hand and how many hands there are
                     if (i == 0) {
                         // arithmetic to get the first 2 digits of the first line from char to int type (correspondent to the number of hands)
@@ -563,54 +733,260 @@ void openFile(int type, int content[LINES][MAX2], int *numberOfHands, int *handS
                         *handSize = fOut[2] - '0';
                         *handSize *= 10;
                         *handSize += (fOut[3] - '0');
-                    } else {
-                        content[i - 1][0] = fOut[0] - '0';
-                        content[i - 1][1] = fOut[1] - '0';
+                    // saves the matrix of the hands that are after the first line until (numberOfHands*handSize) lines
+                    } else if(i < ((*numberOfHands)*(*handSize))+1){
+                        handsMat[i - 1][0] = fOut[0] - '0';
+                        handsMat[i - 1][1] = fOut[1] - '0';
+                    // after the matrix of the hands comes the game matrix
+                    }else{
+                        gameMat[j][0] = fOut[0] - '0';
+                        gameMat[j][1] = fOut[1] - '0';
+                        j++;
                     }
                     i++;
                 }
+                // compresses the game matrix to the size extracted from the file
+                compressMatrix(gameMat, j, -1);
+            } else {
+                printf("\nxx Error: Impossible to open the file '%s' xx\n", fileName);
+                openFile(fileName, type, handsMat, gameMat, numberOfHands, handSize);
             }
+            fclose(file);
             break;
 
-            // Binary files
+        // Binary files
         case 2:
-
+            // printf("\nFiles existing:\n");
+            // system("dir/b *.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
+            checkExtension(fileName, ".bin");
+            if((file = fopen(fileName, "rb")) != NULL)
+            {
+                while(!feof(file))
+                {
+                    if(i == 0){
+                        fread(numberOfHands, sizeof(int), 1, file);
+                        fread(handSize, sizeof(int), 1, file);
+                    }else if(i < ((*numberOfHands)*(*handSize))+1){
+                        fread(&auxInt, sizeof(int), 1, file);
+                        handsMat[i-1][0] = auxInt;
+                        fread(&auxInt, sizeof(int), 1, file);
+                        handsMat[i-1][1] = auxInt;
+                    }else{
+                        fread(&auxInt, sizeof(int), 1, file);
+                        gameMat[j][0] = auxInt;
+                        fread(&auxInt, sizeof(int), 1, file);
+                        gameMat[j][1] = auxInt;
+                        j++;
+                    }
+                    i++;
+                }
+                // compresses the game matrix to the size extracted from the file
+                // needed to decrese by 1 the size because of the cycles the reading does
+                compressMatrix(gameMat, j-1, -1);
+            } else {
+                printf("\nxx Error: Impossible to open the file '%s' xx\n", fileName);
+                openFile(fileName, type, handsMat, gameMat, numberOfHands, handSize);
+            }
+            fclose(file);
             break;
 
-        default:
-            break;
+        default: break;
     }
 }
 
-void createGameFile(int content[LINES][MAX2], int numberOfHands, int handSize) {
-    FILE *file;
-    int i = 0;
-    char fileName[40];
-    // create txt file
-    printf("\nFile name: ");
-    scanf("%s", fileName);
-    checkExtension(fileName);
-    file = fopen(fileName, "w");
-    if (file == NULL) {
-        printf("\nxx Error: Impossible to create the file '%s' xx\n", fileName);
-        createGameFile(content, numberOfHands, handSize);
-    } else {
-        // guardar numberOfHands e handSize
-        for (i = 0; i < (numberOfHands * handSize) + 1; i++) {
-            fprintf(file, "%d%d", content[i][0], content[i][1]);
-            fprintf(file, "\n");
-        }
-        fclose(file);
+/**
+ * Rewrites the file the user loaded with the new hands and game matrix after he edited them
+ * @param fileName name of the file to edit
+ * @param type the type of file (txt or bin)
+ * @param handsMat matrix where will be stored the hands stored in the file
+ * @param gameMat matrix where will be stored the game stored in the file (the game that doesn't have the blocks used in the hands)
+ * @param numberOfHands number of hands in the hands matrix
+ * @param handSize size of each hand
+ */
+void editFile(char fileName[], int type, int handsMat[LINES][COLS], int gameMat[LINES][COLS], int numberOfHands, int handSize){
+    FILE *file = NULL;
+    int i = 0, auxInt;
+    switch (type) {
+        // Text files
+        case 1:
+            if (!fileExists(fileName)) {
+                printf("\nxx Error: The file '%s' doesnt exist xx\n", fileName);
+                return;
+            }
+            if ((file = fopen(fileName, "w")) != NULL) {
+                // stores the numberOfHands and the handSize
+                // checks if the number is 2 digit or not, if not, adds a 0 before, so we maintain the structure
+                if (numberOfHands / 10 == 0) {
+                    fprintf(file, "0%d", numberOfHands);
+                } else {
+                    fprintf(file, "%d", numberOfHands);
+                }
+                if (handSize / 10 == 0) {
+                    fprintf(file, "0%d", handSize);
+                } else {
+                    fprintf(file, "%d", handSize);
+                }
+                // stores the matrix of the hands generated
+                for (i = 0; i < (numberOfHands * handSize); i++) {
+                    fprintf(file, "\n%d%d", handsMat[i][0], handsMat[i][1]);
+                }
+                // stores the game matrix with the unused blocks
+                for (i = 0 ; i < (28 - (numberOfHands * handSize)); i++) {
+                    fprintf(file, "\n%d%d", gameMat[i][0], gameMat[i][1]);
+                }
+            } else {
+                printf("\nxx Error: Impossible to write to the file '%s' xx\n", fileName);
+                return;
+            }
+            fclose(file);
+            break;
+
+        // Binary files
+        case 2:
+            if (!fileExists(fileName)) {
+                printf("\nxx Error: The file '%s' doesnt exist xx\n", fileName);
+                return;
+            }
+            if((file = fopen(fileName, "wb")) != NULL)
+            {
+                // stores the numberOfHands and the handSize
+                fwrite(&numberOfHands, sizeof(int), 1, file);
+                fwrite(&handSize, sizeof(int), 1, file);
+                // stores the matrix of the hands generated
+                for (i = 0; i < (numberOfHands * handSize); i++) {
+                    auxInt = handsMat[i][0];
+                    fwrite(&auxInt, sizeof(int), 1, file);
+                    auxInt = handsMat[i][1];
+                    fwrite(&auxInt, sizeof(int), 1, file);
+                }
+                // stores the game matrix with the unused blocks
+                for (i = 0 ; i < (28 - (numberOfHands * handSize)); i++) {
+                    auxInt = gameMat[i][0];
+                    fwrite(&auxInt, sizeof(int), 1, file);
+                    auxInt = gameMat[i][1];
+                    fwrite(&auxInt, sizeof(int), 1, file);
+                }
+            }else{
+                printf("\nxx Error: Impossible to write to the file '%s' xx\n", fileName);
+                return;
+            }
+            fclose(file);
+            break;
+
+        default: break;
     }
-    // verificar nomes repetidos para evitar rewrite
+}
+
+/**
+ *  Creates a file with the game generated and the name and type of file the user chooses
+ *  Afterwards the user can load the game, edit it and play
+ * @param type the type of file (txt or bin)
+ * @param handsMat matrix where will be stored the hands stored in the file
+ * @param gameMat matrix where will be stored the game stored in the file (the game that doesn't have the blocks used in the hands)
+ * @param numberOfHands number of hands in the hands matrix
+ * @param handSize size of each hand
+ */
+void createGameFile(int type, int handsMat[LINES][COLS], int gameMat[LINES][COLS], int numberOfHands, int handSize){
+    FILE *file = NULL;
+    int i = 0, auxInt;
+    char fileName[40];
+    switch (type) {
+        // create txt file
+        case 1:
+            printf("\nSave the game as: ");
+            scanf("%s", fileName);
+            checkExtension(fileName, ".txt");
+            if (fileExists(fileName)) {
+                printf("\nxx Error: The file '%s' already exists xx\n", fileName);
+                createGameFile(type, handsMat, gameMat, numberOfHands, handSize);
+                return;
+            }
+            if ((file = fopen(fileName, "w")) != NULL) {
+                // stores the numberOfHands and the handSize
+                // checks if the number is 2 digit or not, if not, adds a 0 before, so we maintain the structure
+                if (numberOfHands / 10 == 0) {
+                    fprintf(file, "0%d", numberOfHands);
+                } else {
+                    fprintf(file, "%d", numberOfHands);
+                }
+                if (handSize / 10 == 0) {
+                    fprintf(file, "0%d", handSize);
+                } else {
+                    fprintf(file, "%d", handSize);
+                }
+                // stores the matrix of the hands generated
+                for (i = 0; i < (numberOfHands * handSize); i++) {
+                    fprintf(file, "\n%d%d", handsMat[i][0], handsMat[i][1]);
+                }
+                // stores the game matrix with the unused blocks
+                for (i = 0 ; i < (28 - (numberOfHands * handSize)); i++) {
+                    fprintf(file, "\n%d%d", gameMat[i][0], gameMat[i][1]);
+                }
+            } else {
+                printf("\nxx Error: Impossible to create the file '%s' xx\n", fileName);
+                createGameFile(type, handsMat, gameMat, numberOfHands, handSize);
+            }
+            fclose(file);
+            break;
+
+        // create bin file
+        case 2:
+            printf("\nSave the game as: ");
+            scanf("%s", fileName);
+            checkExtension(fileName, ".bin");
+            if (fileExists(fileName)) {
+                printf("\nxx Error: The file '%s' already exists xx\n", fileName);
+                createGameFile(type, handsMat, gameMat, numberOfHands, handSize);
+                return;
+            }
+            if((file = fopen(fileName, "wb")) != NULL)
+            {
+                // stores the numberOfHands and the handSize
+                fwrite(&numberOfHands, sizeof(int), 1, file);
+                fwrite(&handSize, sizeof(int), 1, file);
+                // stores the matrix of the hands generated
+                for (i = 0; i < (numberOfHands * handSize); i++) {
+                    auxInt = handsMat[i][0];
+                    fwrite(&auxInt, sizeof(int), 1, file);
+                    auxInt = handsMat[i][1];
+                    fwrite(&auxInt, sizeof(int), 1, file);
+                }
+                // stores the game matrix with the unused blocks
+                for (i = 0 ; i < (28 - (numberOfHands * handSize)); i++) {
+                    auxInt = gameMat[i][0];
+                    fwrite(&auxInt, sizeof(int), 1, file);
+                    auxInt = gameMat[i][1];
+                    fwrite(&auxInt, sizeof(int), 1, file);
+                }
+            }else{
+                printf("\nxx Error: Impossible to create the file '%s' xx\n", fileName);
+                createGameFile(type, handsMat, gameMat, numberOfHands, handSize);
+            }
+            fclose(file);
+            break;
+
+        default: break;
+    }
 }
 
 /**
  * checks the filename the user inputted for the extension and if it doesn't exist adds it at the end
  * @param fileName name of the file requested by the user
  */
-void checkExtension(char *fileName) {
-    if (strstr(fileName, ".txt") == NULL) { // searches the substring ".txt" in the filename the user inputted
-        strcat(fileName, ".txt");
+void checkExtension(char fileName[], char extension[]){
+    if (strstr(fileName, extension) == NULL) { // searches for the extension in the filename the user inputted
+        strcat(fileName, extension);
     }
+}
+
+/**
+ * tries to open a file with the name inputted to check if it exists before writing on it
+ * prevents rewriting on an existing file with the name the user wrote
+ * @param fileName
+ * @return returns 0 if there's no file with that name and 1 if there is
+ */
+int fileExists(char fileName[]){
+    FILE *file = fopen(fileName, "r");
+    if (file == NULL) return 0;
+    return 1;
 }
