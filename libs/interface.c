@@ -315,7 +315,7 @@ void printMatDefault(int matrix[][MAX57], int lines, int cols) {
 
     for (l = 0; l < lines; l++) {
         for (c = 0; c < cols && matrix[l][c] != -1; c++) {
-            printf("|%d ", matrix[l][c]);
+            printf("%d ", matrix[l][c]);
         }
         printf("\n");
     }

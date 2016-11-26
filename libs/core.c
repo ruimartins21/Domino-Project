@@ -114,19 +114,7 @@ void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSeq
     while (allSequences[i][0] != -1) {
         i++; // incremento primeiro pois a proxima linha pode ser a disponivel para guardar a sequencia
 //        if (allSequences[i][0] == -1 && handSize <= 10) {
-//            allSequences[i][0] = sizeOfSequence;
-//            for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
-//                allSequences[i][j] = sequence[k][0];
-//                allSequences[i][j + 1] = sequence[k][1];
-//            }
-//            return;
-//        }
-
-//        se a mao de jogo for maior que 10 só grava as sequencias maiores que metade do tamanho da mao
-//        o tamanho de uma sequencia é duas vezes o numero de peças, ao comparar o handSize queremos sequencias com metade do tamanaho da mao
-        printf("handSize: %d\n", handSize);
-        printf("sizeofsequence: %d\n", sizeOfSequence);
-        if (allSequences[i][0] == -1 && (sizeOfSequence >= handSize )) {
+        if (allSequences[i][0] == -1 ) {
             allSequences[i][0] = sizeOfSequence;
             for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
                 allSequences[i][j] = sequence[k][0];
@@ -135,16 +123,32 @@ void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSeq
             return;
         }
 
+//        se a mao de jogo for maior que 10 só grava as sequencias maiores que metade do tamanho da mao
+//        o tamanho de uma sequencia é duas vezes o numero de peças, ao comparar o handSize queremos sequencias com metade do tamanaho da mao
+//        printf("handSize: %d\n", handSize);
+//        printf("sizeofsequence: %d\n", sizeOfSequence);
+//        if (allSequences[i][0] == -1 && (sizeOfSequence >= handSize )) {
+//        if (allSequences[i][0] == -1 && (sizeOfSequence >= handSize )) {
+//            allSequences[i][0] = sizeOfSequence;
+//            for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
+//                allSequences[i][j] = sequence[k][0];
+//                allSequences[i][j + 1] = sequence[k][1];
+//            }
+//            return;
+//        }
+
 
     }
 //    se for a primeira insiro na primeira linha ele nem vai entrar no clico while de cima por isso insiro a sequencia
-    if (i == 0 && (sizeOfSequence >= handSize )) {
+//    if (i == 0 && (sizeOfSequence >= handSize )) {
+    if (i == 0) {
         allSequences[i][0] = sizeOfSequence;
         for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
             allSequences[i][j] = sequence[k][0];
             allSequences[i][j + 1] = sequence[k][1];
         }
     }
+
 
 }
 
@@ -160,9 +164,9 @@ void sortAllSequences(int allSequences[][MAX57]) {
         numberOfSequences++;
 
     }
-//    printf("Number of Sequences generated: %d\n", numberOfSequences);
     // order array by descending order -> quick sort
-//    sortIntArray(arraySorted, numberOfSequences);
+    sortIntArray(arraySorted, numberOfSequences);
+
 //    printf("\nAux sorted:");
 //    printArray(arraySorted, numberOfSequences);
 //    printf("\n");
@@ -170,10 +174,10 @@ void sortAllSequences(int allSequences[][MAX57]) {
 //    printf("allSequences for sort:\n");
 //    printMatDefault(allSequences, numberOfSequences, 56);
 //    printf("\n");
+
     // fills an auxiliar matrix with -1
     initMat(auxMatrix, MAX2000, 57);
     k = numberOfSequences - 1;
-//    printf("Number of Sequences generated: %d\n", numberOfSequences);
     for (j = 0; j < numberOfSequences; j++) {
         if (arraySorted[k] == allSequences[j][0]) {
             for (l = 0; l <= allSequences[j][0]; l++) {
@@ -194,9 +198,10 @@ void sortAllSequences(int allSequences[][MAX57]) {
         allSequences[j][l] = -1;
 
     }
-//    printf("allSequences:\n");
-//    printMatDefault(allSequences, numberOfSequences, 57);
-//    printf("\n");
+    printf("Number of Sequences generated: %d\n", numberOfSequences);
+    printf("allSequences:\n");
+    printMatDefault(allSequences, numberOfSequences, 57);
+    printf("\n");
 }
 
 /***

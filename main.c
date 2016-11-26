@@ -53,34 +53,54 @@ int main(int argc, char *argv[])
 //            {6,6},
 //    };
 
-//    int mao[10][MAX3] = {
-//            {0,0,1},
-//            {0,1,1},
-//            {0,2,1},
-//            {0,3,1},
-//            {0,4,1},
-//            {0,5,1},
-//            {0,6,1},
-//            {1,1,1},
-//            {1,2,1},
-//            {6,6,1}
+//    int mao[15][MAX3] = {
+//            {0,0},
+//            {0,1},
+//            {0,2},
+//            {0,3},
+//            {0,4},
+//            {0,5},
+//            {0,6},
+//            {1,1},
+//            {1,2},
+//            {1,3},
+//            {1,4},
+//            {1,5},
+//            {1,6},
+//            {2,2},
+//            {2,3}
 //    };
+
+    int mao[10][MAX3] = {
+            {0,0,1},
+            {0,1,1},
+            {0,2,1},
+            {0,3,1},
+            {0,4,1},
+            {0,5,1},
+            {0,6,1},
+            {1,1,1},
+            {1,2,1},
+            {1,3,1},
+//            {1,4,1},
+//            {1,5,1},
+//            {1,6,1},
+//            {2,2,1},
+//            {2,3,1}
+    };
+
+
 
 
     int sequence[MAX28][MAX2] = {};
     int allSequences[MAX2000][MAX57] = {};
     handSize = 10;
 
-//    initMat(allSequences, MAX2000, 57);
-//    generateSequence(mao, handSize, sequence, allSequences , 0);
-//
-//
-//    printf("allSequences -------------------------------------------------------------------------------:\n");
-//    printMatDefault(allSequences, 100, 57);
-//    printf("\n");
-////
-//    sortAllSequences(allSequences);
-//    return 0;
+    initMat(allSequences, MAX2000, 57);
+    generateSequence(mao, handSize, sequence, allSequences , 0);
+
+    sortAllSequences(allSequences);
+    return 0;
 
     /**
      *  Inicio do programa, para tras são testes (RETIRAR)
