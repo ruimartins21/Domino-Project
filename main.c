@@ -8,6 +8,8 @@
 #include "libs/files.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
+#include <dir.h>
 
 /**
  * Project main function
@@ -18,100 +20,22 @@
  */
 int main(int argc, char *argv[])
 {
-    int handSize, choice, numberOfHands = 0, validated = 0, maxSize = 0, path = 0, l = 0, c = 0, lin = 0, typeOfFile = 0, edited = 0;
+    int handSize = 10, choice, numberOfHands = 0, path = 0, typeOfFile = 0, edited = 0, numberOfSequences;
+//    int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
     int game[MAX28][MAX2] = {};
     int hand[MAX28][MAX3] = {};
-    char fileName[40];
-//    int game[28][COLS] = {
-//            {0,0},
-//            {0,1},
-//            {0,2},
-//            {0,3},
-//            {0,4},
-//            {0,5},
-//            {0,6},
-//            {1,1},
-//            {1,2},
-//            {1,3},
-//            {1,4},
-//            {1,5},
-//            {1,6},
-//            {2,2},
-//            {2,3},
-//            {2,4},
-//            {2,5},
-//            {2,6},
-//            {3,3},
-//            {3,4},
-//            {3,5},
-//            {3,6},
-//            {4,4},
-//            {4,5},
-//            {4,6},
-//            {5,5},
-//            {5,6},
-//            {6,6},
-//    };
-
-//    int mao[15][MAX3] = {
-//            {0,0},
-//            {0,1},
-//            {0,2},
-//            {0,3},
-//            {0,4},
-//            {0,5},
-//            {0,6},
-//            {1,1},
-//            {1,2},
-//            {1,3},
-//            {1,4},
-//            {1,5},
-//            {1,6},
-//            {2,2},
-//            {2,3}
-//    };
-
-    int mao[10][MAX3] = {
-            {0,0,1},
-            {0,1,1},
-            {0,2,1},
-            {0,3,1},
-            {0,4,1},
-            {0,5,1},
-            {0,6,1},
-            {1,1,1},
-            {1,2,1},
-            {1,3,1},
-//            {1,4,1},
-//            {1,5,1},
-//            {1,6,1},
-//            {2,2,1},
-//            {2,3,1}
-    };
-
-
-
-
+    char fileName[40], filePath[40] = "data/";
     int sequence[MAX28][MAX2] = {};
     int allSequences[MAX2000][MAX57] = {};
-    handSize = 10;
-
-    initMat(allSequences, MAX2000, 57);
-    generateSequence(mao, handSize, sequence, allSequences , 0);
-
-    sortAllSequences(allSequences);
-    return 0;
-
-    /**
-     *  Inicio do programa, para tras são testes (RETIRAR)
-     */
 
     // First iteration of the menu is for the user to choose between starting a new game or loading a saved game from a file
     choice = printMenu(0);
     if(choice == 1){
         path += 1; // iterates in the menu
         // Second iteration of the menu asks for the number of hands the users wants the program to use
-        numberOfHands = printMenu(path);
+//        numberOfHands = printMenu(path);
+        // at the first phase of this project we still couldn't make the sequences work with more than one hand
+        numberOfHands = 1;
         path += 1;
         // The third iteration is to choose a game made randomly or manually (where the user chooses the number of blocks on each hand)
         choice = printMenu(path);
@@ -121,24 +45,31 @@ int main(int argc, char *argv[])
         if(choice == 1){
             // Generate the hands by calculating the maximum amount of blocks possible on each hand
             handSize = MAX28 / numberOfHands;
-            // Defining a max number of blocks per hand (7)
-            if(handSize > 7) {
-                handSize = 7;
+            // Defining a max number of blocks per hand (10)
+            if(handSize > 10) {
+                handSize = 10;
             }
+            // at the first phase of this project we couldn't generate and save all the sequences possible because there is no hardware capacity
+            // for so many sequences possible with more than 10 blocks, so we limit the user choice at 10 block maximum
             generateRandomHand(game, hand, handSize, numberOfHands);
         }else if(choice == 2){
             // asks the user for the number of blocks each hand will have
-            while(!validated){
+//            while(!validated){
+//                handSize = printMenu(path);
+//                // distribute the number of blocks chosen by the number of hands and it can't exceed 28 (total blocks existing)
+//                // all hands have the same number of blocks
+//                if(numberOfHands * handSize > 28){
+//                    // tells the user what is the max size each hand can have depending on how many hands he chose before
+//                    maxSize = 28 / numberOfHands;
+//                    printf("!!! Size too large! To use %d hands each one can have %d game maximum. !!!\n", numberOfHands, maxSize);
+//                }else{
+//                    validated = 1;
+//                }
+//            }
+            // at the first phase of this project we couldn't generate and save all the sequences possible because there is no hardware capacity
+            // for so many sequences possible with more than 10 blocks, so we limit the user choice at 10 block maximum
+            while(handSize > 10){
                 handSize = printMenu(path);
-                // distribute the number of blocks chosen by the number of hands and it can't exceed 28 (total blocks existing)
-                // all hands have the same number of blocks
-                if(numberOfHands * handSize > 28){
-                    // tells the user what is the max size each hand can have depending on how many hands he chose before
-                    maxSize = 28 / numberOfHands;
-                    printf("!!! Size too large! To use %d hands each one can have %d game maximum. !!!\n", numberOfHands, maxSize);
-                }else{
-                    validated = 1;
-                }
             }
             path += 1;
             // asks the user if he wants to choose the blocks for each hand randomly or manually
@@ -154,16 +85,28 @@ int main(int argc, char *argv[])
     }else if(choice == 2){
         // load a game from file
         path = 5;
+        mkdir("data/"); // creates the folder if it doesn't yet exists
         printf("\nFiles existing (.txt):\n");
         system("dir/b data\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
         printf("\nFiles existing (.bin):\n");
         system("dir/b data\\*.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
         typeOfFile = printMenu(path); // choose between text file or binary file
-        printf("\nFile name: ");
-        scanf("%s", fileName);
-        if(fileExists(fileName)) {
+        while(fileExists(filePath) != 1){
+            strcpy(filePath, "data/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
+            printf("\nFile name: ");
+            scanf("%s", fileName);
+            if(typeOfFile == 1){
+                checkExtension(fileName, ".txt");
+            }else{
+                checkExtension(fileName, ".bin");
+            }
+            strcat(filePath, fileName);
+        }
+        if(fileExists(filePath)) {
             openFile(fileName, typeOfFile, hand, game, &numberOfHands, &handSize);
         }
+        // adds the 3rd column to the hands matrix to generate the sequences correctly
+        fillHands(hand, handSize, numberOfHands);
     }
     // if the game matrix is empty there's no blocks that can be edited
     if(game[0][0] != -1){
@@ -186,6 +129,19 @@ int main(int argc, char *argv[])
                 createGameFile(typeOfFile, hand, game, numberOfHands, handSize);
             }
         }
+    }
+    // at this point the game is ready to be played so we move on to generating the sequences
+    initMat(allSequences, MAX2000, 57);
+    generateSequence(hand, handSize, sequence, allSequences , 0);
+    numberOfSequences = sortAllSequences(allSequences);
+    printf("\t\t\t\t#  GAME COMPLETED  #\n\n");
+    choice = printMenu(8);
+    if(choice == 1){
+        printf("\n# The biggest sequence generated was:\n");
+        printSequences(allSequences, 1);
+    }else{
+        printf("\n# All sequences generated:\n");
+        printSequences(allSequences, numberOfSequences);
     }
     return 0;
 }

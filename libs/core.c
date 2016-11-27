@@ -4,8 +4,6 @@
 
 #include "core.h"
 #include "utils.h"
-// para debugs, retirar depois(interface.h)
-#include "interface.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -57,44 +55,21 @@ void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int
   */
 int generateSequence(int matrix[][MAX3], int handSize, int sequence[][MAX2], int allSequences[][MAX57], int inserted) {
     int i = 0;
-
-//    printf("\nMao:");
-//    printMat(matrix, handSize);
-//    printf("\n");
-//    printf("Sequencia:");
-//    printMat(sequence, inserted);
-//    printf("\n");
-
     for (i = 0; i < handSize; i++) {
-
-//        se peca disponivel
+        // if the block is available
         if (matrix[i][2] == 1) {
-
             sequence[inserted][0] = matrix[i][0];
             sequence[inserted][1] = matrix[i][1];
-
-//            printf("Iteracao (%d): \nPeça em jogo: [%d %d]\n", i, sequence[inserted][0], sequence[inserted][1]);
-
             if (isConsistent(sequence, inserted) == 1) {
-//                printf("Valor do I: %d\n", i);
-
                 inserted++;
-                matrix[i][2] = 0; // peca fica indisponivel
+                matrix[i][2] = 0; // block is now unavailable
                 saveSequence(sequence, allSequences, inserted * 2, handSize);
-
-//                printf("Peças inseridas: %d\n", inserted);
-
                 generateSequence(matrix, handSize, sequence, allSequences, inserted);
-
-
-                matrix[i][2] = 1; // colocar a peça que não deu na sequencia novamente disponivel
+                matrix[i][2] = 1; // block is available if it didn't fit
                 inserted--;
             }
         }
     }
-//    printf("allSequences --------:\n");
-//    printMatDefault(allSequences, 100, 57);
-//    printf("\n");
     return 0;
 }
 
@@ -110,10 +85,9 @@ int generateSequence(int matrix[][MAX3], int handSize, int sequence[][MAX2], int
  */
 void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSequence, int handSize) {
     int i = 0, j = 0, k = 0;
-//    procuro ate encontrar o primiero -1, que sera a primeira linha livre para guardar a sequencia em questao
+    // searches until it finds the first -1, that will be the first available line to store the new sequence
     while (allSequences[i][0] != -1) {
-        i++; // incremento primeiro pois a proxima linha pode ser a disponivel para guardar a sequencia
-//        if (allSequences[i][0] == -1 && handSize <= 10) {
+        i++; // increments before anything else because if the first line is available it will jump to the next condition and won't enter the while
         if (allSequences[i][0] == -1 ) {
             allSequences[i][0] = sizeOfSequence;
             for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
@@ -122,25 +96,8 @@ void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSeq
             }
             return;
         }
-
-//        se a mao de jogo for maior que 10 só grava as sequencias maiores que metade do tamanho da mao
-//        o tamanho de uma sequencia é duas vezes o numero de peças, ao comparar o handSize queremos sequencias com metade do tamanaho da mao
-//        printf("handSize: %d\n", handSize);
-//        printf("sizeofsequence: %d\n", sizeOfSequence);
-//        if (allSequences[i][0] == -1 && (sizeOfSequence >= handSize )) {
-//        if (allSequences[i][0] == -1 && (sizeOfSequence >= handSize )) {
-//            allSequences[i][0] = sizeOfSequence;
-//            for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
-//                allSequences[i][j] = sequence[k][0];
-//                allSequences[i][j + 1] = sequence[k][1];
-//            }
-//            return;
-//        }
-
-
     }
-//    se for a primeira insiro na primeira linha ele nem vai entrar no clico while de cima por isso insiro a sequencia
-//    if (i == 0 && (sizeOfSequence >= handSize )) {
+    // if it's the first line of the matrix it will jump out of the previous while and will insert the sequence here
     if (i == 0) {
         allSequences[i][0] = sizeOfSequence;
         for (j = 1, k = 0; j < sizeOfSequence; j += 2, k++) {
@@ -148,8 +105,6 @@ void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSeq
             allSequences[i][j + 1] = sequence[k][1];
         }
     }
-
-
 }
 
 /**
@@ -157,7 +112,7 @@ void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSeq
   * Orders by an ordered array that has the size of each hand, and searches in the first column of the allSequences matrix that size
   * @param allSequences matrix that has all the sequences and sub-sequences
   */
-void sortAllSequences(int allSequences[][MAX57]) {
+int sortAllSequences(int allSequences[][MAX57]) {
     int numberOfSequences = 0, j = 0, k = 0, l = 0, m = 0, arraySorted[MAX2000], auxMatrix[MAX2000][MAX57];
     while (allSequences[numberOfSequences][0] != -1) {
         arraySorted[numberOfSequences] = allSequences[numberOfSequences][0];
@@ -166,16 +121,7 @@ void sortAllSequences(int allSequences[][MAX57]) {
     }
     // order array by descending order -> quick sort
     sortIntArray(arraySorted, numberOfSequences);
-
-//    printf("\nAux sorted:");
-//    printArray(arraySorted, numberOfSequences);
-//    printf("\n");
-
-//    printf("allSequences for sort:\n");
-//    printMatDefault(allSequences, numberOfSequences, 56);
-//    printf("\n");
-
-    // fills an auxiliar matrix with -1
+    // fills an auxiliary matrix with -1
     initMat(auxMatrix, MAX2000, 57);
     k = numberOfSequences - 1;
     for (j = 0; j < numberOfSequences; j++) {
@@ -184,7 +130,7 @@ void sortAllSequences(int allSequences[][MAX57]) {
                 auxMatrix[m][l] = allSequences[j][l];
             }
             allSequences[j][0] = -1;
-            m++; // increments a line in the auxiliar matrix
+            m++; // increments a line in the auxiliary matrix
             k--; // decrements a line in the arraySorted array
             j = -1; // when this cycle ends it restarts the outer cycle so it starts searching the next sequence from the beginning
             // (-1 because the cycle will still increment after this)
@@ -196,21 +142,11 @@ void sortAllSequences(int allSequences[][MAX57]) {
             allSequences[j][l] = auxMatrix[j][l];
         }
         allSequences[j][l] = -1;
-
     }
-    printf("Number of Sequences generated: %d\n", numberOfSequences);
-    printf("allSequences:\n");
-    printMatDefault(allSequences, numberOfSequences, 57);
-    printf("\n");
+    printf("\t\t\t# Number of sequences generated: %d #\n", numberOfSequences);
+    return numberOfSequences;
 }
 
-/***
- * verifica se uma determinada peça é consistente na sequencia de jogo
- *
- * @param sequence matriz sequencia de pecas consistentes
- * @param index posicao da peça a ser inserida
- * @return 1 se consistente
- */
 /**
  * Checks if a block is consistent with the last placed block on the sequence matrix
  * @param sequence is the matrix of the current sequence

@@ -13,7 +13,7 @@
 void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int qtSet);
 int generateSequence(int matrix[][MAX3], int handSize, int sequence[][MAX2], int allSequences[][MAX57], int inserted);
 void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSequence, int handSize);
-void sortAllSequences(int allSequences[][MAX57]);
+int sortAllSequences(int allSequences[][MAX57]);
 int isConsistent(int sequence[][MAX2], int index);
 void invertBlock(int sequence[][MAX2], int index);
 

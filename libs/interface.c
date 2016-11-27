@@ -125,13 +125,15 @@ int printMenu(int path) {
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - See the biggest sequence\n");
             printf("\t\t\t\t2 - See all the sequences\n");
-            printf("\t\t\t\t3 - Search a sequence\n");
-            printf("\t\t\t\t4 - Search a pattern in the sequences\n");
-            printf("\t\t\t\t5 - Replace a pattern in the sequences\n");
+//            printf("\t\t\t\t3 - Search a sequence\n");
+//            printf("\t\t\t\t4 - Search a pattern in the sequences\n");
+//            printf("\t\t\t\t5 - Replace a pattern in the sequences\n");
             printf("\t\t\t\tChoice: ");
             scanf("%d", &choiceMade);
-            if (choiceMade < 1 || choiceMade > 5) {
-                printf("!!! Please choose a number between 1 & 5. !!!\n");
+//            if (choiceMade < 1 || choiceMade > 5) {
+            if (choiceMade < 1 || choiceMade > 2) {
+//                printf("!!! Please choose a number between 1 & 5. !!!\n");
+                printf("!!! Please choose a number between 1 & 2. !!!\n");
                 return printMenu(path);
             } else {
                 return choiceMade;
@@ -319,7 +321,36 @@ void printMatDefault(int matrix[][MAX57], int lines, int cols) {
         }
         printf("\n");
     }
+}
 
+/**
+ * Function that prints the allSequences matrix with the proper info for the user to see
+ * @param matrix is the allSequences matrix
+ * @param lines are the number of sequences on it
+ * @param cols are the columns to print, maximum is 57
+ */
+void printSequences(int matrix[][MAX57], int lines) {
+    int l = 0, c = 0;
+    for (l = 0; l < lines; l++) {
+        for (c = 0; c < MAX57 && matrix[l][c] != -1; c++) {
+            if(c == 0){
+                printf("(%d blocks): ", (matrix[l][c]/2));
+            }else{
+                if(c%2 == 1){
+                    if(c == 1){
+                        printf("[ ");
+                    }else{
+                        printf("] [ ");
+                    }
+                    printf("%d , ", matrix[l][c]);
+                }else{
+                    printf("%d ", matrix[l][c]);
+                }
+            }
+        }
+        printf("]");
+        printf("\n");
+    }
 }
 
 /**

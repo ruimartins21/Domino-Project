@@ -6,6 +6,7 @@
 #include "utils.h"
 #include <stdio.h>
 #include <strings.h>
+#include <dir.h>
 
 /**
  * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
@@ -19,12 +20,11 @@ void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
     FILE *file = NULL;
     int i = 0, auxInt, j = 0;
     char fOut[30];
-    char path[] = "data/";
+    char path[40] = "data/";
     strcat(path, fileName);
     switch (type) {
         // Text files
         case 1:
-            checkExtension(fileName, ".txt");
             if ((file = fopen(path, "r")) != NULL) {
                 while (fgets(fOut, 29, file)) {
                     // first line of the file, to extract the size of each hand and how many hands there are
@@ -58,7 +58,6 @@ void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
 
             // Binary files
         case 2:
-            checkExtension(fileName, ".bin");
             if ((file = fopen(path, "rb")) != NULL) {
                 while (!feof(file)) {
                     if (i == 0) {
@@ -79,7 +78,7 @@ void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
                     i++;
                 }
                 // compresses the game matrix to the size extracted from the file
-                // needed to decrese by 1 the size because of the cycles the reading does
+                // needed to decrease by 1 the size because of the cycles the reading does
                 compressMatrix(gameMat, j - 1, -1);
             }
             fclose(file);
@@ -103,6 +102,7 @@ void editFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
     FILE *file = NULL;
     int i = 0, auxInt;
     char path[40] = "data/";
+    mkdir(path); // creates the folder if it doesn't yet exists
     strcat(path, fileName);
     switch (type) {
         // Text files
@@ -188,6 +188,7 @@ void createGameFile(int type, int hand[][MAX3], int gameMat[][MAX2], int numberO
     FILE *file = NULL;
     int i = 0, auxInt;
     char fileName[40], path[40] = "data/";
+    mkdir(path); // creates the folder if it doesn't yet exists
     switch (type) {
         // create txt file
         case 1:

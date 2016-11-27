@@ -18,6 +18,7 @@ int blocksAvailable(int matrix[][MAX2]);
 void generateManualHand(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHands);
 int editHands(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHands);
 void printMatDefault(int matrix[][MAX57], int lines, int cols);
+void printSequences(int matrix[][MAX57], int lines);
 void printArray(int* a, int N);
 
 
