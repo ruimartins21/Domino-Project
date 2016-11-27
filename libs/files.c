@@ -5,8 +5,8 @@
 #include "files.h"
 #include "utils.h"
 #include <stdio.h>
-#include <strings.h>
-#include <dir.h>
+#include <string.h>
+//#include <dir.h>
 
 /**
  * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
@@ -102,7 +102,8 @@ void editFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
     FILE *file = NULL;
     int i = 0, auxInt;
     char path[40] = "data/";
-    mkdir(path); // creates the folder if it doesn't yet exists
+    // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
+//    mkdir(path); // creates the folder if it doesn't yet exists
     strcat(path, fileName);
     switch (type) {
         // Text files
@@ -188,7 +189,8 @@ void createGameFile(int type, int hand[][MAX3], int gameMat[][MAX2], int numberO
     FILE *file = NULL;
     int i = 0, auxInt;
     char fileName[40], path[40] = "data/";
-    mkdir(path); // creates the folder if it doesn't yet exists
+    // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
+//    mkdir(path); // creates the folder if it doesn't yet exists
     switch (type) {
         // create txt file
         case 1:
