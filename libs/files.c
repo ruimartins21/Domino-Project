@@ -6,7 +6,7 @@
 #include "utils.h"
 #include <stdio.h>
 #include <string.h>
-//#include <dir.h>
+//#include <dir.h> // this library only works as it should on windows
 
 /**
  * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
