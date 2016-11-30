@@ -5,6 +5,34 @@
 #ifndef DOMINO_PROJECT_UTILS_H
 #define DOMINO_PROJECT_UTILS_H
 
+typedef struct block{
+    int rightSide;
+    int leftSide;
+    int available;
+    struct block *pnextBlock;
+}BLOCK;
+
+typedef struct hand{
+    BLOCK *pfirstBlock;
+    struct hand *pnextHand;
+}HAND;
+
+typedef struct game{
+    int handSize;
+    int numberOfHands;
+    HAND *pfirstHand;
+}GAME;
+
+typedef struct sequence{
+    BLOCK *pfirstBlock;
+    int sizeOfSequence;
+}SEQUENCE;
+
+typedef struct allSequences{
+    SEQUENCE *pfirstSequence;
+    int numberOfSequences;
+}ALLSEQUENCES;
+
 #define MAX2 2
 #define MAX3 3
 #define MAX28 28

@@ -28,6 +28,13 @@ int main(int argc, char *argv[])
     int sequence[MAX28][MAX2] = {};
     int allSequences[MAX2000][MAX57] = {};
 
+
+
+    generateRandomHand(game, hand, handSize, numberOfHands);
+
+
+    /*
+
     // First iteration of the menu is for the user to choose between starting a new game or loading a saved game from a file
     choice = printMenu(0);
     if(choice == 1){
@@ -144,5 +151,7 @@ int main(int argc, char *argv[])
         printf("\n# All sequences generated:\n");
         printSequences(allSequences, numberOfSequences);
     }
+
+     */
     return 0;
 }
