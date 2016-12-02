@@ -14,11 +14,11 @@
  * @return default (0): filled matrix is stored via its addresses so it isn't needed to return anything
  */
 void getGame(GAME *game) {
-    int l = 0, c = 0;
+    int l, c;
     BLOCK *paux = NULL;
     game->availableBlocks = MAX28;
-    game->blocks = (BLOCK*)malloc(sizeof(BLOCK)*MAX28);
-    paux = game->blocks;
+    game->pblocks = (BLOCK*)malloc(sizeof(BLOCK)*MAX28);
+    paux = game->pblocks;
     for (l = 0; l <= 6; l++) {
         for (c = l; c <= 6; c++) {
             paux->leftSide = l;
@@ -29,7 +29,7 @@ void getGame(GAME *game) {
 }
 
 void printGame(GAME game){
-    BLOCK *paux = game.blocks;
+    BLOCK *paux = game.pblocks;
     int i = game.availableBlocks;
     while(i != 0){
         printf("[%d, %d]\n", paux->leftSide, paux->rightSide);

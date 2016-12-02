@@ -329,27 +329,17 @@ void printMatDefault(int matrix[][MAX57], int lines, int cols) {
  * @param lines are the number of sequences on it
  * @param cols are the columns to print, maximum is 57
  */
-void printSequences(int matrix[][MAX57], int lines) {
+void printSequences(ALLSEQUENCES allSequences) {
     int l = 0, c = 0;
+    unsigned long lines = allSequences.numberOfSequences;
+    SEQUENCE *paux = allSequences.pfirstSequence;
     for (l = 0; l < lines; l++) {
-        for (c = 0; c < MAX57 && matrix[l][c] != -1; c++) {
-            if(c == 0){
-                printf("(%d blocks): ", (matrix[l][c]/2));
-            }else{
-                if(c%2 == 1){
-                    if(c == 1){
-                        printf("[ ");
-                    }else{
-                        printf("] [ ");
-                    }
-                    printf("%d , ", matrix[l][c]);
-                }else{
-                    printf("%d ", matrix[l][c]);
-                }
-            }
+        BLOCK *pblocks = paux->pfirstBlock;
+        for (c = 0; c < paux->sizeOfSequence && pblocks != NULL; c++) {
+            printf("[%d, %d] ", pblocks->leftSide, pblocks->rightSide);
+            pblocks = pblocks->pnextBlock;
         }
-        printf("]");
-        printf("\n");
+        paux++;
     }
 }
 

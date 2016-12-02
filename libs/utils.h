@@ -14,7 +14,7 @@ typedef struct block{
 
 typedef struct game{
     unsigned int availableBlocks;
-    BLOCK *blocks;
+    BLOCK *pblocks;
 }GAME;
 
 typedef struct hand{
@@ -29,13 +29,14 @@ typedef struct hands{
 }HANDS;
 
 typedef struct sequence{
-    BLOCK *pfirstBlock;
     int sizeOfSequence;
+    BLOCK *pfirstBlock;
+    struct sequence *pnextSequence;
 }SEQUENCE;
 
 typedef struct allSequences{
+    unsigned long numberOfSequences;
     SEQUENCE *pfirstSequence;
-    int numberOfSequences;
 }ALLSEQUENCES;
 
 #define MAX2 2
