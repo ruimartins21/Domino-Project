@@ -13,16 +13,29 @@
  * @param pieces matrix to store the generated numbers
  * @return default (0): filled matrix is stored via its addresses so it isn't needed to return anything
  */
-int getGame(int game[][MAX2]) {
-    int l = 0, c = 0, lin = 0;
+void getGame(GAME *game) {
+    int l = 0, c = 0;
+    BLOCK *paux = NULL;
+    game->availableBlocks = MAX28;
+    game->blocks = (BLOCK*)malloc(sizeof(BLOCK)*MAX28);
+    paux = game->blocks;
     for (l = 0; l <= 6; l++) {
         for (c = l; c <= 6; c++) {
-            game[lin][0] = l;
-            game[lin][1] = c;
-            lin += 1;
+            paux->leftSide = l;
+            paux->rightSide = c;
+            paux++;
         }
     }
-    return 0;
+}
+
+void printGame(GAME game){
+    BLOCK *paux = game.blocks;
+    int i = game.availableBlocks;
+    while(i != 0){
+        printf("[%d, %d]\n", paux->leftSide, paux->rightSide);
+        paux++;
+        i--;
+    }
 }
 
 /**

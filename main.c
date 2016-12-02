@@ -20,17 +20,19 @@
  */
 int main(int argc, char *argv[])
 {
-    int handSize = 10, choice, numberOfHands = 0, path = 0, typeOfFile = 0, edited = 0, numberOfSequences;
+//    int handSize = 10, choice, numberOfHands = 0, path = 0, typeOfFile = 0, edited = 0, numberOfSequences;
 //    int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
-    int game[MAX28][MAX2] = {};
-    int hand[MAX28][MAX3] = {};
-    char fileName[40], filePath[40] = "data/";
-    int sequence[MAX28][MAX2] = {};
-    int allSequences[MAX2000][MAX57] = {};
+//    int game[MAX28][MAX2] = {};
+//    int hand[MAX28][MAX3] = {};
+//    char fileName[40], filePath[40] = "data/";
+//    int sequence[MAX28][MAX2] = {};
+//    int allSequences[MAX2000][MAX57] = {};
 
+    GAME game = {0, NULL};
+    getGame(&game);
+    printGame(game);
 
-
-    generateRandomHand(game, hand, handSize, numberOfHands);
+//    generateRandomHand(game, hand, handSize, numberOfHands);
 
 
     /*
