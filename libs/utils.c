@@ -39,6 +39,7 @@ void printGame(GAME game){
         i--;
     }
 }
+
 void printHand(HANDS hands){
     HAND *handAux = hands.pfirstHand;
     BLOCK *blockAux = NULL;
