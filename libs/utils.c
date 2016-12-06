@@ -23,6 +23,8 @@ void getGame(GAME *game) {
         for (c = l; c <= 6; c++) {
             paux->leftSide = l;
             paux->rightSide = c;
+            paux->available = 1;
+            paux->pnextBlock = NULL;
             paux++;
         }
     }
@@ -35,6 +37,20 @@ void printGame(GAME game){
         printf("[%d, %d]\n", paux->leftSide, paux->rightSide);
         paux++;
         i--;
+    }
+}
+void printHand(HANDS hands){
+    HAND *handAux = hands.pfirstHand;
+    BLOCK *blockAux = NULL;
+    int i,j;
+    for (i = 0; i < hands.numberOfHands && handAux != NULL; i++) {
+        blockAux = handAux->pfirstBlock;
+        for (j = 0; j < hands.handSize; j++) {
+            printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
+            blockAux++;
+        }
+        printf("\n");
+        handAux = handAux->pnextHand;
     }
 }
 
@@ -143,9 +159,9 @@ int fileExists(char fileName[]) {
  * @param handSize size of each hand
  * @param numberOfHands number of hands
  */
-void fillHands(int hand[][MAX3], int handSize, int numberOfHands){
-    int i;
-    for (i = 0; i < (handSize*numberOfHands); i++) {
-        hand[i][2] = 1; // 3rd column
-    }
-}
+//void fillHands(int hand[][MAX3], int handSize, int numberOfHands){
+//    int i;
+//    for (i = 0; i < (handSize*numberOfHands); i++) {
+//        hand[i][2] = 1; // 3rd column
+//    }
+//}

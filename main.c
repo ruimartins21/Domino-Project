@@ -29,9 +29,10 @@ int main(int argc, char *argv[])
 //    int allSequences[MAX2000][MAX57] = {};
 
     GAME game = {0, NULL};
-    getGame(&game);
-    printGame(game);
-
+    HANDS hands = {0, 0, NULL};
+//    getGame(&game);
+//    printGame(game);
+    openFile2("teste.txt", 1, &hands, &game);
 //    generateRandomHand(game, hand, handSize, numberOfHands);
 
 

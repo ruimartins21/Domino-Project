@@ -5,9 +5,12 @@
 #ifndef DOMINO_PROJECT_FILES_H
 #define DOMINO_PROJECT_FILES_H
 
+#include "utils.h"
+
 #define MAX2 2
 #define MAX3 3
 
+void openFile2(char fileName[], int type, HANDS *hands, GAME *game);
 void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], int *numberOfHands, int *handSize);
 void editFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], int numberOfHands, int handSize);
 void createGameFile(int type, int hand[][MAX3], int gameMat[][MAX2], int numberOfHands, int handSize);

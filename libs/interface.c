@@ -148,14 +148,14 @@ int printMenu(int path) {
  * Prints an hand of the game as a vector with its numbers
  * @param size size of the hand
  */
-void printHand(int hand[][MAX3], int size, int index) {
-    int i;
-    // move the first position to print according to the index
-    index = (index == 0 ? index : index * size);
-    for (i = index; i < index + size; i++) {
-        printf("[ %d , %d ] ", hand[i][0], hand[i][1]);
-    }
-}
+//void printHand(int hand[][MAX3], int size, int index) {
+//    int i;
+//    // move the first position to print according to the index
+//    index = (index == 0 ? index : index * size);
+//    for (i = index; i < index + size; i++) {
+//        printf("[ %d , %d ] ", hand[i][0], hand[i][1]);
+//    }
+//}
 
 /**
  * Prints an entire matrix until it finds -1 on it that means the matrix ended
@@ -252,7 +252,7 @@ int editHands(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHa
     while (1) {
         for (i = 0; i < numberOfHands; i++) {
             printf("\n#%2d = Hand %d: ", i + 1, i + 1);
-            printHand(hand, handSize, i);
+//            printHand(hand, handSize, i);
         }
         while (!validate) {
             printf("\nDo you wish to change anything before proceeding? (Y/N): ");
