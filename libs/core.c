@@ -40,8 +40,8 @@ void generateRandomHand(GAME *pGame, HANDS *pHands, int handSize, int numberOfHa
 //            hand[linesCount][1] = matrix[randValue][1];
 //            hand[linesCount][2] = 1;
 
-            compressMatrix(matrix, MAX28 - linesCount, randValue);
-            linesCount++;
+//            compressMatrix(matrix, MAX28 - linesCount, randValue);
+//            linesCount++;
         }
     }
 
