@@ -3,7 +3,6 @@
 /// @copyright
 
 #include "core.h"
-#include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -19,18 +18,27 @@
  * @param linesHand Matrix lines of the player hand
  * @param qtSet Number of hands to generate
  */
-void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int qtSet) {
+void generateRandomHand(GAME *pGame, HANDS *pHands, int handSize, int numberOfHands) {
     int l = 0, j = 0, randValue = 0, linesCount = 0, limit = 0;
-    limit = MAX28 / linesHand;
-    if (qtSet < limit)
-        limit = qtSet;
+
+    HAND *pHand = (HAND *) malloc(sizeof(HAND *));
+
+    limit = MAX28 / handSize;
+    printf("limit de maos: %d\n", limit);
+    if (numberOfHands < limit)
+        limit = numberOfHands;
+
+//    paux = pHands
 
     for (j = 0; j < limit; j++) {
-        for (l = 0; l < linesHand; l++) {
+         HANDS.pfirstHand = pHand;
+
+        for (l = 0; l < handSize; l++) {
             randValue = 0 + rand() % (MAX28 - linesCount);
-            hand[linesCount][0] = matrix[randValue][0];
-            hand[linesCount][1] = matrix[randValue][1];
-            hand[linesCount][2] = 1;
+
+//            hand[linesCount][0] = matrix[randValue][0];
+//            hand[linesCount][1] = matrix[randValue][1];
+//            hand[linesCount][2] = 1;
 
             compressMatrix(matrix, MAX28 - linesCount, randValue);
             linesCount++;

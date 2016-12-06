@@ -10,7 +10,10 @@
 #define MAX28 28
 #define MAX57 57
 
-void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int qtSet);
+#include "utils.h"
+
+//void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int qtSet);
+void generateRandomHand(GAME *pGame, HANDS *pHands, int handSize, int numberOfHands);
 int generateSequence(int matrix[][MAX3], int handSize, int sequence[][MAX2], int allSequences[][MAX57], int inserted);
 void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSequence, int handSize);
 int sortAllSequences(int allSequences[][MAX57]);

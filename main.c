@@ -29,10 +29,11 @@ int main(int argc, char *argv[])
 //    int allSequences[MAX2000][MAX57] = {};
 
     GAME game = {0, NULL};
+    HANDS hands = {10, 1, NULL};
     getGame(&game);
     printGame(game);
 
-//    generateRandomHand(game, hand, handSize, numberOfHands);
+    generateRandomHand(&game, &hands, hands.handSize, hands.numberOfHands);
 
 
     /*
