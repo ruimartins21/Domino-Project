@@ -5,8 +5,116 @@
 #include "files.h"
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 //#include <dir.h> // this library only works as it should on windows
+
+void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
+    FILE *file = NULL;
+    int i = 0, auxInt = 0, j = 0;
+    char fOut[30];
+    char path[40] = "data/";
+    strcat(path, fileName);
+    HAND *handAux   = NULL;
+    BLOCK *blockAux = NULL;
+    switch (type) {
+        // Text files
+        case 1:
+            if ((file = fopen(path, "r")) != NULL) {
+                while (fgets(fOut, 29, file)) {
+                    // first line of the file, to extract the size of each hand and how many hands there are
+                    if (i == 0) {
+                        // arithmetic to get the first 2 digits of the first line from char to int type (correspondent to the number of hands)
+                        hands->numberOfHands = fOut[0] - '0';
+                        hands->numberOfHands *= 10;
+                        hands->numberOfHands += (fOut[1] - '0');
+                        // arithmetic to get the second 2 digits of the first line from char to int type (correspondent to the hands size)
+                        hands->handSize = fOut[2] - '0';
+                        hands->handSize *= 10;
+                        hands->handSize += (fOut[3] - '0');
+                        hands->pfirstHand  = (HAND*)malloc(sizeof(HAND)); // allocates space for the first hand
+                        handAux = hands->pfirstHand;
+                        // allocates space for the remaining hands because they're saved in another element of the structure HAND
+                        for (j = 1; j < hands->numberOfHands; j++) {
+                            handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
+                            handAux = handAux->pnextHand;
+                        }
+                        handAux = hands->pfirstHand;
+                        // allocates memory for all the blocks, being used on the hands or the game doesn't matter yet
+                        blockAux = (BLOCK*)malloc(sizeof(BLOCK) * MAX28);
+                        // funçao para inicializar estruturas
+                        // funcao insertSort que cria as peças ordenadas por um index
+                        blockAux->available  = 1;
+                        blockAux->leftSide   = 0;
+                        blockAux->rightSide  = 0;
+                        blockAux->pnextBlock = NULL;
+                        handAux->pfirstBlock = blockAux;
+                    // saves the hands and respective blocks that are after the first line until (numberOfHands*handSize) lines
+                    } else if (i < (hands->numberOfHands * hands->handSize) + 1) {
+                        if(auxInt < hands->handSize){
+                            blockAux->leftSide  = fOut[0] - '0';
+                            blockAux->rightSide = fOut[1] - '0';
+//                            printf("\n[%d, %d]", blockAux->leftSide, blockAux->rightSide);
+                            blockAux++;
+                            auxInt++;
+                        }else{
+                            handAux              = handAux->pnextHand;
+                            handAux->pfirstBlock = blockAux;
+                            blockAux->leftSide   = fOut[0] - '0';
+                            blockAux->rightSide  = fOut[1] - '0';
+                            blockAux++;
+                            auxInt = 1;
+                        }
+                    } else {
+                        game->pfirstBlock = blockAux;
+
+//                        gameMat[j][0] = fOut[0] - '0';
+//                        gameMat[j][1] = fOut[1] - '0';
+                        j++;
+                    }
+                    i += 1;
+                }
+
+                printHand(*hands);
+                // compresses the game matrix to the size extracted from the file
+                // se nao for lista ligada tenho de iterarçao
+//                compressMatrix(gameMat, j, -1);
+            }
+            fclose(file);
+            break;
+
+            // Binary files
+//        case 2:
+//            if ((file = fopen(path, "rb")) != NULL) {
+//                while (!feof(file)) {
+//                    if (i == 0) {
+//                        fread(numberOfHands, sizeof(int), 1, file);
+//                        fread(handSize, sizeof(int), 1, file);
+//                    } else if (i < ((*numberOfHands) * (*handSize)) + 1) {
+//                        fread(&auxInt, sizeof(int), 1, file);
+//                        hand[i - 1][0] = auxInt;
+//                        fread(&auxInt, sizeof(int), 1, file);
+//                        hand[i - 1][1] = auxInt;
+//                    } else {
+//                        fread(&auxInt, sizeof(int), 1, file);
+//                        gameMat[j][0] = auxInt;
+//                        fread(&auxInt, sizeof(int), 1, file);
+//                        gameMat[j][1] = auxInt;
+//                        j++;
+//                    }
+//                    i++;
+//                }
+//                // compresses the game matrix to the size extracted from the file
+//                // needed to decrease by 1 the size because of the cycles the reading does
+//                compressMatrix(gameMat, j - 1, -1);
+//            }
+//            fclose(file);
+//            break;
+
+        default:
+            break;
+    }
+}
 
 /**
  * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
@@ -51,7 +159,7 @@ void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
                 // compresses the game matrix to the size extracted from the file
                 compressMatrix(gameMat, j, -1);
                 // fills the 3rd column of the hands matrix with 1 necessary for the generate sequence function
-                fillHands(hand, *handSize, *numberOfHands);
+//                fillHands(hand, *handSize, *numberOfHands);
             }
             fclose(file);
             break;

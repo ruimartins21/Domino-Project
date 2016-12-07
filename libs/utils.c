@@ -14,27 +14,49 @@
  * @return default (0): filled matrix is stored via its addresses so it isn't needed to return anything
  */
 void getGame(GAME *game) {
-    int l = 0, c = 0;
-    BLOCK *paux = NULL;
+    int l, c, i = 0;
+    BLOCK *blockAux = NULL;
     game->availableBlocks = MAX28;
-    game->blocks = (BLOCK*)malloc(sizeof(BLOCK)*MAX28);
-    paux = game->blocks;
+    game->pfirstBlock = (BLOCK*)malloc(sizeof(BLOCK));
+    blockAux = game->pfirstBlock;
     for (l = 0; l <= 6; l++) {
         for (c = l; c <= 6; c++) {
-            paux->leftSide = l;
-            paux->rightSide = c;
-            paux++;
+            blockAux->leftSide   = l;
+            blockAux->rightSide  = c;
+            blockAux->available  = 1;
+            if(i == 27){
+                blockAux->pnextBlock = NULL;
+            }else{
+                blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
+                blockAux             = blockAux->pnextBlock;
+            }
+            i++;
         }
     }
 }
 
 void printGame(GAME game){
-    BLOCK *paux = game.blocks;
+    BLOCK *blockAux = game.pfirstBlock;
     int i = game.availableBlocks;
-    while(i != 0){
-        printf("[%d, %d]\n", paux->leftSide, paux->rightSide);
-        paux++;
+    while(i != 0 && blockAux != NULL){
+        printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
+        blockAux = blockAux->pnextBlock;
         i--;
+    }
+}
+
+void printHand(HANDS hands){
+    HAND *handAux = hands.pfirstHand;
+    BLOCK *blockAux = NULL;
+    int i,j;
+    for (i = 0; i < hands.numberOfHands && handAux != NULL; i++) {
+        blockAux = handAux->pfirstBlock;
+        for (j = 0; j < hands.handSize; j++) {
+            printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
+            blockAux++;
+        }
+        printf("\n");
+        handAux = handAux->pnextHand;
     }
 }
 
@@ -49,23 +71,46 @@ void printGame(GAME game){
  * @param index Position of the block to be withdrawn to the player hand
  * if it's NULL it will get the lines given and "compress" the matrix to be that size only
  */
-void compressMatrix(int matrix[][MAX2], int lines, int index) {
-    int i;
-    if (index == -1) {
-        // it will compress the matrix to the size given from the lines parameter
-        // after the size given fills with -1 until the limit size (28)
-        for (i = lines; i < (lines + (28 - lines)); i++) {
-            matrix[i][0] = -1;
-            matrix[i][1] = -1;
-        }
-    } else {
-        for (; index < lines; index++) {
-            matrix[index][0] = matrix[index + 1][0];
-            matrix[index][1] = matrix[index + 1][1];
-        }
-        matrix[index - 1][0] = -1;
-        matrix[index - 1][1] = -1;
+//void compressMatrix(int matrix[][MAX2], int lines, int index) {
+//    int i;
+//    if (index == -1) {
+//        // it will compress the matrix to the size given from the lines parameter
+//        // after the size given fills with -1 until the limit size (28)
+//        for (i = lines; i < (lines + (28 - lines)); i++) {
+//            matrix[i][0] = -1;
+//            matrix[i][1] = -1;
+//        }
+//    } else {
+//        for (; index < lines; index++) {
+//            matrix[index][0] = matrix[index + 1][0];
+//            matrix[index][1] = matrix[index + 1][1];
+//        }
+//        matrix[index - 1][0] = -1;
+//        matrix[index - 1][1] = -1;
+//    }
+//}
+
+/**
+ * Returns a certain block at the index given and removes it from the linked list
+ * @param game structure that has the non-used blocks
+ * @param index position of the block to pop
+ * @return returns the block that corresponds to the index
+ */
+BLOCK *popBlock(GAME *game, int index){
+    int i = 0;
+    BLOCK *blockAux = game->pfirstBlock;
+    BLOCK *blockAuxPrev = NULL;
+    while(i != index && blockAux != NULL){
+        blockAuxPrev = blockAux;
+        blockAux = blockAux->pnextBlock;
+        i++;
     }
+    if(blockAuxPrev == NULL){
+        game->pfirstBlock = blockAux->pnextBlock;
+    }else{
+        blockAuxPrev->pnextBlock = blockAux->pnextBlock;
+    }
+    return blockAux;
 }
 
 /**
@@ -143,9 +188,9 @@ int fileExists(char fileName[]) {
  * @param handSize size of each hand
  * @param numberOfHands number of hands
  */
-void fillHands(int hand[][MAX3], int handSize, int numberOfHands){
-    int i;
-    for (i = 0; i < (handSize*numberOfHands); i++) {
-        hand[i][2] = 1; // 3rd column
-    }
-}
+//void fillHands(int hand[][MAX3], int handSize, int numberOfHands){
+//    int i;
+//    for (i = 0; i < (handSize*numberOfHands); i++) {
+//        hand[i][2] = 1; // 3rd column
+//    }
+//}

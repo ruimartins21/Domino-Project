@@ -27,10 +27,15 @@ int main(int argc, char *argv[])
 //    char fileName[40], filePath[40] = "data/";
 //    int sequence[MAX28][MAX2] = {};
 //    int allSequences[MAX2000][MAX57] = {};
+    int i = 0, j;
 
     GAME game = {0, NULL};
     HANDS hands = {10, 1, NULL};
     getGame(&game);
+//    printGame(game);
+//    free(blockAux);
+//    generateRandomHand(&game, &hands, hands.handSize, hands.numberOfHands);
+//    openFile2("teste.txt", 1, &hands, &game);
     printGame(game);
 
     generateRandomHand(&game, &hands);

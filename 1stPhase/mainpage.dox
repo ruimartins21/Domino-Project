@@ -1,0 +1,41 @@
+/**
+
+@mainpage Domino-Project
+
+@authors  Ricardo Barbosa (31210@ufp.edu.pt) <br>
+		  Rui Martins     (31217@ufp.edu.pt)
+
+<b>Este projeto consiste na manipulação de vectores e estruturas dinâmicas usando a linguagem de programação C: caso de estudo dominó.</b>
+
+<h2><b>Requisitos Funcionais:</b></h2>
+<b>R1</b>: Permitir ao utilizador armazenar e gerir um ou mais conjuntos de peças de dominó, i.e., inserir e/ou remover as peças iniciais dum jogo de mão usado no jogo; as peças também podem ser geradas de forma aleatória; em nenhum dos casos podem haver peças repetidas nos vários conjuntos de peças mão envolvidos.<br>
+<b>Implementado</b><br>
+<b>R2</b>: Dada uma representação de peças ou sequências de peças recorrendo a tipos inteiros, permitir gerar as mesmas peças ou sequência usando caracteres/strings, e vice-versa.<br>
+<b>Parcialmente Implementado</b><br>
+<b>R3</b>: Dadas várias sequências de encaixe com tamanhos variáveis (geradas por um algoritmo ou aleatoriamente) pretende-se permitir ordenar essas pesquisas por ordem de tamanho (comprimento da sequência de encaixe).<br>
+<b>Implementado</b><br>
+<b>R4</b>: Dadas várias sequências de encaixe com tamanhos variáveis (geradas por um algoritmo ou aleatoriamente) pretende-se encontrar padrões de encaixe nessas sequências, ou seja, encontrar as posições de sub-sequências pré-definidas de encaixe.<br>
+<b>Não Implementado</b><br>
+<b>R5</b>: Dada um sequência de encaixe com várias peças, permitir substituir um padrão de encaixe por outro padrão (os padrões podem ter tamanhos diferentes); deverá ser possível também substituir todas as ocorrências de um padrão por outro padrão, numa dada sequência.<br>
+<b>Não Implementado</b><br>
+<b>R6</b>: A partir de um conjunto de peças do jogador e de uma sequência de encaixe de peças inicial já colocada na mesa de jogo (esta sequência pode ser vazia), pretende-se determinar a sequência de encaixe final que utiliza todas as peças disponíveis; poderão existir uma ou mais sequências de encaixe com todas as peças; se não for possível encaixar todas as peças deve determinar-se a maior sequência de encaixe possível.<br>
+<b>Implementado</b><br>
+<b>R7</b>: Dados dois ou mais conjuntos de peças ou jogos de mão e de uma sequência de encaixe de peças inicial colocada na mesa de jogo (esta sequência pode ser vazia), pretende-se determinar se é possível encaixar todas as peças desses conjuntos de mão (retiradas à vez de cada mão do jogador) de forma a conseguir-se uma sequência válida; se não for possível encaixar todas as peças então deve determinar-se a maior sequência de encaixe possível.<br>
+<b>Não Implementado</b><br>
+<b>R8</b>: Permitir a manipulação das estruturas de dados através da entrada e saída de dados via ficheiros de texto.<br>
+<b>Implementado</b><br>
+<b>R9</b>: Permitir a manipulação das estruturas de dados através da entrada e saída de dados via ficheiros binários.<br>
+<b>Implementado</b><br>
+<b>R10</b>: Permitir a manipulação das estruturas de dados e das funcionalidades da aplicação através de uma estrutura de interação baseada em texto (menus).<br>
+<b>Implementado</b><br>
+
+<h2><b>Observações:</b></h2>
+<ul>
+	<li><b>R2:</b>Este requisito foi parcialmente implementado já que manipulamos as matrizes de ambas as formas mas não no seu potencial necessário, com isto queremos dizer que a manipulação feita das matrizes como caracteres foi ainda pouca já que só foi utilizada para retirar as matrizes dos ficheiros de texto. Na segunda fase do projeto iremos manipular mais as matrizes como caracteres para funções como a pesquisa e substituição de padrões.</li>
+	<li><b>R4:</b> Este requisito não foi implementado nesta primeira fase pois não chegamos a uma solução para este problema a tempo da entrega.</li>
+	<li><b>R5:</b> Este requisito não foi implementado nesta primeira fase pois não chegamos a uma solução para este problema a tempo da entrega.</li>
+	<li><b>R7:</b> Este requisito não foi implementado nesta primeira fase pois não chegamos a uma solução para este problema a tempo da entrega.</li>
+</ul>
+*/
+
+
