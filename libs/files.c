@@ -15,7 +15,7 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
     char fOut[30];
     char path[40] = "data/";
     strcat(path, fileName);
-    HAND *handAux = NULL;
+    HAND *handAux   = NULL;
     BLOCK *blockAux = NULL;
     switch (type) {
         // Text files
@@ -32,12 +32,16 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                         hands->handSize = fOut[2] - '0';
                         hands->handSize *= 10;
                         hands->handSize += (fOut[3] - '0');
-                        // allocates the memory for the hands and blocks that will be used all at once because the memory access is slow
-                        // since we know for certain how many space we will need, this way we do all the memory access at once
-
-                        // alocar peça a peça ja ficam todas ligadas a proxima peça
-                        handAux  = (HAND*)malloc(sizeof(HAND) * hands->numberOfHands);
-                        blockAux = (BLOCK*)malloc(sizeof(BLOCK) * (hands->handSize * hands->numberOfHands));
+                        hands->pfirstHand  = (HAND*)malloc(sizeof(HAND)); // allocates space for the first hand
+                        handAux = hands->pfirstHand;
+                        // allocates space for the remaining hands because they're saved in another element of the structure HAND
+                        for (j = 1; j < hands->numberOfHands; j++) {
+                            handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
+                            handAux = handAux->pnextHand;
+                        }
+                        handAux = hands->pfirstHand;
+                        // allocates memory for all the blocks, being used on the hands or the game doesn't matter yet
+                        blockAux = (BLOCK*)malloc(sizeof(BLOCK) * MAX28);
                         // funçao para inicializar estruturas
                         // funcao insertSort que cria as peças ordenadas por um index
                         blockAux->available  = 1;
@@ -45,19 +49,16 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                         blockAux->rightSide  = 0;
                         blockAux->pnextBlock = NULL;
                         handAux->pfirstBlock = blockAux;
-                        handAux->pnextHand   = NULL;
-
-                        hands->pfirstHand = handAux;
                     // saves the hands and respective blocks that are after the first line until (numberOfHands*handSize) lines
                     } else if (i < (hands->numberOfHands * hands->handSize) + 1) {
                         if(auxInt < hands->handSize){
                             blockAux->leftSide  = fOut[0] - '0';
                             blockAux->rightSide = fOut[1] - '0';
+//                            printf("\n[%d, %d]", blockAux->leftSide, blockAux->rightSide);
                             blockAux++;
                             auxInt++;
                         }else{
-                            hands->pfirstHand->pnextHand   = ++handAux; // a linha a seguir nao guarda na estr. "hands" o apontador para next
-                            handAux->pnextHand   = handAux; // links the next hand to the previous one and increments it
+                            handAux              = handAux->pnextHand;
                             handAux->pfirstBlock = blockAux;
                             blockAux->leftSide   = fOut[0] - '0';
                             blockAux->rightSide  = fOut[1] - '0';
@@ -65,11 +66,13 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                             auxInt = 1;
                         }
                     } else {
+                        game->pfirstBlock = blockAux;
+
 //                        gameMat[j][0] = fOut[0] - '0';
 //                        gameMat[j][1] = fOut[1] - '0';
                         j++;
                     }
-                    i++;
+                    i += 1;
                 }
 
                 printHand(*hands);

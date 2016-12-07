@@ -14,28 +14,33 @@
  * @return default (0): filled matrix is stored via its addresses so it isn't needed to return anything
  */
 void getGame(GAME *game) {
-    int l, c;
-    BLOCK *paux = NULL;
+    int l, c, i = 0;
+    BLOCK *blockAux = NULL;
     game->availableBlocks = MAX28;
-    game->pblocks = (BLOCK*)malloc(sizeof(BLOCK)*MAX28);
-    paux = game->pblocks;
+    game->pfirstBlock = (BLOCK*)malloc(sizeof(BLOCK));
+    blockAux = game->pfirstBlock;
     for (l = 0; l <= 6; l++) {
         for (c = l; c <= 6; c++) {
-            paux->leftSide = l;
-            paux->rightSide = c;
-            paux->available = 1;
-            paux->pnextBlock = NULL;
-            paux++;
+            blockAux->leftSide   = l;
+            blockAux->rightSide  = c;
+            blockAux->available  = 1;
+            if(i == 27){
+                blockAux->pnextBlock = NULL;
+            }else{
+                blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
+                blockAux             = blockAux->pnextBlock;
+            }
+            i++;
         }
     }
 }
 
 void printGame(GAME game){
-    BLOCK *paux = game.pblocks;
+    BLOCK *blockAux = game.pfirstBlock;
     int i = game.availableBlocks;
-    while(i != 0){
-        printf("[%d, %d]\n", paux->leftSide, paux->rightSide);
-        paux++;
+    while(i != 0 && blockAux != NULL){
+        printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
+        blockAux = blockAux->pnextBlock;
         i--;
     }
 }
@@ -66,23 +71,46 @@ void printHand(HANDS hands){
  * @param index Position of the block to be withdrawn to the player hand
  * if it's NULL it will get the lines given and "compress" the matrix to be that size only
  */
-void compressMatrix(int matrix[][MAX2], int lines, int index) {
-    int i;
-    if (index == -1) {
-        // it will compress the matrix to the size given from the lines parameter
-        // after the size given fills with -1 until the limit size (28)
-        for (i = lines; i < (lines + (28 - lines)); i++) {
-            matrix[i][0] = -1;
-            matrix[i][1] = -1;
-        }
-    } else {
-        for (; index < lines; index++) {
-            matrix[index][0] = matrix[index + 1][0];
-            matrix[index][1] = matrix[index + 1][1];
-        }
-        matrix[index - 1][0] = -1;
-        matrix[index - 1][1] = -1;
+//void compressMatrix(int matrix[][MAX2], int lines, int index) {
+//    int i;
+//    if (index == -1) {
+//        // it will compress the matrix to the size given from the lines parameter
+//        // after the size given fills with -1 until the limit size (28)
+//        for (i = lines; i < (lines + (28 - lines)); i++) {
+//            matrix[i][0] = -1;
+//            matrix[i][1] = -1;
+//        }
+//    } else {
+//        for (; index < lines; index++) {
+//            matrix[index][0] = matrix[index + 1][0];
+//            matrix[index][1] = matrix[index + 1][1];
+//        }
+//        matrix[index - 1][0] = -1;
+//        matrix[index - 1][1] = -1;
+//    }
+//}
+
+/**
+ * Returns a certain block at the index given and removes it from the linked list
+ * @param game structure that has the non-used blocks
+ * @param index position of the block to pop
+ * @return returns the block that corresponds to the index
+ */
+BLOCK *popBlock(GAME *game, int index){
+    int i = 0;
+    BLOCK *blockAux = game->pfirstBlock;
+    BLOCK *blockAuxPrev = NULL;
+    while(i != index && blockAux != NULL){
+        blockAuxPrev = blockAux;
+        blockAux = blockAux->pnextBlock;
+        i++;
     }
+    if(blockAuxPrev == NULL){
+        game->pfirstBlock = blockAux->pnextBlock;
+    }else{
+        blockAuxPrev->pnextBlock = blockAux->pnextBlock;
+    }
+    return blockAux;
 }
 
 /**

@@ -31,7 +31,7 @@ void generateRandomHand(GAME *pGame, HANDS *pHands, int handSize, int numberOfHa
 //    paux = pHands
 
     for (j = 0; j < limit; j++) {
-         HANDS.pfirstHand = pHand;
+//         HANDS.pfirstHand = pHand;
 
         for (l = 0; l < handSize; l++) {
             randValue = 0 + rand() % (MAX28 - linesCount);
