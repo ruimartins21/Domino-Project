@@ -13,7 +13,7 @@
 #include "utils.h"
 
 //void generateRandomHand(int matrix[][MAX2], int hand[][MAX3], int linesHand, int qtSet);
-void generateRandomHand(GAME *pGame, HANDS *pHands, int handSize, int numberOfHands);
+void generateRandomHand(GAME *pGame, HANDS *pHands);
 int generateSequence(int matrix[][MAX3], int handSize, int sequence[][MAX2], int allSequences[][MAX57], int inserted);
 void saveSequence(int sequence[][MAX2], int allSequences[][MAX57], int sizeOfSequence, int handSize);
 int sortAllSequences(int allSequences[][MAX57]);

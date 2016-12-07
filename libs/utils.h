@@ -14,7 +14,7 @@ typedef struct block{
 
 typedef struct game{
     unsigned int availableBlocks;
-    BLOCK *blocks;
+    BLOCK *pfirstBlock;
 }GAME;
 
 typedef struct hand{

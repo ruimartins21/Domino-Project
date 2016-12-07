@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     getGame(&game);
     printGame(game);
 
-    generateRandomHand(&game, &hands, hands.handSize, hands.numberOfHands);
+    generateRandomHand(&game, &hands);
 
 
     /*

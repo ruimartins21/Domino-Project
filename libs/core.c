@@ -18,22 +18,45 @@
  * @param linesHand Matrix lines of the player hand
  * @param qtSet Number of hands to generate
  */
-void generateRandomHand(GAME *pGame, HANDS *pHands, int handSize, int numberOfHands) {
+void generateRandomHand(GAME *game, HANDS *hands) {
     int l = 0, j = 0, randValue = 0, linesCount = 0, limit = 0;
+    HAND *handAux = NULL;
+    BLOCK *blockAux = NULL;
 
-    HAND *pHand = (HAND *) malloc(sizeof(HAND *));
-
-    limit = MAX28 / handSize;
+    limit = MAX28 / hands->handSize;
     printf("limit de maos: %d\n", limit);
-    if (numberOfHands < limit)
-        limit = numberOfHands;
+    if (hands->numberOfHands < limit) {
+        limit = hands->numberOfHands;
+    }
 
-//    paux = pHands
+    hands->pfirstHand  = (HAND*)malloc(sizeof(HAND)); // allocates space for the first hand
+    handAux = hands->pfirstHand;
+
+    // allocates space for the remaining hands because they're saved in another element of the structure HAND
+    for (j = 1; j < hands->numberOfHands; j++) {
+        handAux->pfirstBlock = (BLOCK*) malloc(sizeof(BLOCK)); // alocates space for the first block
+        blockAux = handAux->pfirstBlock;
+        for (l = 0; l < hands->handSize; l++) {
+            randValue = 0 + rand() % ((MAX28-1) - linesCount);
+
+            // depois de ir buscar a peca a funcao esta retorna-a, copio o seu conteudo para outro aux e depois tenho de fazer free da retornada
+            //blockAux->leftSide =
+            blockAux->pnextBlock = (BLOCK*) malloc(sizeof(BLOCK));
+            blockAux = blockAux->pnextBlock;
+
+        }
+
+        handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
+        handAux = handAux->pnextHand;
+    }
+
+
+
 
     for (j = 0; j < limit; j++) {
-         HANDS.pfirstHand = pHand;
 
-        for (l = 0; l < handSize; l++) {
+
+        for (l = 0; l < pHands->handSize; l++) {
             randValue = 0 + rand() % (MAX28 - linesCount);
 
 //            hand[linesCount][0] = matrix[randValue][0];
