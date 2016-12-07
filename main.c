@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     BLOCK *pblock = NULL;
     getGame(&game);
 //    free(blockAux);
-//    generateRandomHand(&game, &hands, hands.handSize, hands.numberOfHands);
+    generateRandomHand(&game, &hands);
 //    openFile2("teste.txt", 1, &hands, &game);
 //    printGame(game);
     pblock = popBlock(&game, 24);
