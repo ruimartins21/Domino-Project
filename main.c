@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 //    getGame(&game);
 //    free(blockAux);
 //    generateRandomHand(&game, &hands);
-    openFile2("teste.txt", 1, &hands, &game);
+    openFile("teste.bin", 2, &hands, &game);
     printf("\n## Game ##\n");
     printGame(game);
     printf("\n## Hands ##\n");

@@ -30,7 +30,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
         blockAux = handAux->pfirstBlock;
         for (l = 0; l < hands->handSize; l++) {
             randValue = 0 + rand() % ((MAX28-1) - linesCount);
-            delBlock = popBlock(game,randValue);
+            delBlock = popBlock(game, randValue); // retrieves the block to pass it to the hand and remove from the game structure
             blockAux->leftSide  = delBlock->leftSide;
             blockAux->rightSide = delBlock->rightSide;
             blockAux->available = 1;

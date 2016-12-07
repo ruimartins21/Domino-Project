@@ -9,9 +9,17 @@
 #include <string.h>
 //#include <dir.h> // this library only works as it should on windows
 
-void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
+/**
+ * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
+ * @param type type = 1 means it's a text file, type = 2 means it's a binary file
+ * @param handsMat matrix where will be stored the hands stored in the file
+ * @param gameMat matrix where will be stored the game stored in the file (the game that doesn't have the blocks used in the hands)
+ * @param numberOfHands number of hands in the hands matrix
+ * @param handSize size of each hand
+ */
+void openFile(char fileName[], int type, HANDS *hands, GAME *game){
     FILE *file = NULL;
-    int i = 0, auxInt = 0, j = 0;
+    int i = 0, auxInt = 0, j = 0, auxInt2 = 0;
     char fOut[30];
     char path[40] = "data/";
     strcat(path, fileName);
@@ -54,7 +62,7 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                         if(auxInt < hands->handSize){
                             auxInt++;
                         }else{
-                            handAux              = handAux->pnextHand;
+                            handAux = handAux->pnextHand;
                             handAux->pfirstBlock = blockAux;
                             auxInt = 1;
                         }
@@ -65,7 +73,7 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                     } else {
                         // first time it enters here it points to the first block of the game structure
                         if(i == (hands->numberOfHands * hands->handSize) + 1) {
-                            // available blocks are the number of total blocks substracted by the blocks already used by the hands
+                            // available blocks are the number of total blocks subtracted by the blocks already used by the hands
                             // substracts by 29 because the value of i is one step further than what's real
                             game->availableBlocks = 29 - i;
                             blockAux = game->pfirstBlock;
@@ -84,112 +92,70 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
             fclose(file);
             break;
 
-            // Binary files
-//        case 2:
-//            if ((file = fopen(path, "rb")) != NULL) {
-//                while (!feof(file)) {
-//                    if (i == 0) {
-//                        fread(numberOfHands, sizeof(int), 1, file);
-//                        fread(handSize, sizeof(int), 1, file);
-//                    } else if (i < ((*numberOfHands) * (*handSize)) + 1) {
-//                        fread(&auxInt, sizeof(int), 1, file);
-//                        hand[i - 1][0] = auxInt;
-//                        fread(&auxInt, sizeof(int), 1, file);
-//                        hand[i - 1][1] = auxInt;
-//                    } else {
-//                        fread(&auxInt, sizeof(int), 1, file);
-//                        gameMat[j][0] = auxInt;
-//                        fread(&auxInt, sizeof(int), 1, file);
-//                        gameMat[j][1] = auxInt;
-//                        j++;
-//                    }
-//                    i++;
-//                }
-//                // compresses the game matrix to the size extracted from the file
-//                // needed to decrease by 1 the size because of the cycles the reading does
-//                compressMatrix(gameMat, j - 1, -1);
-//            }
-//            fclose(file);
-//            break;
-
-        default:
-            break;
-    }
-}
-
-/**
- * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
- * @param type type = 1 means it's a text file, type = 2 means it's a binary file
- * @param handsMat matrix where will be stored the hands stored in the file
- * @param gameMat matrix where will be stored the game stored in the file (the game that doesn't have the blocks used in the hands)
- * @param numberOfHands number of hands in the hands matrix
- * @param handSize size of each hand
- */
-void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], int *numberOfHands, int *handSize) {
-    FILE *file = NULL;
-    int i = 0, auxInt, j = 0;
-    char fOut[30];
-    char path[40] = "data/";
-    strcat(path, fileName);
-    switch (type) {
-        // Text files
-        case 1:
-            if ((file = fopen(path, "r")) != NULL) {
-                while (fgets(fOut, 29, file)) {
-                    // first line of the file, to extract the size of each hand and how many hands there are
-                    if (i == 0) {
-                        // arithmetic to get the first 2 digits of the first line from char to int type (correspondent to the number of hands)
-                        *numberOfHands = fOut[0] - '0';
-                        *numberOfHands *= 10;
-                        *numberOfHands += (fOut[1] - '0');
-                        // arithmetic to get the second 2 digits of the first line from char to int type (correspondent to the hands size)
-                        *handSize = fOut[2] - '0';
-                        *handSize *= 10;
-                        *handSize += (fOut[3] - '0');
-                        // saves the matrix of the hands that are after the first line until (numberOfHands*handSize) lines
-                    } else if (i < ((*numberOfHands) * (*handSize)) + 1) {
-                        hand[i - 1][0] = fOut[0] - '0';
-                        hand[i - 1][1] = fOut[1] - '0';
-                    } else {
-                        gameMat[j][0] = fOut[0] - '0';
-                        gameMat[j][1] = fOut[1] - '0';
-                        j++;
-                    }
-                    i++;
-                }
-                // compresses the game matrix to the size extracted from the file
-//                compressMatrix(gameMat, j, -1);
-                // fills the 3rd column of the hands matrix with 1 necessary for the generate sequence function
-//                fillHands(hand, *handSize, *numberOfHands);
-            }
-            fclose(file);
-            break;
-
-            // Binary files
+        // Binary files
         case 2:
             if ((file = fopen(path, "rb")) != NULL) {
                 while (!feof(file)) {
                     if (i == 0) {
-                        fread(numberOfHands, sizeof(int), 1, file);
-                        fread(handSize, sizeof(int), 1, file);
-                    } else if (i < ((*numberOfHands) * (*handSize)) + 1) {
+                        fread(&hands->numberOfHands, sizeof(int), 1, file);
+                        fread(&hands->handSize, sizeof(int), 1, file);
+                        // initialize structures
+                        hands->pfirstHand  = (HAND*)malloc(sizeof(HAND)); // allocates space for the first hand
+                        game->pfirstBlock  = (BLOCK*)malloc(sizeof(BLOCK)); // allocates space for the first block of the game structure
+                        handAux = hands->pfirstHand;
+                        // allocates space for the remaining hands because they're saved in another element of the structure HAND
+                        for (j = 1; j < hands->numberOfHands; j++) {
+                            handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
+                            handAux = handAux->pnextHand;
+                        }
+                        handAux = hands->pfirstHand;
+                        handAux->pfirstBlock = (BLOCK*)malloc(sizeof(BLOCK));
+                        blockAux = handAux->pfirstBlock;
+                        for (j = 1; j < (hands->numberOfHands * hands->handSize); j++) {
+                            blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
+                            blockAux = blockAux->pnextBlock;
+                        }
+                        blockAux = handAux->pfirstBlock;
+                        j = 0;
+                    } else if (i < ((hands->numberOfHands) * (hands->handSize)) + 1) {
+                        if(auxInt2 < hands->handSize){
+                            auxInt2++;
+                        }else{
+                            handAux = handAux->pnextHand;
+                            handAux->pfirstBlock = blockAux;
+                            auxInt2 = 1;
+                        }
                         fread(&auxInt, sizeof(int), 1, file);
-                        hand[i - 1][0] = auxInt;
+                        blockAux->leftSide = auxInt;
                         fread(&auxInt, sizeof(int), 1, file);
-                        hand[i - 1][1] = auxInt;
+                        blockAux->rightSide = auxInt;
+                        blockAux->available  = 1;
+                        blockAux = blockAux->pnextBlock;
                     } else {
+//                        printf("\nj: %d", j);
+                        if(j == 0){
+                            // available blocks are the number of total blocks subtracted by the blocks already used by the hands
+                            // substracts by 29 because the value of i is one step further than what's real
+                            game->availableBlocks = 29 - i;
+                            blockAux = game->pfirstBlock;
+                        }
                         fread(&auxInt, sizeof(int), 1, file);
-                        gameMat[j][0] = auxInt;
+                        blockAux->leftSide = auxInt;
                         fread(&auxInt, sizeof(int), 1, file);
-                        gameMat[j][1] = auxInt;
+                        blockAux->rightSide = auxInt;
+                        blockAux->available  = 1;
+//                        printf("\n[%d,%d]", blockAux->leftSide, blockAux->rightSide);
+                        if(i < 28){ // while it's not the last cycle, because if it is the nextBlock pointer is NULL
+                            blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
+                            blockAux = blockAux->pnextBlock;
+                        }
                         j++;
                     }
                     i++;
                 }
-                // compresses the game matrix to the size extracted from the file
-                // needed to decrease by 1 the size because of the cycles the reading does
-//                compressMatrix(gameMat, j - 1, -1);
             }
+//            printGame(*game);
+//            printHand(*hands);
             fclose(file);
             break;
 
