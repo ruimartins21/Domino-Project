@@ -42,8 +42,13 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                         }
                         handAux = hands->pfirstHand;
                         // allocates memory for all the blocks, being used on the hands
-                        blockAux = (BLOCK*)malloc(sizeof(BLOCK) * (hands->numberOfHands * hands->handSize));
-                        handAux->pfirstBlock = blockAux;
+                        handAux->pfirstBlock = (BLOCK*)malloc(sizeof(BLOCK));
+                        blockAux = handAux->pfirstBlock;
+                        for (j = 1; j < (hands->numberOfHands * hands->handSize); j++) {
+                            blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
+                            blockAux = blockAux->pnextBlock;
+                        }
+                        blockAux = handAux->pfirstBlock;
                     // saves the hands and respective blocks that are after the first line until (numberOfHands*handSize) lines
                     } else if (i < (hands->numberOfHands * hands->handSize) + 1) {
                         if(auxInt < hands->handSize){
@@ -56,9 +61,7 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                         blockAux->leftSide   = fOut[0] - '0';
                         blockAux->rightSide  = fOut[1] - '0';
                         blockAux->available  = 1;
-                        if(i+1 < (hands->numberOfHands * hands->handSize) + 1){
-                            blockAux->pnextBlock = ++blockAux;
-                        }
+                        blockAux = blockAux->pnextBlock;
                     } else {
                         // first time it enters here it points to the first block of the game structure
                         if(i == (hands->numberOfHands * hands->handSize) + 1) {

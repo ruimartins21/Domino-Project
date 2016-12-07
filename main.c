@@ -32,13 +32,16 @@ int main(int argc, char *argv[])
     GAME game = {0, NULL};
     HANDS hands = {10, 1, NULL};
     BLOCK *pblock = NULL;
-    getGame(&game);
+//    getGame(&game);
 //    free(blockAux);
-    generateRandomHand(&game, &hands);
-//    openFile2("teste.txt", 1, &hands, &game);
-//    printGame(game);
-    pblock = popBlock(&game, 24);
-    printf("[%d,%d]", pblock->leftSide, pblock->rightSide);
+//    generateRandomHand(&game, &hands);
+    openFile2("teste.txt", 1, &hands, &game);
+    printf("\n## Game ##\n");
+    printGame(game);
+    printf("\n## Hands ##\n");
+    printHand(hands);
+//    pblock = popBlock(&game, 24);
+//    printf("[%d,%d]", pblock->leftSide, pblock->rightSide);
     /*
 
     // First iteration of the menu is for the user to choose between starting a new game or loading a saved game from a file

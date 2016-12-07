@@ -19,63 +19,33 @@
  * @param qtSet Number of hands to generate
  */
 void generateRandomHand(GAME *game, HANDS *hands) {
-    int l = 0, j = 0, randValue = 0, linesCount = 0, limit = 0;
+    int l = 0, j = 0, randValue = 0, linesCount = 0;
     HAND *handAux = NULL;
     BLOCK *blockAux = NULL;
     BLOCK *delBlock = NULL;
-
-    limit = MAX28 / hands->handSize;
-    printf("limit de maos: %d\n", hands->handSize);
-    if (hands->numberOfHands < limit) {
-        limit = hands->numberOfHands;
-    }
-
-    hands->pfirstHand  = (HAND*)malloc(sizeof(HAND)); // allocates space for the first hand
+    hands->pfirstHand = (HAND*)malloc(sizeof(HAND)); // allocates space for the first hand
     handAux = hands->pfirstHand;
-
-    // allocates space for the remaining hands because they're saved in another element of the structure HAND
     for (j = 0; j < hands->numberOfHands; j++) {
-        handAux->pfirstBlock = (BLOCK*) malloc(sizeof(BLOCK)); // alocates space for the first block
+        handAux->pfirstBlock = (BLOCK*) malloc(sizeof(BLOCK)); // allocates space for the first block
         blockAux = handAux->pfirstBlock;
         for (l = 0; l < hands->handSize; l++) {
             randValue = 0 + rand() % ((MAX28-1) - linesCount);
-            printf("val: %d\n", randValue);
-            // depois de ir buscar a peca a funcao esta retorna-a, copio o seu conteudo para outro aux e depois tenho de fazer free da retornada
             delBlock = popBlock(game,randValue);
-            blockAux->leftSide = delBlock->leftSide;
+            blockAux->leftSide  = delBlock->leftSide;
             blockAux->rightSide = delBlock->rightSide;
             blockAux->available = 1;
             free(delBlock);
-            //printf("popBlock(): %d, %d\n", blockAux->leftSide, blockAux->rightSide);
-
-            blockAux->pnextBlock = (BLOCK*) malloc(sizeof(BLOCK));
+            blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
             blockAux = blockAux->pnextBlock;
             linesCount++;
         }
-        //handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
-        //handAux = handAux->pnextHand;
+        if(j+1 == hands->numberOfHands){ // if the cycle will end at the next increment, the next pointer will be NULL
+            handAux->pnextHand = NULL;
+        }else{
+            handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
+            handAux = handAux->pnextHand;
+        }
     }
-
-    printf("\n");
-     printHand(*hands);
-    printf("\n");
-
-
-    //for (j = 0; j < limit; j++) {
-
-
-//        for (l = 0; l < pHands->handSize; l++) {
-            randValue = 0 + rand() % (MAX28 - linesCount);
-
-//            hand[linesCount][0] = matrix[randValue][0];
-//            hand[linesCount][1] = matrix[randValue][1];
-//            hand[linesCount][2] = 1;
-
-//            compressMatrix(matrix, MAX28 - linesCount, randValue);
-//            linesCount++;
-        //}
-    //}
-
 }
 
 /**

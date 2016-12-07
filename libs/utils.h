@@ -48,6 +48,7 @@ typedef struct allSequences{
 void getGame(GAME *game);
 void printGame(GAME game);
 void printHand(HANDS hands);
+void printTesteHand(HAND hand, int handSize);
 //void compressMatrix(int matrix[][MAX2], int lines, int index);
 BLOCK *popBlock(GAME *game, int index);
 void initMat(int m[][MAX57], int lines, int cols);

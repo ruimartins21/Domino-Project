@@ -46,17 +46,26 @@ void printGame(GAME game){
 }
 
 void printHand(HANDS hands){
-    HAND *handAux = hands.pfirstHand;
+    HAND  *handAux  = hands.pfirstHand;
     BLOCK *blockAux = NULL;
     int i,j;
     for (i = 0; i < hands.numberOfHands && handAux != NULL; i++) {
         blockAux = handAux->pfirstBlock;
         for (j = 0; j < hands.handSize; j++) {
             printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
-            blockAux++;
+            blockAux = blockAux->pnextBlock;
         }
         printf("\n");
         handAux = handAux->pnextHand;
+    }
+}
+
+void printTesteHand(HAND hand, int handSize){
+    BLOCK *pblock = hand.pfirstBlock;
+    int i;
+    for (i = 0; i < handSize && pblock != NULL; i++) {
+        printf("[%d , %d]\n", pblock->leftSide, pblock->rightSide);
+        pblock = pblock->pnextBlock;
     }
 }
 
