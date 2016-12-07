@@ -33,6 +33,7 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                         hands->handSize *= 10;
                         hands->handSize += (fOut[3] - '0');
                         hands->pfirstHand  = (HAND*)malloc(sizeof(HAND)); // allocates space for the first hand
+                        game->pfirstBlock  = (BLOCK*)malloc(sizeof(BLOCK)); // allocates space for the first block of the game structure
                         handAux = hands->pfirstHand;
                         // allocates space for the remaining hands because they're saved in another element of the structure HAND
                         for (j = 1; j < hands->numberOfHands; j++) {
@@ -40,45 +41,42 @@ void openFile2(char fileName[], int type, HANDS *hands, GAME *game){
                             handAux = handAux->pnextHand;
                         }
                         handAux = hands->pfirstHand;
-                        // allocates memory for all the blocks, being used on the hands or the game doesn't matter yet
-                        blockAux = (BLOCK*)malloc(sizeof(BLOCK) * MAX28);
-                        // funçao para inicializar estruturas
-                        // funcao insertSort que cria as peças ordenadas por um index
-                        blockAux->available  = 1;
-                        blockAux->leftSide   = 0;
-                        blockAux->rightSide  = 0;
-                        blockAux->pnextBlock = NULL;
+                        // allocates memory for all the blocks, being used on the hands
+                        blockAux = (BLOCK*)malloc(sizeof(BLOCK) * (hands->numberOfHands * hands->handSize));
                         handAux->pfirstBlock = blockAux;
                     // saves the hands and respective blocks that are after the first line until (numberOfHands*handSize) lines
                     } else if (i < (hands->numberOfHands * hands->handSize) + 1) {
                         if(auxInt < hands->handSize){
-                            blockAux->leftSide  = fOut[0] - '0';
-                            blockAux->rightSide = fOut[1] - '0';
-//                            printf("\n[%d, %d]", blockAux->leftSide, blockAux->rightSide);
-                            blockAux++;
                             auxInt++;
                         }else{
                             handAux              = handAux->pnextHand;
                             handAux->pfirstBlock = blockAux;
-                            blockAux->leftSide   = fOut[0] - '0';
-                            blockAux->rightSide  = fOut[1] - '0';
-                            blockAux++;
                             auxInt = 1;
                         }
+                        blockAux->leftSide   = fOut[0] - '0';
+                        blockAux->rightSide  = fOut[1] - '0';
+                        blockAux->available  = 1;
+                        if(i+1 < (hands->numberOfHands * hands->handSize) + 1){
+                            blockAux->pnextBlock = ++blockAux;
+                        }
                     } else {
-                        game->pfirstBlock = blockAux;
-
-//                        gameMat[j][0] = fOut[0] - '0';
-//                        gameMat[j][1] = fOut[1] - '0';
-                        j++;
+                        // first time it enters here it points to the first block of the game structure
+                        if(i == (hands->numberOfHands * hands->handSize) + 1) {
+                            // available blocks are the number of total blocks substracted by the blocks already used by the hands
+                            // substracts by 29 because the value of i is one step further than what's real
+                            game->availableBlocks = 29 - i;
+                            blockAux = game->pfirstBlock;
+                        }
+                        blockAux->leftSide   = fOut[0] - '0';
+                        blockAux->rightSide  = fOut[1] - '0';
+                        blockAux->available  = 1;
+                        if(i < 28){ // while it's not the last cycle, because if it is the nextBlock pointer is NULL
+                            blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
+                            blockAux = blockAux->pnextBlock;
+                        }
                     }
-                    i += 1;
+                    i++;
                 }
-
-                printHand(*hands);
-                // compresses the game matrix to the size extracted from the file
-                // se nao for lista ligada tenho de iterarçao
-//                compressMatrix(gameMat, j, -1);
             }
             fclose(file);
             break;
@@ -157,7 +155,7 @@ void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
                     i++;
                 }
                 // compresses the game matrix to the size extracted from the file
-                compressMatrix(gameMat, j, -1);
+//                compressMatrix(gameMat, j, -1);
                 // fills the 3rd column of the hands matrix with 1 necessary for the generate sequence function
 //                fillHands(hand, *handSize, *numberOfHands);
             }
@@ -187,7 +185,7 @@ void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
                 }
                 // compresses the game matrix to the size extracted from the file
                 // needed to decrease by 1 the size because of the cycles the reading does
-                compressMatrix(gameMat, j - 1, -1);
+//                compressMatrix(gameMat, j - 1, -1);
             }
             fclose(file);
             break;
