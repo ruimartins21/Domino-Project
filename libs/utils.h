@@ -13,7 +13,7 @@ typedef struct block{
 }BLOCK;
 
 typedef struct game{
-    unsigned int availableBlocks;
+    int availableBlocks;
     BLOCK *pfirstBlock;
 }GAME;
 

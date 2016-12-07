@@ -232,7 +232,7 @@ void generateManualHand(int matrix[][MAX2], int hand[][MAX3], int handSize, int 
             hand[k][1] = matrix[blockId][1];
             hand[k][2] = 1;
             // sends to compressMatrix to remove the block chosen from the game matrix
-            compressMatrix(matrix, blocksLimit, blockId);
+//            compressMatrix(matrix, blocksLimit, blockId);
             k++;
         }
     }
