@@ -132,7 +132,6 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
                         blockAux->available  = 1;
                         blockAux = blockAux->pnextBlock;
                     } else {
-//                        printf("\nj: %d", j);
                         if(j == 0){
                             // available blocks are the number of total blocks subtracted by the blocks already used by the hands
                             // substracts by 29 because the value of i is one step further than what's real
@@ -144,7 +143,6 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
                         fread(&auxInt, sizeof(int), 1, file);
                         blockAux->rightSide = auxInt;
                         blockAux->available  = 1;
-//                        printf("\n[%d,%d]", blockAux->leftSide, blockAux->rightSide);
                         if(i < 28){ // while it's not the last cycle, because if it is the nextBlock pointer is NULL
                             blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
                             blockAux = blockAux->pnextBlock;
@@ -154,8 +152,6 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
                     i++;
                 }
             }
-//            printGame(*game);
-//            printHand(*hands);
             fclose(file);
             break;
 

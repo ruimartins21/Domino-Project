@@ -10,8 +10,7 @@
  * Function that generates player hand randomly
  * -> Runs the number of hands chosen by the user, for each one runs all the blocks of the hand
  * -> Generates a random number confined to the values 0 to 27
- * -> Drops index of generated number from the deck and puts it on the player hand
- * -> Compresses Matrix and inserts "-1" in the last position according to the number of lines withdrawned
+ * -> Returns the block positioned at the index generated and copies its content to another place and frees the space on memory of the previous one
  *
  * @param matrix Initial game matrix (all pieces)
  * @param hand Matrix with the player pieces (hand game)
@@ -19,32 +18,30 @@
  * @param qtSet Number of hands to generate
  */
 void generateRandomHand(GAME *game, HANDS *hands) {
-    int l = 0, j = 0, randValue = 0, linesCount = 0;
+    int i = 0, j = 0, randValue = 0, linesCount = 0;
     HAND *handAux = NULL;
-    BLOCK *blockAux = NULL;
-    BLOCK *delBlock = NULL;
-    hands->pfirstHand = (HAND*)malloc(sizeof(HAND)); // allocates space for the first hand
-    handAux = hands->pfirstHand;
-    for (j = 0; j < hands->numberOfHands; j++) {
-        handAux->pfirstBlock = (BLOCK*) malloc(sizeof(BLOCK)); // allocates space for the first block
-        blockAux = handAux->pfirstBlock;
-        for (l = 0; l < hands->handSize; l++) {
-            randValue = 0 + rand() % ((MAX28-1) - linesCount);
+    BLOCK *delBlock = NULL, *blockAux = NULL;
+    hands->pfirstHand = NULL;
+    for (i = 0; i < hands->numberOfHands; i++) {
+        handAux = (HAND*)malloc(sizeof(HAND));
+        for (j = 0; j < hands->handSize; j++) {
+            if(linesCount < 27){
+                randValue = 0 + rand() % ((MAX28-1) - linesCount);
+            }else{
+                randValue = 0;
+            }
             delBlock = popBlock(game, randValue); // retrieves the block to pass it to the hand and remove from the game structure
-            blockAux->leftSide  = delBlock->leftSide;
-            blockAux->rightSide = delBlock->rightSide;
-            blockAux->available = 1;
-            free(delBlock);
-            blockAux->pnextBlock = (BLOCK*)malloc(sizeof(BLOCK));
-            blockAux = blockAux->pnextBlock;
+            blockAux = transferBlock(delBlock);
+            if(handAux->pfirstBlock == NULL){ // it's the first block to be inserted in the hand
+                blockAux->pnextBlock = NULL; // it will be used the insertion at the head, so the first block to be inserted will be the one at the tail
+            }else{
+                blockAux->pnextBlock = handAux->pfirstBlock;
+            }
+            handAux->pfirstBlock = blockAux;
             linesCount++;
         }
-        if(j+1 == hands->numberOfHands){ // if the cycle will end at the next increment, the next pointer will be NULL
-            handAux->pnextHand = NULL;
-        }else{
-            handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
-            handAux = handAux->pnextHand;
-        }
+        handAux->pnextHand = hands->pfirstHand;
+        hands->pfirstHand = handAux;
     }
 }
 

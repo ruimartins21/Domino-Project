@@ -5,6 +5,7 @@
 #include "interface.h"
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 /**
 * Prints the multiple menus that are needed
@@ -190,35 +191,32 @@ void printHands(int hand[][MAX3], int lines){
  * @param matrix is the game matrix that has the unused blocks
  * @return returns the counter of blocks available to choose from for further conditioning from the user inputs
  */
-int blocksAvailable(int matrix[][MAX2]) {
+int blocksAvailable(GAME game) {
     int i = 0;
+    BLOCK *blockAux = game.pfirstBlock;
     printf("\n\t\t\t\t### Available Blocks ###\n");
-    while (i < MAX28 && (matrix[i][0] != -1 || matrix[i][1] != -1)) {
-        printf("\t#%2d = [%d|%d]", i + 1, matrix[i][0], matrix[i][1]);
+    while (blockAux != NULL) {
+        printf("\t#%2d = [%d|%d]", i + 1, blockAux->leftSide, blockAux->rightSide);
+        // putting breaks after a certain number of blocks printed to improve the visualization
         if ((i + 1) % 5 == 0 && i != 0) {
             printf("\n");
         }
         i++;
+        blockAux = blockAux->pnextBlock;
     }
     return i;
 }
 
-/**
- * The user chooses block by block wich ones he wants in each hand
- * it's showed the game matrix so he can see the available blocks
- * after each choice the game matrix goes through the compressMatrix
- * because a block was "removed" from it and passed to the hands matrix
- * @param matrix game matrix with the unused blocks
- * @param hand matrix with all the hands generated
- * @param handSize size of each hand
- * @param numberOfHands number of hands existing
- */
-void generateManualHand(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHands) {
-    int i, j, k = 0, blocksLimit, blockId;
-    for (i = 0; i < numberOfHands; i++) {
+void generateManualHand(GAME *game, HANDS *hands) {
+    int i, j, blocksLimit, blockId;
+    hands->pfirstHand = NULL;
+    HAND *handAux = NULL;
+    BLOCK *delBlock = NULL, *blockAux = NULL;
+    for (i = 0; i < hands->numberOfHands; i++) {
+        handAux = (HAND*)malloc(sizeof(HAND));
         printf("\n## %2d hand ##\n", i + 1);
-        for (j = 0; j < handSize; j++) {
-            blocksLimit = blocksAvailable(matrix);
+        for (j = 0; j < hands->handSize; j++) {
+            blocksLimit = blocksAvailable(*game);
             printf("\n%2d block: ", j + 1);
             scanf("%d", &blockId);
             if (blockId < 1 || blockId > blocksLimit) {
@@ -227,16 +225,55 @@ void generateManualHand(int matrix[][MAX2], int hand[][MAX3], int handSize, int 
                 continue;
             }
             blockId -= 1;
-            // gets the block chosen in the game matrix and stores it in the hands matrix
-            hand[k][0] = matrix[blockId][0];
-            hand[k][1] = matrix[blockId][1];
-            hand[k][2] = 1;
-            // sends to compressMatrix to remove the block chosen from the game matrix
-//            compressMatrix(matrix, blocksLimit, blockId);
-            k++;
+            // gets the block chosen from the game, removing it from there, and inserting it in the respective hand
+            delBlock = popBlock(game, blockId);
+            blockAux = transferBlock(delBlock);
+            if(handAux->pfirstBlock == NULL){ // it's the first block to be inserted in the hand
+                blockAux->pnextBlock = NULL; // it will be used the insertion at the head, so the first block to be inserted will be the one at the tail
+            }else{
+                blockAux->pnextBlock = handAux->pfirstBlock;
+            }
+            handAux->pfirstBlock = blockAux;
         }
+        handAux->pnextHand = hands->pfirstHand;
+        hands->pfirstHand = handAux;
     }
 }
+
+///**
+// * The user chooses block by block wich ones he wants in each hand
+// * it's showed the game matrix so he can see the available blocks
+// * after each choice the game matrix goes through the compressMatrix
+// * because a block was "removed" from it and passed to the hands matrix
+// * @param matrix game matrix with the unused blocks
+// * @param hand matrix with all the hands generated
+// * @param handSize size of each hand
+// * @param numberOfHands number of hands existing
+// */
+//void generateManualHand(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHands) {
+//    int i, j, k = 0, blocksLimit, blockId;
+//    for (i = 0; i < numberOfHands; i++) {
+//        printf("\n## %2d hand ##\n", i + 1);
+//        for (j = 0; j < handSize; j++) {
+//            blocksLimit = blocksAvailable(matrix);
+//            printf("\n%2d block: ", j + 1);
+//            scanf("%d", &blockId);
+//            if (blockId < 1 || blockId > blocksLimit) {
+//                printf("!!! Choose a valid number !!!");
+//                j--;
+//                continue;
+//            }
+//            blockId -= 1;
+//            // gets the block chosen in the game matrix and stores it in the hands matrix
+//            hand[k][0] = matrix[blockId][0];
+//            hand[k][1] = matrix[blockId][1];
+//            hand[k][2] = 1;
+//            // sends to compressMatrix to remove the block chosen from the game matrix
+////            compressMatrix(matrix, blocksLimit, blockId);
+//            k++;
+//        }
+//    }
+//}
 
 /**
  * Function that handles all the editing the user wishes to do on the generated hands
@@ -285,7 +322,7 @@ int editHands(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHa
         removeId -= 1;
         // to this removeId it's needed to add the previous handId index so we can reach the correct hand inside the hands matrix and then move the desired index
         removeId += handId;
-        blocksLimit = blocksAvailable(matrix);
+//        blocksLimit = blocksAvailable(matrix);
         while (addId < 1 || addId > blocksLimit) {
             printf("\nChoose a block to insert from the available blocks above: ");
             scanf("%d", &addId);

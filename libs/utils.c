@@ -107,6 +107,10 @@ void printTesteHand(HAND hand, int handSize){
  */
 BLOCK *popBlock(GAME *game, int index){
     int i = 0;
+    if(index > game->availableBlocks){
+        printf("\n!! The block you are trying to get isn't available !!\n");
+        return NULL;
+    }
     BLOCK *blockAux = game->pfirstBlock;
     BLOCK *blockAuxPrev = NULL;
     while(i != index && blockAux != NULL){
@@ -114,11 +118,33 @@ BLOCK *popBlock(GAME *game, int index){
         blockAux = blockAux->pnextBlock;
         i++;
     }
-    if(blockAuxPrev == NULL){
-        game->pfirstBlock = blockAux->pnextBlock;
+    if(blockAux != NULL){
+        if(blockAuxPrev == NULL && blockAux->pnextBlock == NULL) { // if the index is for the first block AND there's only one block
+            game->pfirstBlock = NULL;
+        }else if(blockAuxPrev == NULL){// if the index is for the first block
+            game->pfirstBlock = blockAux->pnextBlock;
+        }else{
+            blockAuxPrev->pnextBlock = blockAux->pnextBlock;
+        }
     }else{
-        blockAuxPrev->pnextBlock = blockAux->pnextBlock;
+        return NULL;
     }
+    game->availableBlocks -= 1;
+    return blockAux;
+}
+
+/**
+ * Receives a certain block to copy its content to a new one and to remove the previous one from the memory
+ * @param delBlock is the block to be copied from and removed
+ * @return returns the address of the new block
+ */
+BLOCK *transferBlock(BLOCK *delBlock){
+    BLOCK *blockAux = (BLOCK*)malloc(sizeof(BLOCK));
+    blockAux->leftSide = delBlock->leftSide;
+    blockAux->rightSide = delBlock->rightSide;
+    blockAux->available = delBlock->available;
+    blockAux->pnextBlock = NULL;
+    free(delBlock);
     return blockAux;
 }
 
