@@ -37,11 +37,9 @@ void getGame(GAME *game) {
 
 void printGame(GAME game){
     BLOCK *blockAux = game.pfirstBlock;
-    int i = game.availableBlocks;
-    while(i != 0 && blockAux != NULL){
+    while(blockAux != NULL){
         printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
         blockAux = blockAux->pnextBlock;
-        i--;
     }
 }
 
@@ -119,13 +117,18 @@ BLOCK *popBlock(GAME *game, int index){
         i++;
     }
     if(blockAux != NULL){
-        if(blockAuxPrev == NULL && blockAux->pnextBlock == NULL) { // if the index is for the first block AND there's only one block
-            game->pfirstBlock = NULL;
-        }else if(blockAuxPrev == NULL){// if the index is for the first block
+        if(blockAuxPrev == NULL){// if the index is for the first block
             game->pfirstBlock = blockAux->pnextBlock;
         }else{
             blockAuxPrev->pnextBlock = blockAux->pnextBlock;
         }
+//        if(blockAuxPrev == NULL && blockAux->pnextBlock == NULL) { // if the index is for the first block AND there's only one block
+//            game->pfirstBlock = NULL;
+//        }else if(blockAuxPrev == NULL){// if the index is for the first block
+//            game->pfirstBlock = blockAux->pnextBlock;
+//        }else{
+//            blockAuxPrev->pnextBlock = blockAux->pnextBlock;
+//        }
     }else{
         return NULL;
     }
@@ -140,9 +143,9 @@ BLOCK *popBlock(GAME *game, int index){
  */
 BLOCK *transferBlock(BLOCK *delBlock){
     BLOCK *blockAux = (BLOCK*)malloc(sizeof(BLOCK));
-    blockAux->leftSide = delBlock->leftSide;
-    blockAux->rightSide = delBlock->rightSide;
-    blockAux->available = delBlock->available;
+    blockAux->leftSide   = delBlock->leftSide;
+    blockAux->rightSide  = delBlock->rightSide;
+    blockAux->available  = delBlock->available;
     blockAux->pnextBlock = NULL;
     free(delBlock);
     return blockAux;

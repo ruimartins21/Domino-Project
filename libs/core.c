@@ -26,7 +26,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
         handAux = (HAND*)malloc(sizeof(HAND));
         for (j = 0; j < hands->handSize; j++) {
             if(linesCount < 27){
-                randValue = 0 + rand() % ((MAX28-1) - linesCount);
+                randValue = 0 + rand() % ((MAX28-1) - linesCount); // it needs to be sent MAX28 - 1 because the popBlock function works with numbers between 0 and 27
             }else{
                 randValue = 0;
             }
@@ -41,7 +41,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
             linesCount++;
         }
         handAux->pnextHand = hands->pfirstHand;
-        hands->pfirstHand = handAux;
+        hands->pfirstHand  = handAux;
     }
 }
 
