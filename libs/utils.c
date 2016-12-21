@@ -58,11 +58,11 @@ void printHand(HANDS hands){
     }
 }
 
-void printTesteHand(HAND hand, int handSize){
+void printSingleHand(HAND hand, int handSize){
     BLOCK *pblock = hand.pfirstBlock;
     int i;
     for (i = 0; i < handSize && pblock != NULL; i++) {
-        printf("[%d , %d]\n", pblock->leftSide, pblock->rightSide);
+        printf("[%d , %d] ", pblock->leftSide, pblock->rightSide);
         pblock = pblock->pnextBlock;
     }
 }
@@ -149,6 +149,38 @@ BLOCK *transferBlock(BLOCK *delBlock){
     blockAux->pnextBlock = NULL;
     free(delBlock);
     return blockAux;
+}
+
+/**
+ * Swaps the contents of the given block with the block existing in the game structure at the given index
+ * @param handBlock is the block to wich will be copied the contents of the game block wanted
+ * @param index is where the game block wanted is located
+ */
+void swapBlock(GAME *game, BLOCK *handBlock, int index){
+    int i = 0;
+    if(index > game->availableBlocks){
+        printf("\n!! The block you are trying to get isn't available !!\n");
+        return;
+    }
+    BLOCK *blockAux = game->pfirstBlock;
+    BLOCK *blockTemp = (BLOCK*)malloc(sizeof(BLOCK));
+    while(i != index && blockAux != NULL){
+        blockAux = blockAux->pnextBlock;
+        i++;
+    }
+    if(blockAux != NULL){
+        // swapping manually because we don't want to change the pointers to the next block
+        blockTemp->leftSide  = handBlock->leftSide;
+        blockTemp->rightSide = handBlock->rightSide;
+        blockTemp->available = handBlock->available;
+        handBlock->leftSide  = blockAux->leftSide;
+        handBlock->rightSide = blockAux->rightSide;
+        handBlock->available = blockAux->available;
+        blockAux->leftSide   = blockTemp->leftSide;
+        blockAux->rightSide  = blockTemp->rightSide;
+        blockAux->available  = blockTemp->available;
+    }
+    free(blockTemp);
 }
 
 /**

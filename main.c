@@ -113,29 +113,32 @@ int main(int argc, char *argv[])
             openFile(fileName, typeOfFile, &hands, &game);
         }
     }
-    // if the game matrix is empty there's no blocks that can be edited
-//    if(game.availableBlocks > 0){
-//        // Editing part: shows the user all the hands made before and asks if he wants to change anything
-//        edited = editHands(game, hands);
-//    }
-//    if(!edited && path == 5) {
-//        // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
-//    }else {
-//        // loaded the game from file and edited? then edit the existing file
-//        if(path == 5){
-//            editFile(fileName, typeOfFile, hands, game);
-//        }else{
-//            path = 6;
-//            choice = printMenu(path);
-//            // if the user chose to save the game in a file
-//            if (choice) {
-//                path += 1;
-//                typeOfFile = printMenu(path);
-//                createGameFile(typeOfFile, hands, game);
-//            }
-//        }
-//    }
-//    // at this point the game is ready to be played so we move on to generating the sequences
+    // if the game has no blocks, it's not possible to edit
+    if(game.availableBlocks > 0){
+        // Editing part: shows the user all the hands made before and asks if he wants to change anything
+        edited = editHands(&hands, &game);
+    }
+    if(!edited && path == 5) {
+        // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
+    }else {
+        if(path == 5){ // loaded the game from file and edited? then edit the existing file
+            editFile(fileName, typeOfFile, hands, game);
+        }else{ // if it enter here, the game wasn't loaded from a file so asks the user if he wants to save the game
+            path = 6;
+            choice = printMenu(path);
+            // if the user chose to save the game in a file
+            if (choice) {
+                path += 1;
+                typeOfFile = printMenu(path);
+                createGameFile(typeOfFile, hands, game);
+            }
+        }
+    }
+//    printf("\n## Game (%d) ##\n", game.availableBlocks);
+//    printGame(game);
+//    printf("\n## Hands ##\n");
+//    printHand(hands);
+    // at this point the game is ready to be played so we move on to generating the sequences
 //    initMat(allSequences, MAX2000, 57);
 //    generateSequence(hand, handSize, sequence, allSequences , 0);
 //    numberOfSequences = sortAllSequences(allSequences);

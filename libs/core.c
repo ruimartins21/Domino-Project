@@ -5,6 +5,7 @@
 #include "core.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 /**
  * Function that generates player hand randomly
@@ -18,6 +19,11 @@
  * @param qtSet Number of hands to generate
  */
 void generateRandomHand(GAME *game, HANDS *hands) {
+
+    long ultime;
+    time(&ultime);
+    srand((unsigned)ultime);
+
     int i = 0, j = 0, randValue = 0, linesCount = 0;
     HAND *handAux = NULL;
     BLOCK *delBlock = NULL, *blockAux = NULL;

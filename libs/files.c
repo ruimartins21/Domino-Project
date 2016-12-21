@@ -240,7 +240,7 @@ void editFile(char fileName[], int type, HANDS hands, GAME game) {
  */
 void createGameFile(int type, HANDS hands, GAME game) {
     FILE *file = NULL;
-    int auxInt;
+    int auxInt, i;
     char fileName[40], path[40] = "data/";
     // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
 //    mkdir(path); // creates the folder if it doesn't yet exists
@@ -274,9 +274,11 @@ void createGameFile(int type, HANDS hands, GAME game) {
                 // stores the hands generated
                 while(handAux != NULL){
                     blockAux = handAux->pfirstBlock;
-                    while(blockAux != NULL){
+                    i = 0;
+                    while(blockAux != NULL && i < hands.handSize){
                         fprintf(file, "\n%d%d", blockAux->leftSide, blockAux->rightSide);
                         blockAux = blockAux->pnextBlock;
+                        i++;
                     }
                     handAux = handAux->pnextHand;
                 }
@@ -313,12 +315,14 @@ void createGameFile(int type, HANDS hands, GAME game) {
                 // stores the hands generated
                 while(handAux != NULL){
                     blockAux = handAux->pfirstBlock;
-                    while(blockAux != NULL){
+                    i = 0;
+                    while(blockAux != NULL && i < hands.handSize){
                         auxInt = blockAux->leftSide;
                         fwrite(&auxInt, sizeof(int), 1, file);
                         auxInt = blockAux->rightSide;
                         fwrite(&auxInt, sizeof(int), 1, file);
                         blockAux = blockAux->pnextBlock;
+                        i++;
                     }
                     handAux = handAux->pnextHand;
                 }
