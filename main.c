@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <io.h>
 //#include <dir.h>
 
 void merge_sort_td(int a[], int aux[], int lo, int hi);
@@ -28,8 +29,9 @@ int main(int argc, char *argv[])
     int choice, path = 0, typeOfFile = 0, edited = 0, numberOfSequences;
     int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
     int i = 0, j;
-//    char fileName[40], filePath[40] = "data/";
     srand((unsigned)time(NULL));
+    char fileName[40], filePath[40] = "data/";
+
     GAME game = {0, NULL};
     HANDS hands = {0, 0, NULL};
     SEQUENCE sequence = { 0, NULL};
@@ -68,7 +70,7 @@ int main(int argc, char *argv[])
 //    }
 
     // First iteration of the menu is for the user to choose between starting a new game or loading a saved game from a file
-    /*choice = printMenu(0);
+    choice = printMenu(0);
     if(choice == 1) {
         path += 1; // iterates in the menu
         // Second iteration of the menu asks for the number of hands the users wants the program to use
@@ -112,66 +114,59 @@ int main(int argc, char *argv[])
                 // choose the blocks manually
                 generateManualHand(&game, &hands);
             }
-            generateRandomHand(&game, &hands);
-            printf("\n## Game (%d) ##\n", game.availableBlocks);
-            printGame(game);
-            printf("\n## Hands ##\n");
-            printHand(hands);
-            generateSequence(&hands, &sequence, &allsequences, 0);
         }
-// retirar ao descomentar para baixo
-    }*/
-//    }else if(choice == 2){
-//        // load a game from file
-//        path = 5;
-//        // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-////        mkdir("data/"); // creates the folder if it doesn't yet exists
-//        printf("\nFiles existing (.txt):\n");
-//        system("dir/b data\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
-//        printf("\nFiles existing (.bin):\n");
-//        system("dir/b data\\*.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
-//        typeOfFile = printMenu(path); // choose between text file or binary file
-//        while(fileExists(filePath) != 1){
-//            strcpy(filePath, "data/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
-//            printf("\nFile name: ");
-//            scanf("%s", fileName);
-//            if(typeOfFile == 1){
-//                checkExtension(fileName, ".txt");
-//            }else{
-//                checkExtension(fileName, ".bin");
-//            }
-//            strcat(filePath, fileName);
-//        }
-//        if(fileExists(filePath)) {
-//            openFile(fileName, typeOfFile, hand, game, &numberOfHands, &handSize);
-//        }
-//        // adds the 3rd column to the hands matrix to generate the sequences correctly
-//        fillHands(hand, handSize, numberOfHands);
-//    }
-//    // if the game matrix is empty there's no blocks that can be edited
-//    if(game[0][0] != -1){
-//        // Editing part: shows the user all the hands made before and asks if he wants to change anything
-//        edited = editHands(game, hand, handSize, numberOfHands);
-//    }
-//    if(!edited && path == 5) {
-//        // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
-//    }else {
-//        // loaded the game from file and edited? then edit the existing file
-//        if(path == 5){
-//            editFile(fileName, typeOfFile, hand, game, numberOfHands, handSize);
-//        }else{
-//            path = 6;
-//            choice = printMenu(path);
-//            // if the user chose to save the game in a file
-//            if (choice) {
-//                path += 1;
-//                typeOfFile = printMenu(path);
-//                createGameFile(typeOfFile, hand, game, numberOfHands, handSize);
-//            }
-//        }
-//    }
-//    // at this point the game is ready to be played so we move on to generating the sequences
-//    initMat(allSequences, MAX5000, 57);
+    }else if(choice == 2){
+        // load a game from file
+        path = 5;
+        // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
+        mkdir("data/"); // creates the folder if it doesn't yet exists
+        printf("\nFiles existing (.txt):\n");
+        system("dir/b data\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
+        printf("\nFiles existing (.bin):\n");
+        system("dir/b data\\*.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
+        typeOfFile = printMenu(path); // choose between text file or binary file
+        while(fileExists(filePath) != 1){
+            strcpy(filePath, "data/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
+            printf("\nFile name: ");
+            scanf("%s", fileName);
+            if(typeOfFile == 1){
+                checkExtension(fileName, ".txt");
+            }else{
+                checkExtension(fileName, ".bin");
+            }
+            strcat(filePath, fileName);
+        }
+        if(fileExists(filePath)) {
+            openFile(fileName, typeOfFile, &hands, &game);
+        }
+    }
+    // if the game has no blocks, it's not possible to edit
+    if(game.availableBlocks > 0){
+        // Editing part: shows the user all the hands made before and asks if he wants to change anything
+        edited = editHands(&hands, &game);
+    }
+    if(!edited && path == 5) {
+        // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
+    }else {
+        if(path == 5){ // loaded the game from file and edited? then edit the existing file
+            editFile(fileName, typeOfFile, hands, game);
+        }else{ // if it enter here, the game wasn't loaded from a file so asks the user if he wants to save the game
+            path = 6;
+            choice = printMenu(path);
+            // if the user chose to save the game in a file
+            if (choice) {
+                path += 1;
+                typeOfFile = printMenu(path);
+                createGameFile(typeOfFile, hands, game);
+            }
+        }
+    }
+//    printf("\n## Game (%d) ##\n", game.availableBlocks);
+//    printGame(game);
+//    printf("\n## Hands ##\n");
+//    printHand(hands);
+    // at this point the game is ready to be played so we move on to generating the sequences
+//    initMat(allSequences, MAX2000, 57);
 //    generateSequence(hand, handSize, sequence, allSequences , 0);
 //    numberOfSequences = sortAllSequences(allSequences);
 //    printf("\t\t\t\t#  GAME COMPLETED  #\n\n");

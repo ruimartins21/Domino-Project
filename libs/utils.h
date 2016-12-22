@@ -50,10 +50,11 @@ typedef struct allSequences{
 void getGame(GAME *game);
 void printGame(GAME game);
 void printHand(HANDS hands);
-void printTesteHand(HAND hand, int handSize);
+void printSingleHand(HAND hand, int handSize);
 //void compressMatrix(int matrix[][MAX2], int lines, int index);
 BLOCK *popBlock(GAME *game, int index);
 BLOCK *transferBlock(BLOCK *delBlock);
+void swapBlock(GAME *game, BLOCK *handBlock, int index);
 void initMat(int m[][MAX57], int lines, int cols);
 void initArray(int array[MAX57]);
 int compareIntValues(const void * a, const void * b);

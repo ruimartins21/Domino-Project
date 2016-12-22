@@ -13,12 +13,11 @@
 #define MAX57 57
 
 int printMenu(int path);
-//void printHand(int hand[][MAX3], int size, int index);
 void printMat(int matrix[][MAX2], int lines);
 void printHands(int hand[][MAX3], int lines);
 int blocksAvailable(GAME game);
 void generateManualHand(GAME *game, HANDS *hands);
-int editHands(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHands);
+int editHands(HANDS *hands, GAME *game);
 void printMatDefault(int matrix[][MAX57], int lines, int cols);
 void printSequences(ALLSEQUENCES allSequences);
 void printArray(int* a, int N);

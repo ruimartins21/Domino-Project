@@ -5,6 +5,7 @@
 #include "core.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 /**
  * Function that generates player hand randomly
@@ -18,6 +19,11 @@
  * @param qtSet Number of hands to generate
  */
 void generateRandomHand(GAME *game, HANDS *hands) {
+
+    long ultime;
+    time(&ultime);
+    srand((unsigned)ultime);
+
     int i = 0, j = 0, randValue = 0, linesCount = 0;
     HAND *handAux = NULL;
     BLOCK *delBlock = NULL, *blockAux = NULL;
@@ -26,7 +32,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
         handAux = (HAND*)malloc(sizeof(HAND));
         for (j = 0; j < hands->handSize; j++) {
             if(linesCount < 27){
-                randValue = 0 + rand() % ((MAX28-1) - linesCount);
+                randValue = 0 + rand() % ((MAX28-1) - linesCount); // it needs to be sent MAX28 - 1 because the popBlock function works with numbers between 0 and 27
             }else{
                 randValue = 0;
             }
@@ -41,7 +47,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
             linesCount++;
         }
         handAux->pnextHand = hands->pfirstHand;
-        hands->pfirstHand = handAux;
+        hands->pfirstHand  = handAux;
     }
 }
 

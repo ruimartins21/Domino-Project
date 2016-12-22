@@ -38,11 +38,9 @@ void getGame(GAME *game) {
 
 void printGame(GAME game){
     BLOCK *blockAux = game.pfirstBlock;
-    int i = game.availableBlocks;
-    while(i != 0 && blockAux != NULL){
+    while(blockAux != NULL){
         printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
         blockAux = blockAux->pnextBlock;
-        i--;
     }
 }
 
@@ -58,6 +56,15 @@ void printHand(HANDS hands){
         }
         printf("\n");
         handAux = handAux->pnextHand;
+    }
+}
+
+void printSingleHand(HAND hand, int handSize){
+    BLOCK *pblock = hand.pfirstBlock;
+    int i;
+    for (i = 0; i < handSize && pblock != NULL; i++) {
+        printf("[%d , %d] ", pblock->leftSide, pblock->rightSide);
+        pblock = pblock->pnextBlock;
     }
 }
 
@@ -84,15 +91,6 @@ void printAllSequence(ALLSEQUENCES allsequences){
         pauxSequence = pauxSequence->pnextSequence;
     }
 
-}
-
-void printTesteHand(HAND hand, int handSize){
-    BLOCK *pblock = hand.pfirstBlock;
-    int i;
-    for (i = 0; i < handSize && pblock != NULL; i++) {
-        printf("[%d , %d]\n", pblock->leftSide, pblock->rightSide);
-        pblock = pblock->pnextBlock;
-    }
 }
 
 /**
@@ -145,13 +143,18 @@ BLOCK *popBlock(GAME *game, int index){
         i++;
     }
     if(blockAux != NULL){
-        if(blockAuxPrev == NULL && blockAux->pnextBlock == NULL) { // if the index is for the first block AND there's only one block
-            game->pfirstBlock = NULL;
-        }else if(blockAuxPrev == NULL){// if the index is for the first block
+        if(blockAuxPrev == NULL){// if the index is for the first block
             game->pfirstBlock = blockAux->pnextBlock;
         }else{
             blockAuxPrev->pnextBlock = blockAux->pnextBlock;
         }
+//        if(blockAuxPrev == NULL && blockAux->pnextBlock == NULL) { // if the index is for the first block AND there's only one block
+//            game->pfirstBlock = NULL;
+//        }else if(blockAuxPrev == NULL){// if the index is for the first block
+//            game->pfirstBlock = blockAux->pnextBlock;
+//        }else{
+//            blockAuxPrev->pnextBlock = blockAux->pnextBlock;
+//        }
     }else{
         return NULL;
     }
@@ -166,13 +169,45 @@ BLOCK *popBlock(GAME *game, int index){
  */
 BLOCK *transferBlock(BLOCK *delBlock){
     BLOCK *blockAux = (BLOCK*)malloc(sizeof(BLOCK));
-    blockAux->leftSide = delBlock->leftSide;
-    blockAux->rightSide = delBlock->rightSide;
-    blockAux->available = delBlock->available;
+    blockAux->leftSide   = delBlock->leftSide;
+    blockAux->rightSide  = delBlock->rightSide;
+    blockAux->available  = delBlock->available;
     blockAux->pnextBlock = NULL;
     blockAux->prevBlock = NULL;
     free(delBlock);
     return blockAux;
+}
+
+/**
+ * Swaps the contents of the given block with the block existing in the game structure at the given index
+ * @param handBlock is the block to wich will be copied the contents of the game block wanted
+ * @param index is where the game block wanted is located
+ */
+void swapBlock(GAME *game, BLOCK *handBlock, int index){
+    int i = 0;
+    if(index > game->availableBlocks){
+        printf("\n!! The block you are trying to get isn't available !!\n");
+        return;
+    }
+    BLOCK *blockAux = game->pfirstBlock;
+    BLOCK *blockTemp = (BLOCK*)malloc(sizeof(BLOCK));
+    while(i != index && blockAux != NULL){
+        blockAux = blockAux->pnextBlock;
+        i++;
+    }
+    if(blockAux != NULL){
+        // swapping manually because we don't want to change the pointers to the next block
+        blockTemp->leftSide  = handBlock->leftSide;
+        blockTemp->rightSide = handBlock->rightSide;
+        blockTemp->available = handBlock->available;
+        handBlock->leftSide  = blockAux->leftSide;
+        handBlock->rightSide = blockAux->rightSide;
+        handBlock->available = blockAux->available;
+        blockAux->leftSide   = blockTemp->leftSide;
+        blockAux->rightSide  = blockTemp->rightSide;
+        blockAux->available  = blockTemp->available;
+    }
+    free(blockTemp);
 }
 
 /**

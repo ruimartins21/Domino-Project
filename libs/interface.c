@@ -284,12 +284,15 @@ void generateManualHand(GAME *game, HANDS *hands) {
  * @param numberOfHands is the number of hands existing
  * @return returns 0 if the user doesn't want to edit anything and 1 if the user edited something
  */
-int editHands(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHands) {
-    int i, j, handId = 0, removeId, addId = 0, blocksLimit, edited = 0, validate = 0, choice = 'y';
+int editHands(HANDS *hands, GAME *game) {
+    int i, j, handId = 0, removeId = 0, addId = 0, blocksLimit, edited = 0, validate = 0, choice = 'y';
+    HAND *handAux = NULL;
     while (1) {
-        for (i = 0; i < numberOfHands; i++) {
+        handAux = hands->pfirstHand;
+        for (i = 0; i < hands->numberOfHands && handAux != NULL; i++) {
             printf("\n#%2d = Hand %d: ", i + 1, i + 1);
-//            printHand(hand, handSize, i);
+            printSingleHand(*handAux, hands->handSize);
+            handAux = handAux->pnextHand;
         }
         while (!validate) {
             printf("\nDo you wish to change anything before proceeding? (Y/N): ");
@@ -307,37 +310,50 @@ int editHands(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHa
             // if the user decided to not edit, since it's inside a loop, we need to check if he edited anything before
             return edited;
         }
-        if (numberOfHands > 1) {
-            printf("\nEnter the id of the hand to edit: ");
-            scanf("%d", &handId);
-            handId -= 1;
-            handId = (handId == 0 ? handId : handId *
-                                             handSize); // arithmetic to reach the desired hand on the matrix of hands
+        if (hands->numberOfHands > 1) {
+            while(handId < 1 || handId > hands->numberOfHands) {
+                printf("\nEnter the id of the hand to edit: ");
+                scanf("%d", &handId);
+            }
+            handAux = hands->pfirstHand;
+            i = 1;
+            while(i < handId && handAux != NULL){
+                handAux = handAux->pnextHand;
+                i++;
+            }
         }
-        for (i = 0, j = handId; i < handSize; i++, j++) {
-            printf(" #%2d = [%d|%d]", i + 1, hand[j][0], hand[j][1]);
+        if(handAux == NULL) {
+            printf("!!! Invalid choice !!!\n");
+            validate = 0;
+            continue;
         }
-        printf("\nWhich block do you want to change? ");
-        scanf("%d", &removeId);
-        removeId -= 1;
-        // to this removeId it's needed to add the previous handId index so we can reach the correct hand inside the hands matrix and then move the desired index
-        removeId += handId;
-//        blocksLimit = blocksAvailable(matrix);
+        BLOCK *blockAux = handAux->pfirstBlock;
+        for (i = 0, j = handId; i < hands->handSize; i++, j++) {
+            printf(" #%2d = [%d|%d]", i + 1, blockAux->leftSide, blockAux->rightSide);
+            blockAux = blockAux->pnextBlock;
+        }
+        while(removeId < 1 || removeId > hands->handSize){
+            printf("\nWhich block do you want to change? ");
+            scanf("%d", &removeId);
+        }
+        blockAux = handAux->pfirstBlock;
+        i = 1;
+        while(i < removeId && blockAux != NULL){
+            blockAux = blockAux->pnextBlock;
+            i++;
+        }
+        blocksLimit = blocksAvailable(*game);
         while (addId < 1 || addId > blocksLimit) {
             printf("\nChoose a block to insert from the available blocks above: ");
             scanf("%d", &addId);
         }
         addId -= 1;
-        // swaps the block chosen from the game matrix with the block chosen on the hand
-        i = matrix[addId][0];
-        j = matrix[addId][1];
-        matrix[addId][0] = hand[removeId][0];
-        matrix[addId][1] = hand[removeId][1];
-        hand[removeId][0] = i;
-        hand[removeId][1] = j;
+        printf("\nindex: %d", addId);
+        swapBlock(game, blockAux, addId);
         edited = 1;
         // reset variables
         addId = 0;
+        handId = 0;
         removeId = 0;
     }
 }
