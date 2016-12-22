@@ -6,10 +6,11 @@
 #define DOMINO_PROJECT_UTILS_H
 
 typedef struct block{
-    int rightSide;
     int leftSide;
+    int rightSide;
     int available;
     struct block *pnextBlock;
+    struct block *prevBlock; // aponta para anterior
 }BLOCK;
 
 typedef struct game{
@@ -31,6 +32,7 @@ typedef struct hands{
 typedef struct sequence{
     int sizeOfSequence;
     BLOCK *pfirstBlock;
+
     struct sequence *pnextSequence;
 }SEQUENCE;
 
@@ -43,7 +45,7 @@ typedef struct allSequences{
 #define MAX3 3
 #define MAX28 28
 #define MAX57 57
-#define MAX2000 2000
+#define MAX5000 5000
 
 void getGame(GAME *game);
 void printGame(GAME game);
@@ -59,5 +61,7 @@ void sortIntArray(int * v, int n);
 void checkExtension(char fileName[], char extension[]);
 int fileExists(char fileName[]);
 void fillHands(int hand[][MAX3], int handSize, int numberOfHands);
+void printSequence(SEQUENCE sequence);
+void printAllSequence(ALLSEQUENCES allsequences);
 
 #endif //DOMINO_PROJECT_UTILS_H

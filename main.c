@@ -9,7 +9,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 //#include <dir.h>
+
+void merge_sort_td(int a[], int aux[], int lo, int hi);
+void merge_arrays(int a[], int aux[], int lo, int mid, int hi);
+void client_Merge_Sort_td();
 
 /**
  * Project main function
@@ -24,11 +29,32 @@ int main(int argc, char *argv[])
     int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
     int i = 0, j;
 //    char fileName[40], filePath[40] = "data/";
-
+    srand((unsigned)time(NULL));
     GAME game = {0, NULL};
     HANDS hands = {0, 0, NULL};
+    SEQUENCE sequence = { 0, NULL};
+    ALLSEQUENCES allsequences = { 0, NULL};
 //    BLOCK *pblock = NULL;
     getGame(&game);
+    int count = 0;
+    hands.handSize = 8;
+
+
+
+    hands.numberOfHands = 1;
+    generateRandomHand(&game, &hands);
+//    generateManualHand(&game, &hands);
+    printf("\n## Game (%d) ##\n", game.availableBlocks);
+    printGame(game);
+    printf("\n## Hands ##\n");
+    printHand(hands);
+    generateSequence(&hands, &sequence, &allsequences, 0, &count);
+    printf("Nº sequencias: %d\n", count);
+    printf("Nº sequencias saved: %d\n", allsequences.numberOfSequences);
+//    printAllSequence(allsequences);
+
+//    client_Merge_Sort_td();
+
 //    free(blockAux);
 //    generateRandomHand(&game, &hands);
 //    openFile("teste.bin", 2, &hands, &game);
@@ -42,7 +68,7 @@ int main(int argc, char *argv[])
 //    }
 
     // First iteration of the menu is for the user to choose between starting a new game or loading a saved game from a file
-    choice = printMenu(0);
+    /*choice = printMenu(0);
     if(choice == 1) {
         path += 1; // iterates in the menu
         // Second iteration of the menu asks for the number of hands the users wants the program to use
@@ -86,13 +112,15 @@ int main(int argc, char *argv[])
                 // choose the blocks manually
                 generateManualHand(&game, &hands);
             }
+            generateRandomHand(&game, &hands);
             printf("\n## Game (%d) ##\n", game.availableBlocks);
             printGame(game);
             printf("\n## Hands ##\n");
             printHand(hands);
+            generateSequence(&hands, &sequence, &allsequences, 0);
         }
 // retirar ao descomentar para baixo
-    }
+    }*/
 //    }else if(choice == 2){
 //        // load a game from file
 //        path = 5;
@@ -143,7 +171,7 @@ int main(int argc, char *argv[])
 //        }
 //    }
 //    // at this point the game is ready to be played so we move on to generating the sequences
-//    initMat(allSequences, MAX2000, 57);
+//    initMat(allSequences, MAX5000, 57);
 //    generateSequence(hand, handSize, sequence, allSequences , 0);
 //    numberOfSequences = sortAllSequences(allSequences);
 //    printf("\t\t\t\t#  GAME COMPLETED  #\n\n");
@@ -158,3 +186,33 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+/*
+void merge_sort_td(int a[], int aux[], int lo, int hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (hi <= lo) return;
+        merge_sort_td(a, aux, lo, mid);
+        merge_sort_td(a, aux, mid + 1, hi);
+        merge_arrays(a, aux, lo, mid, hi);
+}
+
+void merge_arrays(int a[], int aux[], int lo, int mid, int hi) {
+        int i = lo, j = mid + 1, k;
+        for (k = lo; k <= hi; k++) // copy
+            aux[k] = a[k];
+        for (k = lo; k <= hi; k++) { // merge
+                if (i > mid) a[k] = aux[j++];
+                else if (j > hi) a[k] = aux[i++];
+                else if (aux[j] < aux[i]) a[k] = aux[j++];
+                else a[k] = aux[i++];
+            }
+}
+void client_Merge_Sort_td() {
+        int i;
+        int v[] = {10, 33, 22, 4, 75, 3, 68, 13, 55, 34};
+        int N = 10;
+        int v2[10];
+        merge_sort_td(v, v2, 0, N - 1);
+        for (i = 0; i < N; i++) {
+                printf("%d ", v[i]);
+            }
+}*/

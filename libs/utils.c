@@ -24,6 +24,7 @@ void getGame(GAME *game) {
             blockAux->leftSide   = l;
             blockAux->rightSide  = c;
             blockAux->available  = 1;
+            blockAux->prevBlock  =  NULL;
             if(i == 27){
                 blockAux->pnextBlock = NULL;
             }else{
@@ -52,12 +53,37 @@ void printHand(HANDS hands){
     for (i = 0; i < hands.numberOfHands && handAux != NULL; i++) {
         blockAux = handAux->pfirstBlock;
         for (j = 0; j < hands.handSize; j++) {
-            printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
+            printf("[%d, %d] [%d]\n", blockAux->leftSide, blockAux->rightSide, blockAux->available);
             blockAux = blockAux->pnextBlock;
         }
         printf("\n");
         handAux = handAux->pnextHand;
     }
+}
+
+void printSequence(SEQUENCE sequence){
+    BLOCK *blockAux = sequence.pfirstBlock;;
+    int i;
+    for (i = 0; i < sequence.sizeOfSequence; i++) {
+        printf("[%d, %d]", blockAux->leftSide, blockAux->rightSide);
+        blockAux = blockAux->pnextBlock;
+    }
+    printf("\n");
+}
+
+void printAllSequence(ALLSEQUENCES allsequences){
+    SEQUENCE *pauxSequence = allsequences.pfirstSequence;
+    BLOCK *blockAux = pauxSequence->pfirstBlock;;
+    int i;
+    while (pauxSequence != NULL){
+        for (i = 0; i < pauxSequence->sizeOfSequence; i++) {
+            printf("[%d, %d]", blockAux->leftSide, blockAux->rightSide);
+            blockAux = blockAux->pnextBlock;
+        }
+        printf("\n");
+        pauxSequence = pauxSequence->pnextSequence;
+    }
+
 }
 
 void printTesteHand(HAND hand, int handSize){
@@ -144,6 +170,7 @@ BLOCK *transferBlock(BLOCK *delBlock){
     blockAux->rightSide = delBlock->rightSide;
     blockAux->available = delBlock->available;
     blockAux->pnextBlock = NULL;
+    blockAux->prevBlock = NULL;
     free(delBlock);
     return blockAux;
 }
