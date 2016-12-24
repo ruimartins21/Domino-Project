@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
     printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
 
 //    generateSequence(&hands, &sequence, &allsequences, 0, &count, 0);
-    printf("Nº sequencias: %d\n", count);
-    printf("Nº sequencias saved: %ld\n", allsequences.numberOfSequences);
+    printf("N sequencias: %d\n", count);
+    printf("N sequencias saved: %ld\n", allsequences.numberOfSequences);
 //    printAllSequence(allsequences);
 //    sortAllSequences(&allsequences);
     return 0;

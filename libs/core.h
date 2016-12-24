@@ -19,7 +19,7 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
 int isConsistent(SEQUENCE *pSequence, BLOCK *newBlock, int inserted);
 void invertBlock(BLOCK *pBlock);
 void invertBlockSequence(SEQUENCE *pSequence);
-void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE *pSequence);
+void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence);
 
 void sortAllSequences(ALLSEQUENCES *allSequences);
 SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b);

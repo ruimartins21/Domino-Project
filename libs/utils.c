@@ -98,9 +98,11 @@ void printSequence(SEQUENCE sequence){
 
 void printAllSequence(ALLSEQUENCES allsequences){
     SEQUENCE *pauxSequence = allsequences.pfirstSequence;
-    BLOCK *blockAux = pauxSequence->pfirstBlock;;
+//    BLOCK *blockAux = pauxSequence->pfirstBlock;
+    BLOCK *blockAux = NULL;
     int i;
     while (pauxSequence != NULL){
+        blockAux = pauxSequence->pfirstBlock;
         for (i = 0; i < pauxSequence->sizeOfSequence; i++) {
             printf("[%d, %d]", blockAux->leftSide, blockAux->rightSide);
             blockAux = blockAux->pnextBlock;

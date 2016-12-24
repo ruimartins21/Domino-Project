@@ -183,13 +183,13 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                 if(pSequence->sizeOfSequence == pHands->handSize)
                     (*count)++;
 
-//                printf("antes de gravar\n");
+                printf("antes de gravar\n");
                 printSequence(*pSequence);
 
-                saveSequence(pAllsequences, pSequence);
-//                printf("depois de gravar\n");
-//                printSequence(*pSequence);
-//                printf("--------------------------\n\n");
+                saveSequence(pAllsequences, *pSequence);
+                printf("depois de gravar\n");
+                printSequence(*pSequence);
+                printf("--------------------------\n\n");
                 generateSequence(pHands, pSequence, pAllsequences, inserted, count);
 
                 BLOCK *paux = pSequence->pfirstBlock->prevBlock;
@@ -201,8 +201,9 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                 inserted--;
             }
         }
-        if(blockAux->pnextBlock != NULL)
+        if(blockAux->pnextBlock != NULL){
             blockAux = blockAux->pnextBlock;
+        }
     }
     return 0;
 }
@@ -218,15 +219,34 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
  * @param sizeOfSequence the size of the sequence to store
  * @param handSize is the size of the hands, required for some conditions
  */
-void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE *pSequence) {
+void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
+    // Soluçao Ricardo
+    // A sequencia passada vem so o seu conteudo para ser copiado para o novo espaço de memoria criado,
+    // mas os blocos correspondentes (SE for criada a memoria para cada bloco no generateSequence nao precisa de ser copiado para lado nenhum
+    // e usa-se esses espaços)
+    SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+    *pnew = pSequence;
+    // insert at the head
+    if(allSequences->pfirstSequence == NULL){
+        pnew->pnextSequence = NULL;
+        allSequences->pfirstSequence = pnew;
+    }else{
+        pnew->pnextSequence = allSequences->pfirstSequence;
+        allSequences->pfirstSequence = pnew;
+    }
+    allSequences->numberOfSequences++;
 
+
+
+
+    // Soluçao Rui
 //    int i =0;
 //    SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
 //    pnew->sizeOfSequence = pSequence->sizeOfSequence;
 //    BLOCK *pnewB = (BLOCK*)malloc(sizeof(BLOCK));
-//    *pnewB = *pSequence->pfirstBlock;
-//    pnewB->pnextBlock=pnewB;
-//    pnewB->prevBlock=pnewB;
+//    pnewB = pSequence->pfirstBlock;
+//    pnewB->pnextBlock = NULL;
+//    pnewB->prevBlock = NULL;
 //    pnew->pfirstBlock = pnewB;
 //
 //
@@ -258,16 +278,16 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE *pSequence) {
 
 
 //    o que estava 1 fase
-    SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
-    *pnew = *pSequence;
-    if(allSequences->pfirstSequence == NULL){
-        allSequences->pfirstSequence = pnew;
-        allSequences->numberOfSequences++;
-        return;
-    }
-    pnew->pnextSequence = allSequences->pfirstSequence;
-    allSequences->pfirstSequence = pnew;
-    allSequences->numberOfSequences++;
+//    SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+//    *pnew = *pSequence;
+//    if(allSequences->pfirstSequence == NULL){
+//        allSequences->pfirstSequence = pnew;
+//        allSequences->numberOfSequences++;
+//        return;
+//    }
+//    pnew->pnextSequence = allSequences->pfirstSequence;
+//    allSequences->pfirstSequence = pnew;
+//    allSequences->numberOfSequences++;
 
 //    sortAllSequences(allSequences);
 
