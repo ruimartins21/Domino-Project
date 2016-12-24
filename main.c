@@ -10,12 +10,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
-#include <io.h>
+#include <math.h>
+//#include <io.h>
 //#include <dir.h>
+//#include "libs/teste-merge.h"
 
 void merge_sort_td(int a[], int aux[], int lo, int hi);
 void merge_arrays(int a[], int aux[], int lo, int mid, int hi);
 void client_Merge_Sort_td();
+
+int gettimeuseconds(long long * time_usec) {
+    struct timeval time;
+    gettimeofday(&time,NULL);
+
+    *time_usec=(long long) (time.tv_sec * 1000000 + time.tv_usec);
+    return 0;
+}
 
 /**
  * Project main function
@@ -30,7 +40,7 @@ int main(int argc, char *argv[])
     int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
     int i = 0, j;
     srand((unsigned)time(NULL));
-    char fileName[40], filePath[40] = "data/";
+    char fileName[40], filePath[40] = "sizeOfSequence/";
 
     GAME game = {0, NULL};
     HANDS hands = {0, 0, NULL};
@@ -39,22 +49,35 @@ int main(int argc, char *argv[])
 //    BLOCK *pblock = NULL;
     getGame(&game);
     int count = 0;
-    hands.handSize = 8;
+    hands.handSize = 21;
 
 
 
     hands.numberOfHands = 1;
     generateRandomHand(&game, &hands);
 //    generateManualHand(&game, &hands);
-    printf("\n## Game (%d) ##\n", game.availableBlocks);
-    printGame(game);
+//    printf("\n## Game (%d) ##\n", game.availableBlocks);
+//    printGame(game);
     printf("\n## Hands ##\n");
     printHand(hands);
+
+    long long time_usec_init;
+    long long time_usec_end;
+    long elapsed_time;
+    gettimeuseconds(&time_usec_init); // init time
     generateSequence(&hands, &sequence, &allsequences, 0, &count);
+    gettimeuseconds(&time_usec_end); // end time
+    elapsed_time = (long) (time_usec_end - time_usec_init);
+    printf("elapsed time (usec) = %ld\n",elapsed_time);
+    printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
+
+//    generateSequence(&hands, &sequence, &allsequences, 0, &count, 0);
     printf("Nº sequencias: %d\n", count);
     printf("Nº sequencias saved: %d\n", allsequences.numberOfSequences);
 //    printAllSequence(allsequences);
+//    sortAllSequences(&allsequences);
 
+//    main_merge();
 //    client_Merge_Sort_td();
 
 //    free(blockAux);
@@ -70,7 +93,7 @@ int main(int argc, char *argv[])
 //    }
 
     // First iteration of the menu is for the user to choose between starting a new game or loading a saved game from a file
-    choice = printMenu(0);
+    /*choice = printMenu(0);
     if(choice == 1) {
         path += 1; // iterates in the menu
         // Second iteration of the menu asks for the number of hands the users wants the program to use
@@ -119,14 +142,14 @@ int main(int argc, char *argv[])
         // load a game from file
         path = 5;
         // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-        mkdir("data/"); // creates the folder if it doesn't yet exists
+        mkdir("sizeOfSequence/"); // creates the folder if it doesn't yet exists
         printf("\nFiles existing (.txt):\n");
-        system("dir/b data\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
+        system("dir/b sizeOfSequence\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
         printf("\nFiles existing (.bin):\n");
-        system("dir/b data\\*.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
+        system("dir/b sizeOfSequence\\*.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
         typeOfFile = printMenu(path); // choose between text file or binary file
         while(fileExists(filePath) != 1){
-            strcpy(filePath, "data/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
+            strcpy(filePath, "sizeOfSequence/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
             printf("\nFile name: ");
             scanf("%s", fileName);
             if(typeOfFile == 1){
@@ -146,7 +169,7 @@ int main(int argc, char *argv[])
         edited = editHands(&hands, &game);
     }
     if(!edited && path == 5) {
-        // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
+        // if the user loaded the game from a file and didn't edit that sizeOfSequence, it will skip this pnextSequence step that is to save the sizeOfSequence in a file
     }else {
         if(path == 5){ // loaded the game from file and edited? then edit the existing file
             editFile(fileName, typeOfFile, hands, game);
@@ -178,36 +201,36 @@ int main(int argc, char *argv[])
 //        printf("\n# All sequences generated:\n");
 //        printSequences(allSequences, numberOfSequences);
 //    }
-
+*/
     return 0;
 }
-/*
+
 void merge_sort_td(int a[], int aux[], int lo, int hi) {
-        int mid = lo + (hi - lo) / 2;
-        if (hi <= lo) return;
-        merge_sort_td(a, aux, lo, mid);
-        merge_sort_td(a, aux, mid + 1, hi);
-        merge_arrays(a, aux, lo, mid, hi);
+    int mid = lo + (hi - lo) / 2;
+    if (hi <= lo) return;
+    merge_sort_td(a, aux, lo, mid);
+    merge_sort_td(a, aux, mid + 1, hi);
+    merge_arrays(a, aux, lo, mid, hi);
 }
 
 void merge_arrays(int a[], int aux[], int lo, int mid, int hi) {
-        int i = lo, j = mid + 1, k;
-        for (k = lo; k <= hi; k++) // copy
-            aux[k] = a[k];
-        for (k = lo; k <= hi; k++) { // merge
-                if (i > mid) a[k] = aux[j++];
-                else if (j > hi) a[k] = aux[i++];
-                else if (aux[j] < aux[i]) a[k] = aux[j++];
-                else a[k] = aux[i++];
-            }
+    int i = lo, j = mid + 1, k;
+    for (k = lo; k <= hi; k++) // copy
+        aux[k] = a[k];
+    for (k = lo; k <= hi; k++) { // merge
+        if (i > mid) a[k] = aux[j++];
+        else if (j > hi) a[k] = aux[i++];
+        else if (aux[j] < aux[i]) a[k] = aux[j++];
+        else a[k] = aux[i++];
+    }
 }
 void client_Merge_Sort_td() {
-        int i;
-        int v[] = {10, 33, 22, 4, 75, 3, 68, 13, 55, 34};
-        int N = 10;
-        int v2[10];
-        merge_sort_td(v, v2, 0, N - 1);
-        for (i = 0; i < N; i++) {
-                printf("%d ", v[i]);
-            }
-}*/
+    int i;
+    int v[] = {10, 33, 22, 4, 75, 3, 68, 34};
+    int N = 8;
+    int v2[8];
+    merge_sort_td(v, v2, 0, N - 1);
+    for (i = 0; i < N; i++) {
+        printf("%d ", v[i]);
+    }
+}

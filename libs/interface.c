@@ -94,7 +94,7 @@ int printMenu(int path) {
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
-            printf("\t\t\t\tSave game data in a file? (Y/N): ");
+            printf("\t\t\t\tSave game sizeOfSequence in a file? (Y/N): ");
             getchar(); // avoids empty symbols like previous enters
             choiceMade = getchar(); // gets the character needed to answer by its ASCII code
             if (choiceMade != 'Y' && choiceMade != 'y' && choiceMade != 'N' && choiceMade != 'n') {
@@ -109,8 +109,8 @@ int printMenu(int path) {
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
-            printf("\t\t\t\t1 - Save game data in a text file\n");
-            printf("\t\t\t\t2 - Save game data in a binary file\n");
+            printf("\t\t\t\t1 - Save game sizeOfSequence in a text file\n");
+            printf("\t\t\t\t2 - Save game sizeOfSequence in a binary file\n");
             printf("\t\t\t\tChoice: ");
             scanf("%d", &choiceMade);
             if (choiceMade < 1 || choiceMade > 2) {

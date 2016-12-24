@@ -196,7 +196,7 @@ void swapBlock(GAME *game, BLOCK *handBlock, int index){
         i++;
     }
     if(blockAux != NULL){
-        // swapping manually because we don't want to change the pointers to the next block
+        // swapping manually because we don't want to change the pointers to the pnextSequence block
         blockTemp->leftSide  = handBlock->leftSide;
         blockTemp->rightSide = handBlock->rightSide;
         blockTemp->available = handBlock->available;

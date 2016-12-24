@@ -66,12 +66,23 @@ void generateRandomHand(GAME *game, HANDS *hands) {
   * @return
   */
 
-int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, int *count) {
+/*
+int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, int *count, int handId) {
     int i = 0;
     BLOCK *blockAux = NULL;
     HAND *handAux = NULL;
 
     handAux = pHands->pfirstHand; // vai ser usado para varias maos
+
+
+    handId = handId % pHands->numberOfHands; //  mao atual de jogo
+//    printf("Mão[%d]\n", handId);
+
+//    ir buscar a mao correspondente
+    while (i != handId){
+        handAux = handAux->pnextHand;
+        i++;
+    }
     blockAux = handAux->pfirstBlock;
 
     for (i = 0; i < pHands->handSize; i++) {
@@ -86,7 +97,7 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
             pnew->pnextBlock = NULL;
             pnew->prevBlock = NULL;
 
-//            tenho que mandar a ultima peca da sequencia
+
             if (isConsistent(pSequence, pnew, inserted) == 1) {
                 if(inserted == 0) { // se for a primeira peça na sequencia
 
@@ -109,8 +120,76 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                     (*count)++;
 
                 printSequence(*pSequence);
+//                printf("------------------------------------------------------\n");
+//                printHand(*pHands);
 
                 saveSequence(pAllsequences, pSequence);
+                if(pHands->numberOfHands > 1)
+                    handId = handId+1;
+                generateSequence(pHands, pSequence, pAllsequences, inserted, count, handId);
+
+                BLOCK *paux = pSequence->pfirstBlock->prevBlock;
+                blockAux->available = 1; // block is available if it didn't fit
+                pSequence->pfirstBlock->prevBlock = pSequence->pfirstBlock->prevBlock->prevBlock;
+                pSequence->pfirstBlock->prevBlock->pnextBlock = pSequence->pfirstBlock;
+                free(paux);
+                pSequence->sizeOfSequence --;
+                inserted--;
+            }
+        }
+        if(blockAux->pnextBlock != NULL)
+            blockAux = blockAux->pnextBlock;
+    }
+    return 0;
+}
+*/
+
+int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, int *count) {
+    int i = 0;
+    BLOCK *blockAux = NULL;
+    HAND *handAux = NULL;
+
+    handAux = pHands->pfirstHand; // vai ser usado para varias maos
+    blockAux = handAux->pfirstBlock;
+
+    for (i = 0; i < pHands->handSize; i++) {
+//         if the block is available
+        if (blockAux->available == 1) {
+
+            BLOCK *pnew = (BLOCK *) malloc(sizeof(BLOCK));
+//            nova peca a inserir na sequencia
+            pnew->leftSide = blockAux->leftSide;
+            pnew->rightSide = blockAux->rightSide;
+            pnew->available = 0;
+            pnew->pnextBlock = NULL;
+            pnew->prevBlock = NULL;
+
+            if (isConsistent(pSequence, pnew, inserted) == 1) {
+                if(inserted == 0) { // se for a primeira peça na sequencia
+                    pSequence->pfirstBlock = pnew;
+                    pSequence->pfirstBlock->pnextBlock = pnew;
+                    pSequence->pfirstBlock->prevBlock = pnew;
+                }else{
+                    pSequence->pfirstBlock->prevBlock->pnextBlock = pnew;
+                    pnew->prevBlock = pSequence->pfirstBlock->prevBlock;
+                    pnew->pnextBlock = pSequence->pfirstBlock;
+                    pSequence->pfirstBlock->prevBlock = pnew;
+                }
+
+                inserted++;
+                pSequence->sizeOfSequence++;
+                blockAux->available = 0; // block is now unavailable
+
+                if(pSequence->sizeOfSequence == pHands->handSize)
+                    (*count)++;
+
+//                printf("antes de gravar\n");
+                printSequence(*pSequence);
+
+                saveSequence(pAllsequences, pSequence);
+//                printf("depois de gravar\n");
+//                printSequence(*pSequence);
+//                printf("--------------------------\n\n");
                 generateSequence(pHands, pSequence, pAllsequences, inserted, count);
 
                 BLOCK *paux = pSequence->pfirstBlock->prevBlock;
@@ -118,13 +197,8 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                 pSequence->pfirstBlock->prevBlock = pSequence->pfirstBlock->prevBlock->prevBlock;
                 pSequence->pfirstBlock->prevBlock->pnextBlock = pSequence->pfirstBlock;
                 free(paux);
-//                pSequence->pfirstBlock->prevBlock->prevBlock = pSequence->pfirstBlock->prevBlock->pnextBlock;
-//                free()
-//                pSequence->pfirstBlock->prevBlock = pSequence->pfirstBlock->prevBlock->prevBlock;
-//                pSequence->pfirstBlock->prevBlock = pSequence->pfirstBlock->prevBlock->pnextBlock->pnextBlock;
                 pSequence->sizeOfSequence --;
                 inserted--;
-//                printSequence(*pSequence);
             }
         }
         if(blockAux->pnextBlock != NULL)
@@ -145,45 +219,62 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
  * @param handSize is the size of the hands, required for some conditions
  */
 void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE *pSequence) {
-//    if( allSequences->numberOfSequences < MAX5000){
-        SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
-        *pnew = *pSequence;
-        if(allSequences->pfirstSequence == NULL){
-            allSequences->pfirstSequence = pnew;
-            allSequences->numberOfSequences++;
-            return;
-        }
-        pnew->pnextSequence = allSequences->pfirstSequence;
+
+//    int i =0;
+//    SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+//    pnew->sizeOfSequence = pSequence->sizeOfSequence;
+//    BLOCK *pnewB = (BLOCK*)malloc(sizeof(BLOCK));
+//    *pnewB = *pSequence->pfirstBlock;
+//    pnewB->pnextBlock=pnewB;
+//    pnewB->prevBlock=pnewB;
+//    pnew->pfirstBlock = pnewB;
+//
+//
+//
+//    for(i=1;i<pSequence->sizeOfSequence;i++){
+//        BLOCK *pnewBaux = (BLOCK*)malloc(sizeof(BLOCK));
+//        *pnewBaux = *pSequence->pfirstBlock->pnextBlock;
+//        pnewB->pnextBlock = pnewBaux;
+//        pnewB->prevBlock = pnewBaux;
+//        pnewBaux->prevBlock = pnewB;
+//        pnewBaux->pnextBlock = pnew->pfirstBlock;
+//        pnewB = pnewB->pnextBlock;
+//        pSequence->pfirstBlock = pSequence->pfirstBlock->pnextBlock;
+//
+//    }
+//
+//    pnew->pnextSequence = NULL;
+//
+//
+//    if(allSequences->pfirstSequence == NULL){
+//        allSequences->pfirstSequence = pnew;
+//        allSequences->numberOfSequences++;
+//        return;
+//    }
+//    pnew->pnextSequence = allSequences->pfirstSequence;
+//    allSequences->pfirstSequence = pnew;
+//    allSequences->numberOfSequences++;
+
+
+
+//    o que estava 1 fase
+    SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+    *pnew = *pSequence;
+    if(allSequences->pfirstSequence == NULL){
         allSequences->pfirstSequence = pnew;
         allSequences->numberOfSequences++;
+        return;
+    }
+    pnew->pnextSequence = allSequences->pfirstSequence;
+    allSequences->pfirstSequence = pnew;
+    allSequences->numberOfSequences++;
 
-    sortAllSequences(allSequences);
+//    sortAllSequences(allSequences);
 
 //    } else if(allSequences->numberOfSequences == MAX5000){
 //        printf("chegou aos 5000\n");
 
 //    printAllSequence(*allSequences);
-
-//        FILE *fp=NULL;
-//        SEQUENCE *pauxSequence = allSequences->pfirstSequence;
-//        int i = 0;
-//        fp=fopen("/Users/ruimartins/ClionProjects/Domino-Project/data/teste.txt","w");
-//
-//        fprintf(fp,"\ntotal de sequencias:%d\n", allSequences->numberOfSequences);
-//
-//        BLOCK *blockAux = pauxSequence->pfirstBlock;
-//        while (pauxSequence != NULL && allSequences->numberOfSequences < MAX5000){
-//            for (i = 0; i < pauxSequence->sizeOfSequence; i++) {
-//                printf("[%d, %d]", blockAux->leftSide, blockAux->rightSide);
-//                blockAux = blockAux->pnextBlock;
-//            }
-//            printf("\n");
-//            pauxSequence = pauxSequence->pnextSequence;
-//        }
-
-//    }
-
-
 
 }
 
@@ -196,8 +287,180 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE *pSequence) {
 
 void sortAllSequences(ALLSEQUENCES *allSequences) {
 
+    printAllSequence(*allSequences);
+    /* Sort the above created Linked List */
+    mergeSort(&(allSequences->pfirstSequence));
+    printAllSequence(*allSequences);
+
 
 }
+
+/* sorts the linked list by changing pnextSequence pointers (not sizeOfSequence) */
+void mergeSort(struct sequence* *headRef)
+{
+    SEQUENCE *head = *headRef;
+    SEQUENCE *a = NULL;
+    SEQUENCE *b = NULL;
+
+    /* Base case -- length 0 or 1 */
+    if ((head == NULL) || (head->pnextSequence == NULL))
+    {
+        return;
+    }
+
+    /* Split head into 'a' and 'b' sublists */
+    frontBackSplit(head, &a, &b);
+
+    /* Recursively sort the sublists */
+    mergeSort(&a);
+    mergeSort(&b);
+
+    /* answer = merge the two sorted lists together */
+    *headRef = sortedMerge(a, b);
+}
+
+SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b)
+{
+    SEQUENCE *result = NULL;
+
+    /* Base cases */
+    if (a == NULL)
+        return(b);
+    else if (b==NULL)
+        return(a);
+
+    /* Pick either a or b, and recur */
+    if (a->sizeOfSequence <= b->sizeOfSequence)
+    {
+        result = a;
+        result->pnextSequence = sortedMerge(a->pnextSequence, b);
+    }
+    else
+    {
+        result = b;
+        result->pnextSequence = sortedMerge(a, b->pnextSequence);
+    }
+    return(result);
+}
+
+/* UTILITY FUNCTIONS */
+/* Split the nodes of the given list into front and back halves,
+     and return the two lists using the reference parameters.
+     If the length is odd, the extra sequence2 should go in the front list.
+     Uses the fast/slow pointer strategy.  */
+void frontBackSplit(SEQUENCE *source, struct sequence* *frontRef, struct sequence* *backRef)
+{
+    SEQUENCE *fast = NULL;
+    SEQUENCE *slow = NULL;
+    if (source==NULL || source->pnextSequence==NULL)
+    {
+        /* length < 2 cases */
+        *frontRef = source;
+        *backRef = NULL;
+    }
+    else
+    {
+        slow = source;
+        fast = source->pnextSequence;
+
+        /* Advance 'fast' two nodes, and advance 'slow' one sequence2 */
+        while (fast != NULL)
+        {
+            fast = fast->pnextSequence;
+            if (fast != NULL)
+            {
+                slow = slow->pnextSequence;
+                fast = fast->pnextSequence;
+            }
+        }
+
+        /* 'slow' is before the midpoint in the list, so split it in two
+          at that point. */
+        *frontRef = source;
+        *backRef = slow->pnextSequence;
+        slow->pnextSequence = NULL;
+    }
+}
+
+//
+//void merge(ALLSEQUENCES *allsequences, ALLSEQUENCES *paux, int lo, int mid, int hi) {
+//    SEQUENCE *seqAuxK = allsequences->pfirstSequence, *pantK = NULL;
+//    int i = lo, j = mid + 1, k, iter = 0;
+//    for (k = lo; k <= hi; k++){// copy
+//        paux = allsequences;
+//    }
+//
+//    SEQUENCE *seqAuxJ = paux->pfirstSequence, *pantJ = NULL;
+//    SEQUENCE *seqAuxI = paux->pfirstSequence, *pantI = NULL;
+//
+//
+//    for (k = lo; k <= hi; k++) { // merge
+//        while(iter != k){
+//            pantK = seqAuxK;
+//            seqAuxK = seqAuxK->pnextSequence;
+//            iter++;
+//        }
+//        iter = 0;
+//        while(iter != j){
+//            pantJ = seqAuxJ;
+//            seqAuxJ = seqAuxJ->pnextSequence;
+//            iter++;
+//        }
+//        iter = 0;
+//        while(iter != i){
+//            pantI = seqAuxI;
+//            seqAuxI = seqAuxI->pnextSequence;
+//            iter++;
+//        }
+//        if (i > mid){
+//            if(seqAuxK == allsequences->pfirstSequence){
+//                pantJ->pnextSequence = seqAuxJ->pnextSequence;
+//                seqAuxJ->pnextSequence = seqAuxK->pnextSequence;
+//                seqAuxK = seqAuxJ;
+//            }else{
+//                pantK->pnextSequence = seqAuxJ;
+//                seqAuxJ->pnextSequence = seqAuxK->pnextSequence;
+//                seqAuxK = seqAuxJ;
+//            }
+//
+//        }else if (j > hi){
+//            if(pantK == NULL){
+//                seqAuxI->pnextSequence = seqAuxK->pnextSequence;
+//                seqAuxK = seqAuxI;
+//            }else{
+//                pantK->pnextSequence = seqAuxJ;
+//                seqAuxJ->pnextSequence = seqAuxK->pnextSequence;
+//                seqAuxK = seqAuxJ;
+//            }
+//        }else if ( seqAuxJ->sizeOfSequence < seqAuxI->sizeOfSequence){
+//            if(pantK == NULL){
+//                seqAuxJ->pnextSequence = seqAuxK->pnextSequence;
+//                seqAuxK = seqAuxJ;
+//            }else{
+//                pantK->pnextSequence = seqAuxJ;
+//                seqAuxJ->pnextSequence = seqAuxK->pnextSequence;
+//                seqAuxK = seqAuxJ;
+//            }
+//        }else{
+//            if(pantK == NULL){
+//                seqAuxI->pnextSequence = seqAuxK->pnextSequence;
+//                seqAuxK = seqAuxI;
+//            }else{
+//                pantK->pnextSequence = seqAuxJ;
+//                seqAuxJ->pnextSequence = seqAuxK->pnextSequence;
+//                seqAuxK = seqAuxJ;
+//            }
+//        }
+//
+//    }
+
+//    for (k = lo; k <= hi; k++) { // merge
+//        if (i > mid) a[k] = aux[j++];
+//        else if (j > hi) a[k] = aux[i++];
+//        else if (aux[j] < aux[i]) a[k] = aux[j++];
+//        else a[k] = aux[i++];
+//    }
+//}
 
 
 /**

@@ -32,7 +32,6 @@ typedef struct hands{
 typedef struct sequence{
     int sizeOfSequence;
     BLOCK *pfirstBlock;
-
     struct sequence *pnextSequence;
 }SEQUENCE;
 
