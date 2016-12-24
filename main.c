@@ -9,23 +9,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
+#include <time.h>
 #include <math.h>
 //#include <io.h>
 //#include <dir.h>
-//#include "libs/teste-merge.h"
 
 void merge_sort_td(int a[], int aux[], int lo, int hi);
 void merge_arrays(int a[], int aux[], int lo, int mid, int hi);
 void client_Merge_Sort_td();
-
-int gettimeuseconds(long long * time_usec) {
-    struct timeval time;
-    gettimeofday(&time,NULL);
-
-    *time_usec=(long long) (time.tv_sec * 1000000 + time.tv_usec);
-    return 0;
-}
 
 /**
  * Project main function
@@ -49,7 +40,7 @@ int main(int argc, char *argv[])
 //    BLOCK *pblock = NULL;
     getGame(&game);
     int count = 0;
-    hands.handSize = 21;
+    hands.handSize = 5;
 
 
 
@@ -73,10 +64,10 @@ int main(int argc, char *argv[])
 
 //    generateSequence(&hands, &sequence, &allsequences, 0, &count, 0);
     printf("Nº sequencias: %d\n", count);
-    printf("Nº sequencias saved: %d\n", allsequences.numberOfSequences);
+    printf("Nº sequencias saved: %ld\n", allsequences.numberOfSequences);
 //    printAllSequence(allsequences);
 //    sortAllSequences(&allsequences);
-
+    return 0;
 //    main_merge();
 //    client_Merge_Sort_td();
 
@@ -93,7 +84,7 @@ int main(int argc, char *argv[])
 //    }
 
     // First iteration of the menu is for the user to choose between starting a new game or loading a saved game from a file
-    /*choice = printMenu(0);
+    choice = printMenu(0);
     if(choice == 1) {
         path += 1; // iterates in the menu
         // Second iteration of the menu asks for the number of hands the users wants the program to use
@@ -142,14 +133,14 @@ int main(int argc, char *argv[])
         // load a game from file
         path = 5;
         // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-        mkdir("sizeOfSequence/"); // creates the folder if it doesn't yet exists
+//        mkdir("data/"); // creates the folder if it doesn't yet exists
         printf("\nFiles existing (.txt):\n");
-        system("dir/b sizeOfSequence\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
+        system("dir/b data\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
         printf("\nFiles existing (.bin):\n");
-        system("dir/b sizeOfSequence\\*.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
+        system("dir/b data\\*.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
         typeOfFile = printMenu(path); // choose between text file or binary file
         while(fileExists(filePath) != 1){
-            strcpy(filePath, "sizeOfSequence/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
+            strcpy(filePath, "data/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
             printf("\nFile name: ");
             scanf("%s", fileName);
             if(typeOfFile == 1){
@@ -169,7 +160,7 @@ int main(int argc, char *argv[])
         edited = editHands(&hands, &game);
     }
     if(!edited && path == 5) {
-        // if the user loaded the game from a file and didn't edit that sizeOfSequence, it will skip this pnextSequence step that is to save the sizeOfSequence in a file
+        // if the user loaded the game from a file and didn't edit that data, it will skip this next step that is to save the data in a file
     }else {
         if(path == 5){ // loaded the game from file and edited? then edit the existing file
             editFile(fileName, typeOfFile, hands, game);
@@ -201,7 +192,11 @@ int main(int argc, char *argv[])
 //        printf("\n# All sequences generated:\n");
 //        printSequences(allSequences, numberOfSequences);
 //    }
-*/
+
+//        printf("\n## Game (%d) ##\n", game.availableBlocks);
+//        printGame(game);
+//        printf("\n## Hands ##\n");
+//        printHand(hands);
     return 0;
 }
 

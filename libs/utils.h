@@ -46,6 +46,13 @@ typedef struct allSequences{
 #define MAX57 57
 #define MAX5000 5000
 
+#if defined _WIN64 || defined _WIN32
+    #include <windows.h>
+#else
+    #include <sys/time.h>
+#endif
+
+int gettimeuseconds(long long * time_usec);
 void getGame(GAME *game);
 void printGame(GAME game);
 void printHand(HANDS hands);

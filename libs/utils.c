@@ -4,9 +4,27 @@
 
 #include "utils.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+
+#ifdef WIN32
+int gettimeuseconds(long long * time_usec) {
+    union {
+        long long ns100; //time since 1 Jan 1601 in 100ns units
+        FILETIME ft;
+    } now;
+
+    GetSystemTimeAsFileTime( &(now.ft) ); // win32 function!
+    *time_usec=(long long) (now.ns100 / 10LL);
+    return 0;
+}
+#else
+int gettimeuseconds(long long * time_usec) {
+    struct timeval time;
+    gettimeofday(&time,NULL);
+
+    *time_usec=(long long) (time.tv_sec * 1000000 + time.tv_usec);
+    return 0;
+}
+#endif
 
 /**
  * Generates initial game matrix
