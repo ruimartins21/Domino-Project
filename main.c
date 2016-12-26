@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 //    BLOCK *pblock = NULL;
     getGame(&game);
     int count = 0;
-    hands.handSize = 5;
+    hands.handSize = 10;
 
 
 
@@ -52,20 +52,21 @@ int main(int argc, char *argv[])
     printf("\n## Hands ##\n");
     printHand(hands);
 
-    long long time_usec_init;
-    long long time_usec_end;
-    long elapsed_time;
-    gettimeuseconds(&time_usec_init); // init time
+//    long long time_usec_init;
+//    long long time_usec_end;
+//    long elapsed_time;
+//    gettimeuseconds(&time_usec_init); // init time
     generateSequence(&hands, &sequence, &allsequences, 0, &count);
-    gettimeuseconds(&time_usec_end); // end time
-    elapsed_time = (long) (time_usec_end - time_usec_init);
-    printf("elapsed time (usec) = %ld\n",elapsed_time);
-    printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
+//    gettimeuseconds(&time_usec_end); // end time
+//    elapsed_time = (long) (time_usec_end - time_usec_init);
+//    printf("elapsed time (usec) = %ld\n",elapsed_time);
+//    printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
 
 //    generateSequence(&hands, &sequence, &allsequences, 0, &count, 0);
-    printf("N sequencias: %d\n", count);
-    printf("N sequencias saved: %ld\n", allsequences.numberOfSequences);
-//    printAllSequence(allsequences);
+    printf("\nSequencias:\n");
+    printAllSequence(allsequences);
+    printf("N sequencias completas: %d\n", count);
+    printf("N sequencias guardadas: %ld\n", allsequences.numberOfSequences);
 //    sortAllSequences(&allsequences);
     return 0;
 //    main_merge();

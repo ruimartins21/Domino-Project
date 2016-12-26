@@ -183,13 +183,13 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                 if(pSequence->sizeOfSequence == pHands->handSize)
                     (*count)++;
 
-                printf("antes de gravar\n");
-                printSequence(*pSequence);
+//                printf("antes de gravar\n");
+//                printSequence(*pSequence);
 
                 saveSequence(pAllsequences, *pSequence);
-                printf("depois de gravar\n");
-                printSequence(*pSequence);
-                printf("--------------------------\n\n");
+//                printf("depois de gravar\n");
+//                printSequence(*pSequence);
+//                printf("--------------------------\n\n");
                 generateSequence(pHands, pSequence, pAllsequences, inserted, count);
 
                 BLOCK *paux = pSequence->pfirstBlock->prevBlock;
@@ -221,22 +221,42 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
  */
 void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
     // Soluçao Ricardo
-    // A sequencia passada vem so o seu conteudo para ser copiado para o novo espaço de memoria criado,
-    // mas os blocos correspondentes (SE for criada a memoria para cada bloco no generateSequence nao precisa de ser copiado para lado nenhum
-    // e usa-se esses espaços)
-    SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
-    *pnew = pSequence;
-    // insert at the head
+
+    SEQUENCE *newSequence = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+    *newSequence = pSequence;
+    newSequence->pfirstBlock = NULL;
+    BLOCK *newBlock = NULL, *blockAux = pSequence.pfirstBlock, *lastBlock = NULL;
+    int i;
+    // creates new memory spaces for the sequence blocks
+    // because the ones generated and passed through pSequence will be modified in generateSequence function
+    for (i = 0; i < newSequence->sizeOfSequence && blockAux != NULL; i++) {
+        newBlock = (BLOCK*)malloc(sizeof(BLOCK));
+        *newBlock = *blockAux;
+        newBlock->pnextBlock = NULL; // it will always be the last block
+        if(newSequence->pfirstBlock == NULL){
+            newBlock->prevBlock  = newBlock;
+            newSequence->pfirstBlock = newBlock;
+        }else{
+            // insertion at the tail in a doubly linked list
+            lastBlock = newSequence->pfirstBlock;
+            while(lastBlock->pnextBlock != NULL){
+                lastBlock = lastBlock->pnextBlock;
+            }
+            newSequence->pfirstBlock->prevBlock = newBlock; // first block pointing to the last one
+            lastBlock->pnextBlock = newBlock; // previous last block pointing to the new last block
+            newBlock->prevBlock = lastBlock; // last block pointing to the previous block
+        }
+        blockAux = blockAux->pnextBlock;
+    }
+    // insert new sequences at the head
     if(allSequences->pfirstSequence == NULL){
-        pnew->pnextSequence = NULL;
-        allSequences->pfirstSequence = pnew;
+        newSequence->pnextSequence = NULL;
+        allSequences->pfirstSequence = newSequence;
     }else{
-        pnew->pnextSequence = allSequences->pfirstSequence;
-        allSequences->pfirstSequence = pnew;
+        newSequence->pnextSequence = allSequences->pfirstSequence;
+        allSequences->pfirstSequence = newSequence;
     }
     allSequences->numberOfSequences++;
-
-
 
 
     // Soluçao Rui

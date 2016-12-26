@@ -114,36 +114,6 @@ void printAllSequence(ALLSEQUENCES allsequences){
 }
 
 /**
- * Function that compresses the game matrix
- * Used to generated random hands
- * -> Drops index of generated number from deck and put it on player hand
- * -> Compress Matrix and puts "-1" in the last position
- *
- * @param matrix Initial Matrix (with the number of blocks existing at the time)
- * @param lines Number of lines existing at the previous matrix
- * @param index Position of the block to be withdrawn to the player hand
- * if it's NULL it will get the lines given and "compress" the matrix to be that size only
- */
-//void compressMatrix(int matrix[][MAX2], int lines, int index) {
-//    int i;
-//    if (index == -1) {
-//        // it will compress the matrix to the size given from the lines parameter
-//        // after the size given fills with -1 until the limit size (28)
-//        for (i = lines; i < (lines + (28 - lines)); i++) {
-//            matrix[i][0] = -1;
-//            matrix[i][1] = -1;
-//        }
-//    } else {
-//        for (; index < lines; index++) {
-//            matrix[index][0] = matrix[index + 1][0];
-//            matrix[index][1] = matrix[index + 1][1];
-//        }
-//        matrix[index - 1][0] = -1;
-//        matrix[index - 1][1] = -1;
-//    }
-//}
-
-/**
  * Returns a certain block at the index given and removes it from the linked list
  * @param game structure that has the non-used blocks
  * @param index position of the block to pop
@@ -168,13 +138,6 @@ BLOCK *popBlock(GAME *game, int index){
         }else{
             blockAuxPrev->pnextBlock = blockAux->pnextBlock;
         }
-//        if(blockAuxPrev == NULL && blockAux->pnextBlock == NULL) { // if the index is for the first block AND there's only one block
-//            game->pfirstBlock = NULL;
-//        }else if(blockAuxPrev == NULL){// if the index is for the first block
-//            game->pfirstBlock = blockAux->pnextBlock;
-//        }else{
-//            blockAuxPrev->pnextBlock = blockAux->pnextBlock;
-//        }
     }else{
         return NULL;
     }
