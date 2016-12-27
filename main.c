@@ -27,48 +27,46 @@ void client_Merge_Sort_td();
  */
 int main(int argc, char *argv[])
 {
-    int choice, path = 0, typeOfFile = 0, edited = 0, numberOfSequences;
+    int choice, path = 0, typeOfFile = 0, edited = 0;
+    unsigned long cost = 0;
     int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
-    int i = 0, j;
     srand((unsigned)time(NULL));
-    char fileName[40], filePath[40] = "sizeOfSequence/";
+    char fileName[40], filePath[40] = "data/";
 
     GAME game = {0, NULL};
     HANDS hands = {0, 0, NULL};
     SEQUENCE sequence = { 0, NULL};
-    ALLSEQUENCES allsequences = { 0, NULL};
+    ALLSEQUENCES allSequences = { 0, NULL};
 //    BLOCK *pblock = NULL;
-    getGame(&game);
+//    getGame(&game);
     int count = 0;
-    hands.handSize = 10;
-
-
-
-    hands.numberOfHands = 1;
-    generateRandomHand(&game, &hands);
-//    generateManualHand(&game, &hands);
-//    printf("\n## Game (%d) ##\n", game.availableBlocks);
-//    printGame(game);
-    printf("\n## Hands ##\n");
-    printHand(hands);
-
-//    long long time_usec_init;
-//    long long time_usec_end;
-//    long elapsed_time;
-//    gettimeuseconds(&time_usec_init); // init time
-    generateSequence(&hands, &sequence, &allsequences, 0, &count);
-//    gettimeuseconds(&time_usec_end); // end time
-//    elapsed_time = (long) (time_usec_end - time_usec_init);
-//    printf("elapsed time (usec) = %ld\n",elapsed_time);
-//    printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
-
+//    hands.handSize = 5;
+//
+//    hands.numberOfHands = 1;
+//    generateRandomHand(&game, &hands);
+////    generateManualHand(&game, &hands);
+////    printf("\n## Game (%d) ##\n", game.availableBlocks);
+////    printGame(game);
+//    printf("\n## Hands ##\n");
+//    printHand(hands);
+//
+////    long long time_usec_init;
+////    long long time_usec_end;
+////    long elapsed_time;
+////    gettimeuseconds(&time_usec_init); // init time
+//    generateSequence(&hands, &sequence, &allSequences, 0, &count);
+////    gettimeuseconds(&time_usec_end); // end time
+////    elapsed_time = (long) (time_usec_end - time_usec_init);
+////    printf("elapsed time (usec) = %ld\n",elapsed_time);
+////    printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
+//
 //    generateSequence(&hands, &sequence, &allsequences, 0, &count, 0);
-    printf("\nSequencias:\n");
-    printAllSequence(allsequences);
-    printf("N sequencias completas: %d\n", count);
-    printf("N sequencias guardadas: %ld\n", allsequences.numberOfSequences);
-//    sortAllSequences(&allsequences);
-    return 0;
+//    printf("\nSequencias:\n");
+//    printAllSequence(allSequences);
+//    printf("N sequencias completas: %d\n", count);
+//    printf("N sequencias guardadas: %ld\n", allSequences.numberOfSequences);
+////    sortAllSequences(&allsequences);
+//    return 0;
 //    main_merge();
 //    client_Merge_Sort_td();
 
@@ -176,28 +174,40 @@ int main(int argc, char *argv[])
             }
         }
     }
-//    printf("\n## Game (%d) ##\n", game.availableBlocks);
-//    printGame(game);
-//    printf("\n## Hands ##\n");
-//    printHand(hands);
     // at this point the game is ready to be played so we move on to generating the sequences
-//    initMat(allSequences, MAX2000, 57);
-//    generateSequence(hand, handSize, sequence, allSequences , 0);
-//    numberOfSequences = sortAllSequences(allSequences);
-//    printf("\t\t\t\t#  GAME COMPLETED  #\n\n");
-//    choice = printMenu(8);
-//    if(choice == 1){
-//        printf("\n# The biggest sequence generated was:\n");
-//        printSequences(allSequences, 1);
-//    }else{
-//        printf("\n# All sequences generated:\n");
-//        printSequences(allSequences, numberOfSequences);
-//    }
+    long long time_usec_init;
+    long long time_usec_end;
+    long elapsed_time;
+    gettimeuseconds(&time_usec_init); // init time
+    generateSequence(&hands, &sequence, &allSequences, 0, &count);
+    gettimeuseconds(&time_usec_end); // end time
+    elapsed_time = (long) (time_usec_end - time_usec_init);
+    printf("\t\t\t\t#  GAME COMPLETED  #\n\n");
+    printf("Some statistics about the game generated:\n");
+    printf("elapsed time (usec) = %ld\n",elapsed_time);
+    printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
+    printf("Number of completed sequences (using all the blocks): %d\n", count);
+    printf("Number of saved sequences: %ld\n", allSequences.numberOfSequences);
+    path = 8;
+    choice = printMenu(path);
+    if(choice == 1) {
+        printf("\n# The biggest sequence generated was:\n");
+        printSequences(allSequences, 1);
+    }else if(choice == 2){
+        printf("\nSize of the sequences to see: ");
+        scanf("%d", &path); // re-use of the variable "path" since it's no longer needed for the menu path
+        STRINGSEQ *sequenceAux = findSequenceOfSize(allSequences, path, &cost); // returns the first sequence of the given size
+//        printSequences(allSequences, 0);
+//        printf("\nPrimeira sequencia de tamanho %d: [%s] - Custo: %ld\n", path, sequenceAux->sequence, cost);
+        printSequenceOfSize(*sequenceAux, path);
+    }else if(choice == 3){
+        printf("\n# All sequences generated:\n");
+        printSequences(allSequences, 0);
+    }else if(choice == 4){
 
-//        printf("\n## Game (%d) ##\n", game.availableBlocks);
-//        printGame(game);
-//        printf("\n## Hands ##\n");
-//        printHand(hands);
+    }else if(choice == 5){
+
+    }
     return 0;
 }
 

@@ -3,6 +3,7 @@
 /// @copyright
 
 #include "core.h"
+#include "interface.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -220,40 +221,71 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
  * @param handSize is the size of the hands, required for some conditions
  */
 void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
-    // Soluçao Ricardo
+    // Soluçao Ricardo - INTS
 
-    SEQUENCE *newSequence = (SEQUENCE*)malloc(sizeof(SEQUENCE));
-    *newSequence = pSequence;
-    newSequence->pfirstBlock = NULL;
-    BLOCK *newBlock = NULL, *blockAux = pSequence.pfirstBlock, *lastBlock = NULL;
+//    SEQUENCE *newSequence = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+//    *newSequence = pSequence;
+//    newSequence->pfirstBlock = NULL;
+//    BLOCK *newBlock = NULL, *blockAux = pSequence.pfirstBlock, *lastBlock = NULL;
+//    int i;
+//    // creates new memory spaces for the sequence blocks
+//    // because the ones generated and passed through pSequence will be modified in generateSequence function
+//    for (i = 0; i < newSequence->sizeOfSequence && blockAux != NULL; i++) {
+//        newBlock = (BLOCK*)malloc(sizeof(BLOCK));
+//        *newBlock = *blockAux;
+//        newBlock->pnextBlock = NULL; // it will always be the last block
+//        if(newSequence->pfirstBlock == NULL){
+//            newBlock->prevBlock  = newBlock;
+//            newSequence->pfirstBlock = newBlock;
+//        }else{
+//            // insertion at the tail in a doubly linked list
+//            lastBlock = newSequence->pfirstBlock;
+//            while(lastBlock->pnextBlock != NULL){
+//                lastBlock = lastBlock->pnextBlock;
+//            }
+//            newSequence->pfirstBlock->prevBlock = newBlock; // first block pointing to the last one
+//            lastBlock->pnextBlock = newBlock; // previous last block pointing to the new last block
+//            newBlock->prevBlock = lastBlock; // last block pointing to the previous block
+//        }
+//        blockAux = blockAux->pnextBlock;
+//    }
+//    // insert new sequences at the head
+//    if(allSequences->pfirstSequence == NULL){
+//        newSequence->pnextSequence = NULL;
+//        allSequences->pfirstSequence = newSequence;
+//    }else{
+//        newSequence->pnextSequence = allSequences->pfirstSequence;
+//        allSequences->pfirstSequence = newSequence;
+//    }
+//    allSequences->numberOfSequences++;
+
+    // Solucao Ricardo - STRINGS
+    STRINGSEQ *newSequence = (STRINGSEQ*)malloc(sizeof(STRINGSEQ));
+    newSequence->sizeOfSequence = pSequence.sizeOfSequence;
+    BLOCK *blockAux = pSequence.pfirstBlock;
     int i;
-    // creates new memory spaces for the sequence blocks
-    // because the ones generated and passed through pSequence will be modified in generateSequence function
+    // creates space for all the values existing in the sequence
+    // the size of the sequence is the ammount of blocks, so the size needed is the double, for each value, and each block as 2 values
+    // the + 1 at the end is for the end of the string '\0' when there's a sequence that uses all the blocks
+    char *blockString = (char*)malloc( sizeof(char) * (newSequence->sizeOfSequence*2) + 1 );
+    *blockString = '\0'; // initialize the string as empty
+    int blockStringLen = 0;
     for (i = 0; i < newSequence->sizeOfSequence && blockAux != NULL; i++) {
-        newBlock = (BLOCK*)malloc(sizeof(BLOCK));
-        *newBlock = *blockAux;
-        newBlock->pnextBlock = NULL; // it will always be the last block
-        if(newSequence->pfirstBlock == NULL){
-            newBlock->prevBlock  = newBlock;
-            newSequence->pfirstBlock = newBlock;
-        }else{
-            // insertion at the tail in a doubly linked list
-            lastBlock = newSequence->pfirstBlock;
-            while(lastBlock->pnextBlock != NULL){
-                lastBlock = lastBlock->pnextBlock;
-            }
-            newSequence->pfirstBlock->prevBlock = newBlock; // first block pointing to the last one
-            lastBlock->pnextBlock = newBlock; // previous last block pointing to the new last block
-            newBlock->prevBlock = lastBlock; // last block pointing to the previous block
-        }
+        blockStringLen = strlen(blockString);
+        *(blockString + blockStringLen)     = '0' + blockAux->leftSide;
+        *(blockString + (blockStringLen+1)) = '0' + blockAux->rightSide;
+        *(blockString + (blockStringLen+2)) = '\0';
         blockAux = blockAux->pnextBlock;
     }
-    // insert new sequences at the head
+    // at this point there's a string created with all the values of each block existing in the sequence
+    newSequence->sequence = createDynamicString(blockString);
+    free(blockString);
+    //insert new sequences at the head
     if(allSequences->pfirstSequence == NULL){
-        newSequence->pnextSequence = NULL;
+        newSequence->pnextStringSeq = NULL;
         allSequences->pfirstSequence = newSequence;
     }else{
-        newSequence->pnextSequence = allSequences->pfirstSequence;
+        newSequence->pnextStringSeq = allSequences->pfirstSequence;
         allSequences->pfirstSequence = newSequence;
     }
     allSequences->numberOfSequences++;
@@ -314,7 +346,7 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
 //    } else if(allSequences->numberOfSequences == MAX5000){
 //        printf("chegou aos 5000\n");
 
-//    printAllSequence(*allSequences);
+//    printSequences(*allSequences,0);
 
 }
 
@@ -327,12 +359,27 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
 
 void sortAllSequences(ALLSEQUENCES *allSequences) {
 
-    printAllSequence(*allSequences);
+    printSequences(*allSequences, 0);
     /* Sort the above created Linked List */
     mergeSort(&(allSequences->pfirstSequence));
-    printAllSequence(*allSequences);
+    printSequences(*allSequences, 0);
 
 
+}
+
+STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel){
+    STRINGSEQ *sequenceAux = allSequences.pfirstSequence;
+    *costModel = 0;
+    unsigned long lo = 0, hi = allSequences.numberOfSequences-1;
+    while (lo <= hi || sequenceAux != NULL) {
+        *costModel += 1;
+        unsigned long mid = (lo + hi) / 2;
+        if      (size < sequenceAux->sizeOfSequence) hi = mid - 1;
+        else if (size > sequenceAux->sizeOfSequence) lo = mid + 1;
+        else return sequenceAux;
+        sequenceAux = sequenceAux->pnextStringSeq;
+    }
+    return NULL;
 }
 
 /* sorts the linked list by changing pnextSequence pointers (not sizeOfSequence) */

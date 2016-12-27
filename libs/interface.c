@@ -94,7 +94,7 @@ int printMenu(int path) {
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
-            printf("\t\t\t\tSave game sizeOfSequence in a file? (Y/N): ");
+            printf("\t\t\t\tSave game data in a file? (Y/N): ");
             getchar(); // avoids empty symbols like previous enters
             choiceMade = getchar(); // gets the character needed to answer by its ASCII code
             if (choiceMade != 'Y' && choiceMade != 'y' && choiceMade != 'N' && choiceMade != 'n') {
@@ -109,8 +109,8 @@ int printMenu(int path) {
             printf("\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
-            printf("\t\t\t\t1 - Save game sizeOfSequence in a text file\n");
-            printf("\t\t\t\t2 - Save game sizeOfSequence in a binary file\n");
+            printf("\t\t\t\t1 - Save game data in a text file\n");
+            printf("\t\t\t\t2 - Save game data in a binary file\n");
             printf("\t\t\t\tChoice: ");
             scanf("%d", &choiceMade);
             if (choiceMade < 1 || choiceMade > 2) {
@@ -125,16 +125,14 @@ int printMenu(int path) {
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - See the biggest sequence\n");
-            printf("\t\t\t\t2 - See all the sequences\n");
-//            printf("\t\t\t\t3 - Search a sequence\n");
-//            printf("\t\t\t\t4 - Search a pattern in the sequences\n");
-//            printf("\t\t\t\t5 - Replace a pattern in the sequences\n");
+            printf("\t\t\t\t2 - See the sequences of a certain size\n");
+            printf("\t\t\t\t3 - See all the sequences\n");
+            printf("\t\t\t\t4 - Search a pattern in the sequences\n");
+            printf("\t\t\t\t5 - Replace a pattern in the sequences\n");
             printf("\t\t\t\tChoice: ");
             scanf("%d", &choiceMade);
-//            if (choiceMade < 1 || choiceMade > 5) {
-            if (choiceMade < 1 || choiceMade > 2) {
-//                printf("!!! Please choose a number between 1 & 5. !!!\n");
-                printf("!!! Please choose a number between 1 & 2. !!!\n");
+            if (choiceMade < 1 || choiceMade > 5) {
+                printf("!!! Please choose a number between 1 & 5. !!!\n");
                 return printMenu(path);
             } else {
                 return choiceMade;
@@ -310,12 +308,12 @@ int editHands(HANDS *hands, GAME *game) {
             // if the user decided to not edit, since it's inside a loop, we need to check if he edited anything before
             return edited;
         }
+        handAux = hands->pfirstHand;
         if (hands->numberOfHands > 1) {
             while(handId < 1 || handId > hands->numberOfHands) {
                 printf("\nEnter the id of the hand to edit: ");
                 scanf("%d", &handId);
             }
-            handAux = hands->pfirstHand;
             i = 1;
             while(i < handId && handAux != NULL){
                 handAux = handAux->pnextHand;
@@ -377,22 +375,64 @@ void printMatDefault(int matrix[][MAX57], int lines, int cols) {
 }
 
 /**
- * Function that prints the allSequences matrix with the proper info for the user to see
- * @param matrix is the allSequences matrix
- * @param lines are the number of sequences on it
- * @param cols are the columns to print, maximum is 57
+ * Function that prints the allSequences structure with the proper info for the user to see
+ * @param allSequences is the structure that stores all the sequences generated
+ * @param size is a parameter to check if the user wants to see all the sequences or only the biggest one
  */
-void printSequences(ALLSEQUENCES allSequences) {
-    int l = 0, c = 0;
-    unsigned long lines = allSequences.numberOfSequences;
-    SEQUENCE *paux = allSequences.pfirstSequence;
-    for (l = 0; l < lines; l++) {
-        BLOCK *pblocks = paux->pfirstBlock;
-        for (c = 0; c < paux->sizeOfSequence && pblocks != NULL; c++) {
-            printf("[%d, %d] ", pblocks->leftSide, pblocks->rightSide);
-            pblocks = pblocks->pnextBlock;
+void printSequences(ALLSEQUENCES allSequences, int size){
+    STRINGSEQ *pauxSequence = allSequences.pfirstSequence;
+    int i, blockStringLen = 0;
+    if(size == 1){
+        // print only the biggest sequence, since it's an ordered list of sequences, the biggest is the first one
+        blockStringLen = strlen(pauxSequence->sequence);
+        for (i = 0; i < blockStringLen; i++) {
+            if(i%2 == 0){
+                printf("[");
+                printf("%c,", *(pauxSequence->sequence + i));
+            }
+            if((i+1)%2 == 0){
+                printf("%c", *(pauxSequence->sequence + i));
+                printf("]");
+            }
         }
-        paux++;
+        printf(" Using %d blocks\n", pauxSequence->sizeOfSequence);
+    }else{
+        // print all the sequences generated
+        while (pauxSequence != NULL){
+            blockStringLen = strlen(pauxSequence->sequence);
+            for (i = 0; i < blockStringLen; i++) {
+                if(i%2 == 0){
+                    printf("[");
+                    printf("%c,", *(pauxSequence->sequence + i));
+                }
+                if((i+1)%2 == 0){
+                    printf("%c", *(pauxSequence->sequence + i));
+                    printf("]");
+                }
+            }
+            printf("\n");
+            pauxSequence = pauxSequence->pnextStringSeq;
+        }
+    }
+}
+
+void printSequenceOfSize(STRINGSEQ sequence, int size){
+    STRINGSEQ *sequenceAux = &sequence;
+    int blockStringLen, i;
+    while(sequenceAux->sizeOfSequence == size){
+        blockStringLen = strlen(sequenceAux->sequence);
+        for (i = 0; i < blockStringLen; i++) {
+            if(i%2 == 0){
+                printf("[");
+                printf("%c,", *(sequenceAux->sequence + i));
+            }
+            if((i+1)%2 == 0){
+                printf("%c", *(sequenceAux->sequence + i));
+                printf("]");
+            }
+        }
+        printf("\n");
+        sequenceAux = sequenceAux->pnextStringSeq;
     }
 }
 

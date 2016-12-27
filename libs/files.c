@@ -19,7 +19,7 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
     FILE *file = NULL;
     int i = 0, auxInt = 0, auxInt2 = 0;
     char fOut[30];
-    char path[40] = "sizeOfSequence/";
+    char path[40] = "data/";
     strcat(path, fileName);
     HAND *handAux   = NULL;
     BLOCK *blockAux = NULL;
@@ -139,7 +139,7 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
 void editFile(char fileName[], int type, HANDS hands, GAME game) {
     FILE *file = NULL;
     int auxInt;
-    char path[40] = "sizeOfSequence/";
+    char path[40] = "data/";
     // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
 //    mkdir(path); // creates the folder if it doesn't yet exists
     strcat(path, fileName);
@@ -241,7 +241,7 @@ void editFile(char fileName[], int type, HANDS hands, GAME game) {
 void createGameFile(int type, HANDS hands, GAME game) {
     FILE *file = NULL;
     int auxInt, i;
-    char fileName[40], path[40] = "sizeOfSequence/";
+    char fileName[40], path[40] = "data/";
     // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
 //    mkdir(path); // creates the folder if it doesn't yet exists
     switch (type) {

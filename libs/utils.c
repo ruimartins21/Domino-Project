@@ -86,33 +86,6 @@ void printSingleHand(HAND hand, int handSize){
     }
 }
 
-void printSequence(SEQUENCE sequence){
-    BLOCK *blockAux = sequence.pfirstBlock;;
-    int i;
-    for (i = 0; i < sequence.sizeOfSequence; i++) {
-        printf("[%d, %d]", blockAux->leftSide, blockAux->rightSide);
-        blockAux = blockAux->pnextBlock;
-    }
-    printf("\n");
-}
-
-void printAllSequence(ALLSEQUENCES allsequences){
-    SEQUENCE *pauxSequence = allsequences.pfirstSequence;
-//    BLOCK *blockAux = pauxSequence->pfirstBlock;
-    BLOCK *blockAux = NULL;
-    int i;
-    while (pauxSequence != NULL){
-        blockAux = pauxSequence->pfirstBlock;
-        for (i = 0; i < pauxSequence->sizeOfSequence; i++) {
-            printf("[%d, %d]", blockAux->leftSide, blockAux->rightSide);
-            blockAux = blockAux->pnextBlock;
-        }
-        printf("\n");
-        pauxSequence = pauxSequence->pnextSequence;
-    }
-
-}
-
 /**
  * Returns a certain block at the index given and removes it from the linked list
  * @param game structure that has the non-used blocks
@@ -263,14 +236,14 @@ int fileExists(char fileName[]) {
 }
 
 /**
- * Puts the 3rd column of the hands matrix equals to 1 to use on the generate sequence logic
- * @param hand matrix with the hands
- * @param handSize size of each hand
- * @param numberOfHands number of hands
+ * Receives a string, creates space on the memory for it and copies the string to that space
+ * @param str is the string to be saved in the memory
+ * @return returns the memory address where the string previously saved starts
  */
-//void fillHands(int hand[][MAX3], int handSize, int numberOfHands){
-//    int i;
-//    for (i = 0; i < (handSize*numberOfHands); i++) {
-//        hand[i][2] = 1; // 3rd column
-//    }
-//}
+char *createDynamicString(char str[]){
+    char *paux = NULL;
+    int strLen = strlen(str) + 1;
+    paux = (char*)malloc(sizeof(char)*strLen);
+    strcpy(paux, str);
+    return paux;
+}

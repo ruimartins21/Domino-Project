@@ -70,7 +70,7 @@ typedef struct stringseq{
  */
 typedef struct allSequences{
     unsigned long numberOfSequences;
-    SEQUENCE *pfirstSequence;
+    STRINGSEQ *pfirstSequence;
 }ALLSEQUENCES;
 
 #define MAX2 2
@@ -98,8 +98,6 @@ int compareIntValues(const void * a, const void * b);
 void sortIntArray(int * v, int n);
 void checkExtension(char fileName[], char extension[]);
 int fileExists(char fileName[]);
-void fillHands(int hand[][MAX3], int handSize, int numberOfHands);
-void printSequence(SEQUENCE sequence);
-void printAllSequence(ALLSEQUENCES allsequences);
+char *createDynamicString(char str[]);
 
 #endif //DOMINO_PROJECT_UTILS_H

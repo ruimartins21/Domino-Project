@@ -19,7 +19,8 @@ int blocksAvailable(GAME game);
 void generateManualHand(GAME *game, HANDS *hands);
 int editHands(HANDS *hands, GAME *game);
 void printMatDefault(int matrix[][MAX57], int lines, int cols);
-void printSequences(ALLSEQUENCES allSequences);
+void printSequences(ALLSEQUENCES allSequences, int size);
+void printSequenceOfSize(STRINGSEQ sequence, int size);
 void printArray(int* a, int N);
 
 
