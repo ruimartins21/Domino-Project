@@ -61,6 +61,7 @@ typedef struct sequence{
  */
 typedef struct stringseq{
     int sizeOfSequence;
+    unsigned long idSequence;
     char *sequence;
     struct stringseq *pnextStringSeq;
 }STRINGSEQ;
@@ -90,8 +91,10 @@ void printGame(GAME game);
 void printHand(HANDS hands);
 void printSingleHand(HAND hand, int handSize);
 BLOCK *popBlock(GAME *game, int index);
+BLOCK *peepBlock(GAME *game, int index);
 BLOCK *transferBlock(BLOCK *delBlock);
 void swapBlock(GAME *game, BLOCK *handBlock, int index);
+int blockIsPresent(GAME game, BLOCK block);
 void initMat(int m[][MAX57], int lines, int cols);
 void initArray(int array[MAX57]);
 int compareIntValues(const void * a, const void * b);

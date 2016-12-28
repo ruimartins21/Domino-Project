@@ -27,8 +27,11 @@ SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b, unsigned long *costModel);
 //void mergeSort(struct sequence** headRef);
 void mergeSort(SEQUENCE* *headRef, unsigned long *costModel);
 void frontBackSplit(SEQUENCE *source, SEQUENCE* *frontRef, struct sequence* *backRef);
-
 void printSequence(SEQUENCE sequence);
+
+// KMP substring search
+void preKMP(char *pat, int *Pi);
+int KMP(STRINGSEQ text, char *pat);
 
 //void mergeSort(ALLSEQUENCES *allsequences, ALLSEQUENCES *paux, int lo, unsigned long hi);
 //void merge(ALLSEQUENCES *allsequences, ALLSEQUENCES *paux, int lo, int mid, int hi);

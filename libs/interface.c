@@ -4,6 +4,7 @@
 
 #include "interface.h"
 #include "utils.h"
+#include "core.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -186,7 +187,7 @@ void printHands(int hand[][MAX3], int lines){
 }
 
 /**
- * shows the user all the blocks that are available to choose (this prevents out of bounds selections from the user)
+ * Shows the user all the blocks that are available to choose (this prevents out of bounds selections from the user)
  * @param matrix is the game matrix that has the unused blocks
  * @return returns the counter of blocks available to choose from for further conditioning from the user inputs
  */
@@ -206,6 +207,13 @@ int blocksAvailable(GAME game) {
     return i;
 }
 
+/**
+ * The user chooses block by block wich ones he wants in each hand
+ * it's showed the available blocks for choosing
+ * after each choice the block chosen is transfered to the hand and removed from the game
+ * @param game is where all the available blocks are
+ * @param hands are the hands to fill with blocks
+ */
 void generateManualHand(GAME *game, HANDS *hands) {
     int i, j, blocksLimit, blockId;
     hands->pfirstHand = NULL;
@@ -239,40 +247,102 @@ void generateManualHand(GAME *game, HANDS *hands) {
     }
 }
 
-///**
-// * The user chooses block by block wich ones he wants in each hand
-// * it's showed the game matrix so he can see the available blocks
-// * after each choice the game matrix goes through the compressMatrix
-// * because a block was "removed" from it and passed to the hands matrix
-// * @param matrix game matrix with the unused blocks
-// * @param hand matrix with all the hands generated
-// * @param handSize size of each hand
-// * @param numberOfHands number of hands existing
-// */
-//void generateManualHand(int matrix[][MAX2], int hand[][MAX3], int handSize, int numberOfHands) {
-//    int i, j, k = 0, blocksLimit, blockId;
-//    for (i = 0; i < numberOfHands; i++) {
-//        printf("\n## %2d hand ##\n", i + 1);
-//        for (j = 0; j < handSize; j++) {
-//            blocksLimit = blocksAvailable(matrix);
-//            printf("\n%2d block: ", j + 1);
-//            scanf("%d", &blockId);
-//            if (blockId < 1 || blockId > blocksLimit) {
-//                printf("!!! Choose a valid number !!!");
-//                j--;
-//                continue;
-//            }
-//            blockId -= 1;
-//            // gets the block chosen in the game matrix and stores it in the hands matrix
-//            hand[k][0] = matrix[blockId][0];
-//            hand[k][1] = matrix[blockId][1];
-//            hand[k][2] = 1;
-//            // sends to compressMatrix to remove the block chosen from the game matrix
-////            compressMatrix(matrix, blocksLimit, blockId);
-//            k++;
-//        }
-//    }
-//}
+char *createPattern(GAME *allBlocks, GAME game){
+    int i, sizeOfPattern = 0, blocksLimit, blockId;
+    BLOCK *delBlock = NULL, *blockAux = NULL;
+    // will store all the blocks chosen in the a sequence structure to check consistency and only after that is ready to be transformed to a string
+    SEQUENCE *sequenceAux = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+    while(sizeOfPattern < 1 || sizeOfPattern > 28){
+        printf("\nHow many blocks will there be in the pattern? ");
+        scanf("%d", &sizeOfPattern);
+    }
+    sequenceAux->sizeOfSequence = sizeOfPattern;
+    for (i = 0; i < sizeOfPattern; i++) {
+        printf("\ni: %d\n", i);
+        blocksLimit = blocksAvailable(*allBlocks);
+        printf("\n%2d block: ", i + 1);
+        scanf("%d", &blockId);
+        if (blockId < 1 || blockId > blocksLimit) {
+            printf("!!! Choose a valid number !!!");
+            i--;
+            continue;
+        }
+        blockId -= 1;
+        delBlock = peepBlock(allBlocks, blockId); // returns the block chosen without removing it from the game because it might not be consistent
+        // before any other verification, if this block is present in the previous game structure from where the blocks were inserted in the hands
+        // it means that the block wasn't used thereby there won't be any match in the sequences
+        if(blockIsPresent(game, *delBlock)){
+            printf("\nThe block chosen is not being used in the game created");
+            i--;
+            continue;
+        }
+        if (i == 0) { // if it's the first block will insert it in the sequence, no verification required
+            delBlock = popBlock(allBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+            blockAux = transferBlock(delBlock);
+            blockAux->prevBlock = blockAux; // doubly linked list
+            sequenceAux->pfirstBlock = blockAux;
+        }else if(i == 1){ // the second block to be inserted needs a different verification, that will invert the first block if needed
+            if (isConsistent(sequenceAux, delBlock, 1)){ // will check the consistency with the block inserted before
+                delBlock = popBlock(allBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+                blockAux = transferBlock(delBlock);
+                blockAux->prevBlock = sequenceAux->pfirstBlock;
+                sequenceAux->pfirstBlock->pnextBlock = blockAux;
+                sequenceAux->pfirstBlock->prevBlock = blockAux;
+            }else{
+                printf("\nThe block can't be used in this place.");
+                i--;
+                continue;
+            }
+        }else{
+            if (isConsistent(sequenceAux, delBlock, 2)){
+                delBlock = popBlock(allBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+                blockAux = transferBlock(delBlock);
+                blockAux->prevBlock = sequenceAux->pfirstBlock->prevBlock;
+                sequenceAux->pfirstBlock->prevBlock->pnextBlock = blockAux;
+                sequenceAux->pfirstBlock->prevBlock = blockAux;
+            }else{
+                printf("\nThe block can't be used in this place.");
+                i--;
+                continue;
+            }
+        }
+    }
+    printSequence(*sequenceAux);
+    // creates space for all the values that the pattern will have
+    // the size of the pattern is the ammount of blocks, so the size needed is the double (for each value), each block has 2 values
+    // the + 1 at the end is for the end of the string: '\0'
+    char *pattern = (char*)malloc( sizeof(char) * (sizeOfPattern*2) + 1 );
+    *pattern = '\0'; // initialize the string as empty
+    int patternLength = 0;
+    blockAux = sequenceAux->pfirstBlock;
+    for (i = 0; i < sizeOfPattern && blockAux != NULL; i++) {
+        patternLength = strlen(pattern);
+        *(pattern + patternLength)     = '0' + blockAux->leftSide;
+        *(pattern + (patternLength+1)) = '0' + blockAux->rightSide;
+        *(pattern + (patternLength+2)) = '\0';
+        delBlock = blockAux;
+        blockAux = blockAux->pnextBlock;
+        free(delBlock); // freeing the space used by the sequence generated as it goes through all the blocks
+    }
+    free(sequenceAux);
+    return pattern;
+}
+
+void findPatternInSequences(ALLSEQUENCES allSequences, char *pattern){
+    STRINGSEQ *stringSeqAux = allSequences.pfirstSequence;
+    unsigned long numberOfMatches = 0;
+    int patternLength = strlen(pattern);
+//    STRINGSEQ *stringSeqAux = findSequenceOfSize(allSequences, patternLength, 0);
+    while(stringSeqAux != NULL){
+        if((strlen(stringSeqAux->sequence)) >= patternLength){ // the pattern will only appear in a sequence with the pattern size or bigger
+            if(KMP(*stringSeqAux, pattern)){
+                numberOfMatches += 1;
+            }
+        }
+        stringSeqAux = stringSeqAux->pnextStringSeq;
+    }
+    printf("\nNumber of matches for the pattern \"%s\": %ld\n", pattern ,numberOfMatches);
+}
 
 /**
  * Function that handles all the editing the user wishes to do on the generated hands
@@ -434,6 +504,23 @@ void printSequenceOfSize(STRINGSEQ sequence, int size){
         }
         printf("\n");
         sequenceAux = sequenceAux->pnextStringSeq;
+    }
+}
+
+void printSequenceMatch(STRINGSEQ text, int index, int length){
+    int i,j;
+    printf("[%2ld] ", text.idSequence);
+    for (i = 0; i < strlen(text.sequence); i++) {
+        if(i == index){
+            printf("[");
+            for (j = i; j < (i+length); j++) {
+                printf("%c", *(text.sequence + j));
+            }
+            i = j-1;
+            printf("]");
+        }else{
+            printf("%c", *(text.sequence + i));
+        }
     }
 }
 

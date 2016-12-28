@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 #include <math.h>
 //#include <io.h>
 //#include <dir.h>
@@ -25,21 +25,23 @@ void client_Merge_Sort_td();
  * @param argv array of the arguments passed
  * @return returns 0 when the program is finished successfully
  */
-int main(int argc, char *argv[]) {
-    int choice, path = 0, typeOfFile = 0, edited = 0;
+int main(int argc, char *argv[])
+{
+    int choice, path = 0, typeOfFile = 0, edited = 0, size = 0;
     unsigned long cost = 0, costOfGenerate = 0;
     int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
     srand((unsigned) time(NULL));
-    char fileName[40], filePath[40] = "data/";
+    char fileName[40], filePath[40] = "data/", *pattern;
 
     GAME game = {0, NULL};
+    GAME allBlocks = {0, NULL};
     HANDS hands = {0, 0, NULL};
     SEQUENCE sequence = {0, NULL};
     ALLSEQUENCES allSequences = {0, NULL};
-//    BLOCK *pblock = NULL;
+    BLOCK *pblock = NULL;
     getGame(&game);
     int count = 0;
-    hands.handSize = 15;
+    hands.handSize = 10;
 //
     hands.numberOfHands = 1;
     generateRandomHand(&game, &hands);
@@ -65,25 +67,38 @@ int main(int argc, char *argv[]) {
     printf("\nNº Complete sequences: %d\n", count);
     printf("Nº Saved sequences: %ld\n", allSequences.numberOfSequences);
     printf("Total cost of generateSequence(): %ld iterações\n", costOfGenerate);
-    printf("Elapsed time (usec) of generateSequence(): %ld\n",elapsed_time);
-    printf("elapsed time (sec) of generateSequence(): %lf \n",(elapsed_time * pow(10, -6)));
+    printf("Elapsed time (usec) of generateSequence(): %ld\n", elapsed_time);
+    printf("elapsed time (sec) of generateSequence(): %lf \n", (elapsed_time * pow(10, -6)));
 
     gettimeuseconds(&time_usec_init); // init time
     sortAllSequences(&allSequences);
     gettimeuseconds(&time_usec_end); // end time
     elapsed_time2 = (long) (time_usec_end - time_usec_init);
     printf("\nData of sortAllSequences()");
-    printf("\nElapsed time (usec) of sortAllSequences(): %ld\n",elapsed_time2);
-    printf("elapsed time (sec) of sortAllSequences(): %lf \n",(elapsed_time2 * pow(10, -6)));
+    printf("\nElapsed time (usec) of sortAllSequences(): %ld\n", elapsed_time2);
+    printf("elapsed time (sec) of sortAllSequences(): %lf \n", (elapsed_time2 * pow(10, -6)));
 
 
     //printf("N sequencias: %d\n", count);
     //printf("N sequencias saved: %ld\n", allsequences.numberOfSequences);
-    //printAllSequence(allsequences);
+//    printAllSequence(allsequences);
 //    sortAllSequences(&allsequences);
+
+//    /// Testes KMP Substring Search
+//    STRINGSEQ strSequence = {6, "122443355116", NULL}; // [1,2][2,4][4,3][3,5][5,1][1,6]
+//    char *substring = "335511";
+//    printf("\nString: %s\nSubstring: %s\n", strSequence.sequence, substring);
+//    printf("\nres: %d", KMP(strSequence, substring));
+
+    /// TIMESTAMP
+//    struct timeval tv;
+//    gettimeofday(&tv,NULL);
+//    tv.tv_sec; // seconds
+//    tv.tv_usec; // microseconds
+//    printf("timestamp: %ld", tv.tv_sec);
     return 0;
 }
-    /*
+/*
 //    main_merge();
 //    client_Merge_Sort_td();
 
@@ -196,7 +211,7 @@ int main(int argc, char *argv[]) {
     long long time_usec_end;
     long elapsed_time;
     gettimeuseconds(&time_usec_init); // init time
-    generateSequence(&hands, &sequence, &allSequences, 0, &count);
+    generateSequence(&hands, &sequence, &allSequences, 0, &count, 0, &costOfGenerate);
     gettimeuseconds(&time_usec_end); // end time
     elapsed_time = (long) (time_usec_end - time_usec_init);
     printf("\t\t\t\t#  GAME COMPLETED  #\n\n");
@@ -205,25 +220,41 @@ int main(int argc, char *argv[]) {
     printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
     printf("Number of completed sequences (using all the blocks): %d\n", count);
     printf("Number of saved sequences: %ld\n", allSequences.numberOfSequences);
+    printSequences(allSequences, 0);
     path = 8;
-    choice = printMenu(path);
-    if(choice == 1) {
-        printf("\n# The biggest sequence generated was:\n");
-        printSequences(allSequences, 1);
-    }else if(choice == 2){
-        printf("\nSize of the sequences to see: ");
-        scanf("%d", &path); // re-use of the variable "path" since it's no longer needed for the menu path
-        STRINGSEQ *sequenceAux = findSequenceOfSize(allSequences, path, &cost); // returns the first sequence of the given size
-//        printSequences(allSequences, 0);
-//        printf("\nPrimeira sequencia de tamanho %d: [%s] - Custo: %ld\n", path, sequenceAux->sequence, cost);
-        printSequenceOfSize(*sequenceAux, path);
-    }else if(choice == 3){
-        printf("\n# All sequences generated:\n");
-        printSequences(allSequences, 0);
-    }else if(choice == 4){
+    choice = -1;
+    while(choice != 0){ // runs the menu until the user wants to exit
+        choice = printMenu(path);
+        if(choice == 1) {
+            printf("\n# The biggest sequence generated was:\n");
+            printSequences(allSequences, 1);
+        }else if(choice == 2){
+            printf("\nSize of the sequences to see: ");
+            scanf("%d", &size); // re-use of the variable "path" since it's no longer needed for the menu path
+            STRINGSEQ *sequenceAux = findSequenceOfSize(allSequences, size, &cost); // returns the first sequence of the given size
+            if(sequenceAux != NULL){
+                printf("\nSequences of size %d: ", size);
+                printf("(Cost of finding the first sequence: %ld)\n", cost);
+                printSequenceOfSize(*sequenceAux, size);
+            }else{
+                printf("No sequences found with that size\n");
+            }
+        }else if(choice == 3){
+            printf("\n# All sequences generated:\n");
+            printSequences(allSequences, 0);
+        }else if(choice == 4){
+            // search a pattern in the sequences
+            getGame(&allBlocks); // needs to be a new game structure because the one used before doesn't have all the blocks
+            pattern = createPattern(&allBlocks, game);
+            if(strlen(pattern) > 0){
+                printf("\npattern: %s\n", pattern);
+                findPatternInSequences(allSequences, pattern);
+//                printf("\nres: %d", KMP(strSequence, substring));
+            }
+        }else if(choice == 5){
+            // Replace a pattern in the sequences
 
-    }else if(choice == 5){
-
+        }
     }
     return 0;
 }
@@ -256,5 +287,4 @@ void client_Merge_Sort_td() {
     for (i = 0; i < N; i++) {
         printf("%d ", v[i]);
     }
-}
-*/
+}*/

@@ -212,7 +212,7 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
     BLOCK *blockAux = pSequence.pfirstBlock;
     int i;
     // creates space for all the values existing in the sequence
-    // the size of the sequence is the ammount of blocks, so the size needed is the double, for each value, and each block as 2 values
+    // the size of the sequence is the ammount of blocks, so the size needed is the double, for each value, each block has 2 values
     // the + 1 at the end is for the end of the string '\0' when there's a sequence that uses all the blocks
     char *blockString = (char*)malloc( sizeof(char) * (newSequence->sizeOfSequence*2) + 1 );
     *blockString = '\0'; // initialize the string as empty
@@ -236,6 +236,7 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
         allSequences->pfirstSequence = newSequence;
     }
     allSequences->numberOfSequences++;
+    newSequence->idSequence = allSequences->numberOfSequences;
 
 
     // Soluçao Rui
@@ -275,6 +276,66 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
 //    allSequences->numberOfSequences++;
 
 
+}
+
+/**
+ * KMP Substring Search Algorithm
+ */
+
+void preKMP(char *pat, int *dfa)
+{
+    int m = strlen(pat), k, i;
+    dfa[0] = -1;
+    for (i = 1; i < m; i++)
+    {
+        k = dfa[i - 1];
+        while(k >= 0)
+        {
+            if(pat[k] == pat[i - 1]){
+                break;
+            }else{
+                k = dfa[k];
+            }
+        }
+        dfa[i] = k + 1;
+    }
+}
+
+int KMP(STRINGSEQ text, char *pat)
+{
+    int m = strlen(pat);
+    int n = strlen(text.sequence);
+    int dfa[m];
+    preKMP(pat, dfa);
+    int i = 0;
+    // debug
+//    while(i < m){
+//        printf("Pi[%d] = %d ", i, dfa[i]);
+//        i++;
+//    }
+//    printf("\n");
+//    i = 0;
+    // end-debug
+    int k = 0;
+    while (i < n){
+        if (k == -1){
+            i++;
+            k = 0;
+        }else if (text.sequence[i] == pat[k]){ // a match was found so we move up in the state (k)
+            i++;
+            k++;
+            if(k == m) // when k is equal to the size of the substring it means that all the letters were found, k reached the last state
+            {
+                printSequenceMatch(text, (i-m), m);
+                printf(" - Found at position: %d (cost: %d)\n", (i - m), i);
+                return 1;
+            }
+        }else{
+            // it was not a match so we go back in the state according to the dfa table created before
+            k = dfa[k];
+        }
+    }
+    return 0;
 }
 
 /**
@@ -465,5 +526,6 @@ void printSequence(SEQUENCE sequence){
         printf("[%d, %d]", blockAux->leftSide, blockAux->rightSide);
         blockAux = blockAux->pnextBlock;
     }
- printf("\n");
+    printf("\n");
 }
+

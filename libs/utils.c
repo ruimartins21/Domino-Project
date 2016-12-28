@@ -119,6 +119,22 @@ BLOCK *popBlock(GAME *game, int index){
 }
 
 /**
+ * Returns a certain block at the index given but doesn't remove it until some verifications are made in another function
+ * @param game structure that has the non-used blocks
+ * @param index position of the block to return
+ * @return returns the block that corresponds to the index
+ */
+BLOCK *peepBlock(GAME *game, int index){
+    int i = 0;
+    BLOCK *blockAux = game->pfirstBlock;
+    while(i != index && blockAux != NULL){
+        blockAux = blockAux->pnextBlock;
+        i++;
+    }
+    return blockAux;
+}
+
+/**
  * Receives a certain block to copy its content to a new one and to remove the previous one from the memory
  * @param delBlock is the block to be copied from and removed
  * @return returns the address of the new block
@@ -164,6 +180,18 @@ void swapBlock(GAME *game, BLOCK *handBlock, int index){
         blockAux->available  = blockTemp->available;
     }
     free(blockTemp);
+}
+
+int blockIsPresent(GAME game, BLOCK block){
+    BLOCK *blockAux = game.pfirstBlock;
+    while(blockAux != NULL){
+        if(block.leftSide == blockAux->leftSide && block.rightSide == blockAux->rightSide
+           || block.leftSide == blockAux->rightSide && block.rightSide == blockAux->leftSide){
+            return 1;
+        }
+        blockAux = blockAux->pnextBlock;
+    }
+    return 0;
 }
 
 /**

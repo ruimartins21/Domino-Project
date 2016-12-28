@@ -17,10 +17,14 @@ void printMat(int matrix[][MAX2], int lines);
 void printHands(int hand[][MAX3], int lines);
 int blocksAvailable(GAME game);
 void generateManualHand(GAME *game, HANDS *hands);
+char *createPattern(GAME *allBlocks, GAME game);
+void findPatternInSequences(ALLSEQUENCES allSequences, char *pattern);
 int editHands(HANDS *hands, GAME *game);
 void printMatDefault(int matrix[][MAX57], int lines, int cols);
 void printSequences(ALLSEQUENCES allSequences, int size);
 void printSequenceOfSize(STRINGSEQ sequence, int size);
+void printSequenceMatch(STRINGSEQ text, int index, int length);
+
 void printArray(int* a, int N);
 
 
