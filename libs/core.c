@@ -404,7 +404,8 @@ SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b, unsigned long *costModel)
         return(a);
 
     /* Pick either a or b, and recur */
-    if (a->sizeOfSequence <= b->sizeOfSequence)
+//    if (a->sizeOfSequence <= b->sizeOfSequence) // ascending order
+    if (a->sizeOfSequence > b->sizeOfSequence)    // descending order
     {
         result = a;
         result->pnextSequence = sortedMerge(a->pnextSequence, b, &costModel);
