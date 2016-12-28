@@ -15,7 +15,7 @@
 
 void generateRandomHand(GAME *pGame, HANDS *pHands);
 //int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, int *count);
-int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, int *count, int handId, unsigned long *costOfGenerate);
+int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, unsigned long *count, int handId, unsigned long *costOfGenerate);
 int isConsistent(SEQUENCE *pSequence, BLOCK *newBlock, int inserted);
 void invertBlock(BLOCK *pBlock);
 void invertBlockSequence(SEQUENCE *pSequence);
@@ -23,10 +23,10 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence);
 STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel);
 void sortAllSequences(ALLSEQUENCES *allSequences);
 //SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b);
-SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b, unsigned long *costModel);
+STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel);
 //void mergeSort(struct sequence** headRef);
-void mergeSort(SEQUENCE* *headRef, unsigned long *costModel);
-void frontBackSplit(SEQUENCE *source, SEQUENCE* *frontRef, struct sequence* *backRef);
+void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel);
+void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef);
 void printSequence(SEQUENCE sequence);
 
 // KMP substring search

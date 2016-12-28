@@ -490,6 +490,7 @@ void printSequences(ALLSEQUENCES allSequences, int size){
 void printSequenceOfSize(STRINGSEQ sequence, int size){
     STRINGSEQ *sequenceAux = &sequence;
     int blockStringLen, i;
+    unsigned long count = 0;
     while(sequenceAux->sizeOfSequence == size){
         blockStringLen = strlen(sequenceAux->sequence);
         for (i = 0; i < blockStringLen; i++) {
@@ -503,8 +504,10 @@ void printSequenceOfSize(STRINGSEQ sequence, int size){
             }
         }
         printf("\n");
+        count += 1;
         sequenceAux = sequenceAux->pnextStringSeq;
     }
+    printf("\n%ld sequences found\n", count);
 }
 
 void printSequenceMatch(STRINGSEQ text, int index, int length){

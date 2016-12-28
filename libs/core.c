@@ -80,7 +80,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
  * @param costOfGenerate
  * @return
  */
-int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, int *count, int handId, unsigned long *costOfGenerate) {
+int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, unsigned long *count, int handId, unsigned long *costOfGenerate) {
     int i = 0;
     BLOCK *blockAux = NULL;
     HAND *handAux = NULL;
@@ -368,15 +368,15 @@ STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long
 
 /* sorts the linked list by changing pnextSequence pointers (not sizeOfSequence) */
 //void mergeSort(struct sequence* *headRef)
-void mergeSort(SEQUENCE * *headRef, unsigned long *costModel)
+void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel)
 {
     *costModel += 1;
-    SEQUENCE *head = *headRef;
-    SEQUENCE *a = NULL;
-    SEQUENCE *b = NULL;
+    STRINGSEQ *head = *headRef;
+    STRINGSEQ *a = NULL;
+    STRINGSEQ *b = NULL;
 
     /* Base case -- length 0 or 1 */
-    if ((head == NULL) || (head->pnextSequence == NULL))
+    if ((head == NULL) || (head->pnextStringSeq == NULL))
     {
         return;
     }
@@ -385,17 +385,17 @@ void mergeSort(SEQUENCE * *headRef, unsigned long *costModel)
     frontBackSplit(head, &a, &b);
 
     /* Recursively sort the sublists */
-    mergeSort(&a, &costModel);
-    mergeSort(&b, &costModel);
+    mergeSort(&a, costModel);
+    mergeSort(&b, costModel);
 
     /* answer = merge the two sorted lists together */
-    *headRef = sortedMerge(a, b, &costModel);
+    *headRef = sortedMerge(a, b, costModel);
 }
 
-SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b, unsigned long *costModel)
+STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel)
 {
     *costModel += 1;
-    SEQUENCE *result = NULL;
+    STRINGSEQ *result = NULL;
 
     /* Base cases */
     if (a == NULL)
@@ -408,12 +408,12 @@ SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b, unsigned long *costModel)
     if (a->sizeOfSequence > b->sizeOfSequence)    // descending order
     {
         result = a;
-        result->pnextSequence = sortedMerge(a->pnextSequence, b, &costModel);
+        result->pnextStringSeq = sortedMerge(a->pnextStringSeq, b, costModel);
     }
     else
     {
         result = b;
-        result->pnextSequence = sortedMerge(a, b->pnextSequence, &costModel);
+        result->pnextStringSeq = sortedMerge(a, b->pnextStringSeq, costModel);
     }
     return(result);
 }
@@ -423,11 +423,11 @@ SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b, unsigned long *costModel)
      and return the two lists using the reference parameters.
      If the length is odd, the extra sequence2 should go in the front list.
      Uses the fast/slow pointer strategy.  */
-void frontBackSplit(SEQUENCE *source, struct sequence* *frontRef, struct sequence* *backRef)
+void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef)
 {
-    SEQUENCE *fast = NULL;
-    SEQUENCE *slow = NULL;
-    if (source==NULL || source->pnextSequence==NULL)
+    STRINGSEQ *fast = NULL;
+    STRINGSEQ *slow = NULL;
+    if (source==NULL || source->pnextStringSeq==NULL)
     {
         /* length < 2 cases */
         *frontRef = source;
@@ -436,24 +436,24 @@ void frontBackSplit(SEQUENCE *source, struct sequence* *frontRef, struct sequenc
     else
     {
         slow = source;
-        fast = source->pnextSequence;
+        fast = source->pnextStringSeq;
 
         /* Advance 'fast' two nodes, and advance 'slow' one sequence2 */
         while (fast != NULL)
         {
-            fast = fast->pnextSequence;
+            fast = fast->pnextStringSeq;
             if (fast != NULL)
             {
-                slow = slow->pnextSequence;
-                fast = fast->pnextSequence;
+                slow = slow->pnextStringSeq;
+                fast = fast->pnextStringSeq;
             }
         }
 
         /* 'slow' is before the midpoint in the list, so split it in two
           at that point. */
         *frontRef = source;
-        *backRef = slow->pnextSequence;
-        slow->pnextSequence = NULL;
+        *backRef = slow->pnextStringSeq;
+        slow->pnextStringSeq = NULL;
     }
 
 //    free(slow);

@@ -14,10 +14,6 @@
 //#include <io.h>
 //#include <dir.h>
 
-void merge_sort_td(int a[], int aux[], int lo, int hi);
-void merge_arrays(int a[], int aux[], int lo, int mid, int hi);
-void client_Merge_Sort_td();
-
 /**
  * Project main function
  * where all the flow of the program will be managed
@@ -28,7 +24,7 @@ void client_Merge_Sort_td();
 int main(int argc, char *argv[])
 {
     int choice, path = 0, typeOfFile = 0, edited = 0, size = 0;
-    unsigned long cost = 0, costOfGenerate = 0;
+    unsigned long cost = 0, costOfGenerate = 0, count = 0;
     int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
     srand((unsigned) time(NULL));
     char fileName[40], filePath[40] = "data/", *pattern;
@@ -38,46 +34,45 @@ int main(int argc, char *argv[])
     HANDS hands = {0, 0, NULL};
     SEQUENCE sequence = {0, NULL};
     ALLSEQUENCES allSequences = {0, NULL};
-    BLOCK *pblock = NULL;
-    getGame(&game);
-    int count = 0;
-    hands.handSize = 10;
+//    BLOCK *pblock = NULL;
+//    getGame(&game);
+//    hands.handSize = 14;
 //
-    hands.numberOfHands = 1;
-    generateRandomHand(&game, &hands);
+//    hands.numberOfHands = 1;
+//    generateRandomHand(&game, &hands);
 //    generateManualHand(&game, &hands);
 ////    printf("\n## Game (%d) ##\n", game.availableBlocks);
 ////    printGame(game);
 //    printf("\n## Hands ##\n");
 //    printHand(hands);
 //
-    long long time_usec_init;
-    long long time_usec_end;
-    long elapsed_time, elapsed_time2;
-    gettimeuseconds(&time_usec_init); // init time
+//    long long time_usec_init;
+//    long long time_usec_end;
+//    long elapsed_time, elapsed_time2;
+//    gettimeuseconds(&time_usec_init); // init time
 //    generateSequence(&hands, &sequence, &allSequences, 0, &count);
-    generateSequence(&hands, &sequence, &allSequences, 0, &count, 0, &costOfGenerate);
-    gettimeuseconds(&time_usec_end); // end time
-    elapsed_time = (long) (time_usec_end - time_usec_init);
+//    generateSequence(&hands, &sequence, &allSequences, 0, &count, 0, &costOfGenerate);
+//    gettimeuseconds(&time_usec_end); // end time
+//    elapsed_time = (long) (time_usec_end - time_usec_init);
 //
 
 
 
-    printf("\nData of generateSequence()");
-    printf("\nNº Complete sequences: %d\n", count);
-    printf("Nº Saved sequences: %ld\n", allSequences.numberOfSequences);
-    printf("Total cost of generateSequence(): %ld iterações\n", costOfGenerate);
-    printf("Elapsed time (usec) of generateSequence(): %ld\n", elapsed_time);
-    printf("elapsed time (sec) of generateSequence(): %lf \n", (elapsed_time * pow(10, -6)));
-
-    gettimeuseconds(&time_usec_init); // init time
-    sortAllSequences(&allSequences);
-    gettimeuseconds(&time_usec_end); // end time
-    elapsed_time2 = (long) (time_usec_end - time_usec_init);
-    printf("\nData of sortAllSequences()");
-    printf("\nElapsed time (usec) of sortAllSequences(): %ld\n", elapsed_time2);
-    printf("elapsed time (sec) of sortAllSequences(): %lf \n", (elapsed_time2 * pow(10, -6)));
-
+//    printf("\nData of generateSequence()");
+//    printf("\nN Complete sequences: %ld\n", count);
+//    printf("N Saved sequences: %ld\n", allSequences.numberOfSequences);
+//    printf("Total cost of generateSequence(): %ld iteracoes\n", costOfGenerate);
+//    printf("Elapsed time (usec) of generateSequence(): %ld\n", elapsed_time);
+//    printf("elapsed time (sec) of generateSequence(): %lf \n", (elapsed_time * pow(10, -6)));
+//
+//    gettimeuseconds(&time_usec_init); // init time
+//    sortAllSequences(&allSequences);
+//    gettimeuseconds(&time_usec_end); // end time
+//    elapsed_time2 = (long) (time_usec_end - time_usec_init);
+//    printf("\nData of sortAllSequences()");
+//    printf("\nElapsed time (usec) of sortAllSequences(): %ld\n", elapsed_time2);
+//    printf("elapsed time (sec) of sortAllSequences(): %lf \n", (elapsed_time2 * pow(10, -6)));
+//    printSequences(allSequences,0);
 
     //printf("N sequencias: %d\n", count);
     //printf("N sequencias saved: %ld\n", allsequences.numberOfSequences);
@@ -90,15 +85,32 @@ int main(int argc, char *argv[])
 //    printf("\nString: %s\nSubstring: %s\n", strSequence.sequence, substring);
 //    printf("\nres: %d", KMP(strSequence, substring));
 
+//    void KMP(char pattern[M_KMP], int dfa[R_KMP][M_KMP]) {
+//        int X,c,j,i;
+//        // reset dfa[][] matrix to zeros
+//        for (i = 0; i < R_KMP; i++)
+//            for (j = 0; j < M_KMP; j++)
+//                dfa[i][j]=0;
+//        // build DFA from a pattern with length M
+//        dfa[pattern[0]-(int)'A'][0] = 1;
+//        for (X = 0, j = 1; j < M_KMP; j++) {
+//            for (c = 0; c < R_KMP; c++){
+//                dfa[c][j] = dfa[c][X];     // Copy mismatch cases.
+//            }
+//            dfa[pattern[j]-(int)'A'][j] = j+1;      // Set match case.
+//            X = dfa[pattern[j]-(int)'A'][X];        // Update restart state.
+//        }
+//    }
+
     /// TIMESTAMP
 //    struct timeval tv;
 //    gettimeofday(&tv,NULL);
 //    tv.tv_sec; // seconds
 //    tv.tv_usec; // microseconds
 //    printf("timestamp: %ld", tv.tv_sec);
-    return 0;
-}
-/*
+//    return 0;
+//}
+
 //    main_merge();
 //    client_Merge_Sort_td();
 
@@ -212,13 +224,14 @@ int main(int argc, char *argv[])
     long elapsed_time;
     gettimeuseconds(&time_usec_init); // init time
     generateSequence(&hands, &sequence, &allSequences, 0, &count, 0, &costOfGenerate);
+    sortAllSequences(&allSequences);
     gettimeuseconds(&time_usec_end); // end time
     elapsed_time = (long) (time_usec_end - time_usec_init);
     printf("\t\t\t\t#  GAME COMPLETED  #\n\n");
     printf("Some statistics about the game generated:\n");
     printf("elapsed time (usec) = %ld\n",elapsed_time);
     printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
-    printf("Number of completed sequences (using all the blocks): %d\n", count);
+    printf("Number of completed sequences (using all the blocks): %ld\n", count);
     printf("Number of saved sequences: %ld\n", allSequences.numberOfSequences);
     printSequences(allSequences, 0);
     path = 8;
@@ -249,7 +262,6 @@ int main(int argc, char *argv[])
             if(strlen(pattern) > 0){
                 printf("\npattern: %s\n", pattern);
                 findPatternInSequences(allSequences, pattern);
-//                printf("\nres: %d", KMP(strSequence, substring));
             }
         }else if(choice == 5){
             // Replace a pattern in the sequences
@@ -258,33 +270,3 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
-
-void merge_sort_td(int a[], int aux[], int lo, int hi) {
-    int mid = lo + (hi - lo) / 2;
-    if (hi <= lo) return;
-    merge_sort_td(a, aux, lo, mid);
-    merge_sort_td(a, aux, mid + 1, hi);
-    merge_arrays(a, aux, lo, mid, hi);
-}
-
-void merge_arrays(int a[], int aux[], int lo, int mid, int hi) {
-    int i = lo, j = mid + 1, k;
-    for (k = lo; k <= hi; k++) // copy
-        aux[k] = a[k];
-    for (k = lo; k <= hi; k++) { // merge
-        if (i > mid) a[k] = aux[j++];
-        else if (j > hi) a[k] = aux[i++];
-        else if (aux[j] < aux[i]) a[k] = aux[j++];
-        else a[k] = aux[i++];
-    }
-}
-void client_Merge_Sort_td() {
-    int i;
-    int v[] = {10, 33, 22, 4, 75, 3, 68, 34};
-    int N = 8;
-    int v2[8];
-    merge_sort_td(v, v2, 0, N - 1);
-    for (i = 0; i < N; i++) {
-        printf("%d ", v[i]);
-    }
-}*/
