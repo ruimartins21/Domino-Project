@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 //    BLOCK *pblock = NULL;
     getGame(&game);
     int count = 0;
-    hands.handSize = 15;
+    hands.handSize = 14;
 //
     hands.numberOfHands = 1;
     generateRandomHand(&game, &hands);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 
     //printf("N sequencias: %d\n", count);
     //printf("N sequencias saved: %ld\n", allsequences.numberOfSequences);
-    //printAllSequence(allsequences);
+//    printSequences(allSequences,0);
 //    sortAllSequences(&allsequences);
     return 0;
 }
