@@ -17,7 +17,7 @@ void printMat(int matrix[][MAX2], int lines);
 void printHands(int hand[][MAX3], int lines);
 int blocksAvailable(GAME game);
 void generateManualHand(GAME *game, HANDS *hands);
-char *createPattern(GAME *allBlocks, GAME game);
+char *createPattern(GAME *availableBlocks, ALLSEQUENCES allSequences, int maxSequenceSize);
 void findPatternInSequences(ALLSEQUENCES allSequences, char *pattern);
 int editHands(HANDS *hands, GAME *game);
 void printMatDefault(int matrix[][MAX57], int lines, int cols);

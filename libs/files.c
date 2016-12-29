@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 //#include <dir.h> // this library only works as it should on windows
 
 /**
@@ -345,4 +346,26 @@ void createGameFile(int type, HANDS hands, GAME game) {
         default:
             break;
     }
+}
+
+
+void saveSequencesInFile(ALLSEQUENCES allSequences){
+    FILE *file = NULL;
+    char fileName[40], path[40] = "data/sequence-";
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    sprintf(fileName, "%ld",  tv.tv_sec);
+    strcat(path, fileName);
+    strcat(path, ".txt");
+    if ((file = fopen(path, "w")) != NULL) {
+        fprintf(file, "\t\tNumber of generated sequences: %ld\n\n", allSequences.numberOfSequences);
+        STRINGSEQ *strSeqAux = allSequences.pfirstSequence;
+        fprintf(file, "  Size of the sequence\t|\t\t\t\tSequence\n");
+        fprintf(file, "----------------------------------------------------------------------------------\n");
+        while(strSeqAux != NULL){
+            fprintf(file, "\t\t%2d\t\t\t\t|\t\t%s\n", strSeqAux->sizeOfSequence, strSeqAux->sequence);
+            strSeqAux = strSeqAux->pnextStringSeq;
+        }
+    }
+    fclose(file);
 }

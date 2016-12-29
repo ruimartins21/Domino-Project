@@ -87,6 +87,7 @@ typedef struct allSequences{
 
 int gettimeuseconds(long long * time_usec);
 void getGame(GAME *game);
+void freeGame(GAME *game);
 void printGame(GAME game);
 void printHand(HANDS hands);
 void printSingleHand(HAND hand, int handSize);

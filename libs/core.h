@@ -21,6 +21,8 @@ void invertBlock(BLOCK *pBlock);
 void invertBlockSequence(SEQUENCE *pSequence);
 void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence);
 STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel);
+void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int sizeOfPattern);
+int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size);
 void sortAllSequences(ALLSEQUENCES *allSequences);
 //SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b);
 STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel);

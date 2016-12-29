@@ -106,8 +106,12 @@ int main(int argc, char *argv[])
 //    struct timeval tv;
 //    gettimeofday(&tv,NULL);
 //    tv.tv_sec; // seconds
-//    tv.tv_usec; // microseconds
 //    printf("timestamp: %ld", tv.tv_sec);
+//    time_t t = time(NULL);
+//    struct tm tm = *localtime(&t);
+//
+//    printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+
 //    return 0;
 //}
 
@@ -227,13 +231,14 @@ int main(int argc, char *argv[])
     sortAllSequences(&allSequences);
     gettimeuseconds(&time_usec_end); // end time
     elapsed_time = (long) (time_usec_end - time_usec_init);
-    printf("\t\t\t\t#  GAME COMPLETED  #\n\n");
+    printf("\t\t\t\t#  SEQUENCES GENERATED SUCCESSFULLY  #\n\n");
     printf("Some statistics about the game generated:\n");
-    printf("elapsed time (usec) = %ld\n",elapsed_time);
-    printf("elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
+    printf("Elapsed time (usec) = %ld\n",elapsed_time);
+    printf("Elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
     printf("Number of completed sequences (using all the blocks): %ld\n", count);
     printf("Number of saved sequences: %ld\n", allSequences.numberOfSequences);
     printSequences(allSequences, 0);
+    saveSequencesInFile(allSequences);
     path = 8;
     choice = -1;
     while(choice != 0){ // runs the menu until the user wants to exit
@@ -243,7 +248,7 @@ int main(int argc, char *argv[])
             printSequences(allSequences, 1);
         }else if(choice == 2){
             printf("\nSize of the sequences to see: ");
-            scanf("%d", &size); // re-use of the variable "path" since it's no longer needed for the menu path
+            scanf("%d", &size);
             STRINGSEQ *sequenceAux = findSequenceOfSize(allSequences, size, &cost); // returns the first sequence of the given size
             if(sequenceAux != NULL){
                 printf("\nSequences of size %d: ", size);
@@ -255,16 +260,13 @@ int main(int argc, char *argv[])
         }else if(choice == 3){
             printf("\n# All sequences generated:\n");
             printSequences(allSequences, 0);
-        }else if(choice == 4){
-            // search a pattern in the sequences
-            getGame(&allBlocks); // needs to be a new game structure because the one used before doesn't have all the blocks
-            pattern = createPattern(&allBlocks, game);
+        }else if(choice == 4){ // search a pattern in the sequences
+            int maxSequenceSize = allSequences.pfirstSequence->sizeOfSequence; // size of the biggest sequence (in an ordered list by descending order it's the 1st sequence)
+            pattern = createPattern(&allBlocks, allSequences, maxSequenceSize);
             if(strlen(pattern) > 0){
-                printf("\npattern: %s\n", pattern);
                 findPatternInSequences(allSequences, pattern);
             }
-        }else if(choice == 5){
-            // Replace a pattern in the sequences
+        }else if(choice == 5){ // Replace a pattern in the sequences
 
         }
     }

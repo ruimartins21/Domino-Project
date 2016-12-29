@@ -54,6 +54,16 @@ void getGame(GAME *game) {
     }
 }
 
+void freeGame(GAME *game){
+    BLOCK *blockAux = game->pfirstBlock, *delBlock = NULL;
+    while(blockAux != NULL){
+        delBlock = blockAux;
+        blockAux = blockAux->pnextBlock;
+        free(delBlock);
+    }
+    free(game);
+}
+
 void printGame(GAME game){
     BLOCK *blockAux = game.pfirstBlock;
     while(blockAux != NULL){

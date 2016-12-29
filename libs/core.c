@@ -355,6 +355,7 @@ STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long
     STRINGSEQ *sequenceAux = allSequences.pfirstSequence;
     *costModel = 0;
     unsigned long lo = 0, hi = allSequences.numberOfSequences-1;
+    if(size <= 0) return NULL;
     while (lo <= hi || sequenceAux != NULL) {
         *costModel += 1;
         unsigned long mid = (lo + hi) / 2;
@@ -364,6 +365,63 @@ STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long
         sequenceAux = sequenceAux->pnextStringSeq;
     }
     return NULL;
+}
+
+void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int sizeOfPattern){
+    unsigned long test = 0;
+    STRINGSEQ *firstSeq = findSequenceOfSize(allSequences, sizeOfPattern, &test); // first sequence of size
+    if(!getSequencesOfSize(availableBlocks, *firstSeq, sizeOfPattern)){
+        // returning availableBlocks empty will mean that there's only one sequence available (explained in getSequencesOfSize function)
+        availableBlocks->availableBlocks = 0;
+        availableBlocks->pfirstBlock = NULL;
+        printf("\nThere's only one sequence with that size what means that is the only pattern possible\n");
+        printf("Sequence: ");
+        int blockStringLen = strlen(firstSeq->sequence), i;
+        for (i = 0; i < blockStringLen; i++) {
+            if(i%2 == 0){
+                printf("[");
+                printf("%c,", *(firstSeq->sequence + i));
+            }
+            if((i+1)%2 == 0){
+                printf("%c", *(firstSeq->sequence + i));
+                printf("]");
+            }
+        }
+        printf("\n\n");
+    }
+}
+
+int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size){
+    STRINGSEQ *sequenceAux = &firstSequence;
+    int sequenceLen = 0, i;
+    unsigned long count = 0;
+    while(sequenceAux != NULL && sequenceAux->sizeOfSequence == size){
+        sequenceLen = strlen(sequenceAux->sequence);
+        for (i = 1; i < sequenceLen; i += 2) { // iterates 2 by 2 corresponding to a block -> 2 values
+            BLOCK *blockAux = (BLOCK*)malloc(sizeof(BLOCK));
+            blockAux->leftSide  = *(sequenceAux->sequence + (i-1)) - '0'; // turns the character into the correspondent integer
+            blockAux->rightSide = *(sequenceAux->sequence + i) - '0';
+            // checking if the block is already present in the linked list
+            if(blockIsPresent(*availableBlocks, *blockAux)){ // the block already exists so it's ignored
+                free(blockAux);
+                continue;
+            }
+            blockAux->prevBlock = NULL; // no need for a doubly linked list in this case
+            if(availableBlocks->pfirstBlock == NULL){
+                blockAux->pnextBlock = NULL;
+            }else{
+                blockAux->pnextBlock = availableBlocks->pfirstBlock;
+            }
+            availableBlocks->pfirstBlock = blockAux;
+            availableBlocks->availableBlocks += 1;
+        }
+        count += 1;
+        sequenceAux = sequenceAux->pnextStringSeq;
+    }
+    if(count == 1){ // if there's only one sequence of the given size, there's only one way of making the pattern and doesn't make sense to ask for it
+        return 0;
+    }
+    return 1;
 }
 
 /* sorts the linked list by changing pnextSequence pointers (not sizeOfSequence) */
@@ -521,10 +579,10 @@ void invertBlockSequence(SEQUENCE *pSequence) {
 
 
 void printSequence(SEQUENCE sequence){
-    BLOCK *blockAux = sequence.pfirstBlock;;
+    BLOCK *blockAux = sequence.pfirstBlock;
     int i;
-    for (i = 0; i < sequence.sizeOfSequence; i++) {
-        printf("[%d, %d]", blockAux->leftSide, blockAux->rightSide);
+    for (i = 0; i < sequence.sizeOfSequence && blockAux != NULL; i++) {
+        printf("[%d, %d] ", blockAux->leftSide, blockAux->rightSide);
         blockAux = blockAux->pnextBlock;
     }
     printf("\n");
