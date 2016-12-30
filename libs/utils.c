@@ -128,6 +128,25 @@ BLOCK *popBlock(GAME *game, int index){
     return blockAux;
 }
 
+BLOCK *removeBlock(GAME *game, BLOCK block){
+    BLOCK *blockAux = game->pfirstBlock, *blockPrev = NULL;
+    while(blockAux != NULL){
+        if(blockAux->leftSide == block.leftSide && blockAux->rightSide == block.rightSide
+           || blockAux->leftSide == block.rightSide && blockAux->rightSide == block.leftSide){
+            if(blockPrev == NULL){
+                game->pfirstBlock = blockAux->pnextBlock;
+            }else{
+                blockPrev->pnextBlock = blockAux->pnextBlock;
+                free(blockPrev);
+            }
+            return blockAux;
+        }
+        blockPrev = blockAux;
+        blockAux = blockAux->pnextBlock;
+    }
+    return NULL;
+}
+
 /**
  * Returns a certain block at the index given but doesn't remove it until some verifications are made in another function
  * @param game structure that has the non-used blocks
@@ -271,6 +290,33 @@ int fileExists(char fileName[]) {
     FILE *file = fopen(fileName, "r");
     if (file == NULL) return 0;
     return 1;
+}
+
+/**
+ * Runs the structure that has the id of all sequences matching a certain pattern to check if the id the user chose
+ * exists
+ * @param sequenceIds is the structure with all the matching sequences' ids
+ * @param id is the id the user chose
+ * @return returns true if the id is present and false if not
+ */
+int checkId(IDS *sequenceIds, unsigned long id){
+    ID *idAux = sequenceIds->firstId;
+    ID *delId;
+    int toReturn = 0;
+    while(idAux != NULL){
+        if(idAux->sequenceId == id){
+            sequenceIds->firstId = idAux;
+            sequenceIds->numberOfIds = 1;
+            toReturn = 1;           // store the result to continue to run the list and free the memory of the remaining ids
+            idAux = idAux->nextId;  // because we will only need the id that matched
+            continue;
+        }
+        delId = idAux->nextId;
+        free(idAux);
+        idAux = delId;
+    }
+    if(toReturn) sequenceIds->firstId->nextId = NULL;
+    return toReturn;
 }
 
 /**

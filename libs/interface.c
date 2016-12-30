@@ -18,7 +18,7 @@ int printMenu(int path) {
     int choiceMade = 0;
     switch (path) {
         case 0:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - New Game\n");
@@ -33,7 +33,7 @@ int printMenu(int path) {
             }
 
         case 1:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\tNumber of Hands: ");
@@ -46,7 +46,7 @@ int printMenu(int path) {
             }
 
         case 2:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - Create Hand(s) randomly\n");
@@ -61,7 +61,7 @@ int printMenu(int path) {
             }
 
         case 3:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\tNumber of blocks on each hand: ");
@@ -69,7 +69,7 @@ int printMenu(int path) {
             return choiceMade;
 
         case 4:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - Choose the blocks randomly\n");
@@ -78,7 +78,7 @@ int printMenu(int path) {
             return choiceMade;
 
         case 5:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - Load game from text file\n");
@@ -93,7 +93,7 @@ int printMenu(int path) {
             }
 
         case 6:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\tSave game data in a file? (Y/N): ");
@@ -108,7 +108,7 @@ int printMenu(int path) {
             }
 
         case 7:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - Save game data in a text file\n");
@@ -123,7 +123,7 @@ int printMenu(int path) {
             }
 
         case 8:
-            printf("\t\t\t\t# # # # # # # # # #\n");
+            printf("\n\t\t\t\t# # # # # # # # # #\n");
             printf("\t\t\t\t#     M E N U     #\n");
             printf("\t\t\t\t# # # # # # # # # #\n\n");
             printf("\t\t\t\t1 - See the biggest sequence\n");
@@ -247,17 +247,26 @@ void generateManualHand(GAME *game, HANDS *hands) {
     }
 }
 
-void findPatternInSequences(ALLSEQUENCES allSequences, char *pattern){
+void findPatternInSequences(ALLSEQUENCES allSequences, char *pattern, IDS *sequenceIds, unsigned long *numberOfMatches){
     STRINGSEQ *stringSeqAux = allSequences.pfirstSequence;
-    unsigned long numberOfMatches = 0;
     int patternLength = strlen(pattern) / 2; // number of blocks not the number of values (size of the string)
+    ID *idAux;
     while(stringSeqAux != NULL && stringSeqAux->sizeOfSequence >= patternLength){ // it will only find matches if the sequence is the same size or bigger than the pattern size
-        if(KMP(*stringSeqAux, pattern)){ // returns true if the pattern was found in the sequence passed
-            numberOfMatches += 1;
+        if(KMP(*stringSeqAux, pattern, 1) > -1){ // returns the index where the pattern was found in the sequence if a match was found
+            idAux = (ID*)malloc(sizeof(ID));
+            if(sequenceIds->firstId == NULL){
+                idAux->nextId = NULL;
+            }else{
+                idAux->nextId = sequenceIds->firstId;
+            }
+            idAux->sequenceId = stringSeqAux->idSequence;
+            sequenceIds->firstId = idAux;
+            *numberOfMatches += 1;
         }
         stringSeqAux = stringSeqAux->pnextStringSeq;
     }
-    printf("\nNumber of matches for the pattern \"%s\": %ld\n", pattern ,numberOfMatches);
+    sequenceIds->numberOfIds = *numberOfMatches;
+    printf("\nNumber of matches for the pattern \"%s\": %ld\n", pattern , *numberOfMatches);
 }
 
 /**
@@ -291,7 +300,7 @@ int editHands(HANDS *hands, GAME *game) {
             validate = 1;
         }
         validate = 0;
-        if (choice == 'n') {
+        if (choice == 'n' || choice == 'N') {
             // if the user decided to not edit, since it's inside a loop, we need to check if he edited anything before
             return edited;
         }
@@ -427,15 +436,15 @@ void printSequenceOfSize(STRINGSEQ sequence, int size){
 }
 
 /**
- *
+ * Function that handles the creation of the pattern incluiding limitations made by existing blocks, etc
  * @param allBlocks structure containing all the blocks
  * @param game is where the unused blocks are, to check if a certain chosen block is being used on the sequences or not
  * @param maxSequenceSize size of the biggest sequence (in an ordered list by descending order it's the 1st sequence)
  * @return
  */
-//char *createPattern(GAME *availableBlocks, GAME game, int maxSequenceSize, ALLSEQUENCES allSequences){
-char *createPattern(GAME *availableBlocks, ALLSEQUENCES allSequences, int maxSequenceSize){
+char *createPattern(ALLSEQUENCES allSequences, int maxSequenceSize){
     int i, sizeOfPattern = 0, blocksLimit, blockId;
+    GAME availableBlocks = {0, NULL};
     BLOCK *delBlock = NULL, *blockAux = NULL;
     char *pattern = (char*)malloc( sizeof(char) * (sizeOfPattern*2) + 1 );
     *pattern = '\0'; // initialize the string as empty
@@ -448,31 +457,37 @@ char *createPattern(GAME *availableBlocks, ALLSEQUENCES allSequences, int maxSeq
     // with the desired size for the pattern now, to avoid problems like the user choosing some block that isn't consistent with any other
     // block present in the sequences, it's created in a structure of the type GAME a linked list of the blocks present in all the sequences generated
     // of the size of the pattern, this way it's certain that it can always be a pattern made with the given size
-    getAvailableBlocks(availableBlocks, allSequences, sizeOfPattern);
-    if(availableBlocks->availableBlocks == 0){
+    getAvailableBlocks(&availableBlocks, allSequences, sizeOfPattern);
+    if(availableBlocks.availableBlocks == 0){
+        free(sequenceAux);
         return pattern;
     }
     sequenceAux->sizeOfSequence = sizeOfPattern;
     for (i = 0; i < sizeOfPattern; i++) {
-        printf("\ni: %d\n", i);
-        blocksLimit = blocksAvailable(*availableBlocks);
+        blocksLimit = blocksAvailable(availableBlocks);
+        printf("\n\n(insert \'-1\' to return to the menu)");
         printf("\n%2d block: ", i + 1);
         scanf("%d", &blockId);
+        if(blockId == -1){
+            free(sequenceAux);
+            freeGame(&availableBlocks);
+            return pattern;
+        }
         if (blockId < 1 || blockId > blocksLimit) {
             printf("!!! Choose a valid number !!!");
             i--;
             continue;
         }
         blockId -= 1;
-        delBlock = peepBlock(availableBlocks, blockId); // returns the block chosen without removing it from the game because it might not be consistent
+        delBlock = peepBlock(&availableBlocks, blockId); // returns the block chosen without removing it from the game because it might not be consistent
         if (i == 0) { // if it's the first block will insert it in the sequence, no verification required
-            delBlock = popBlock(availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+            delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
             blockAux = transferBlock(delBlock);
             blockAux->prevBlock = blockAux; // doubly linked list
             sequenceAux->pfirstBlock = blockAux;
         }else if(i == 1){ // the second block to be inserted needs a different verification, that will invert the first block if needed
             if (isConsistent(sequenceAux, delBlock, 1)){ // will check the consistency with the block inserted before
-                delBlock = popBlock(availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
                 blockAux = transferBlock(delBlock);
                 blockAux->prevBlock = sequenceAux->pfirstBlock;
                 sequenceAux->pfirstBlock->pnextBlock = blockAux;
@@ -484,7 +499,7 @@ char *createPattern(GAME *availableBlocks, ALLSEQUENCES allSequences, int maxSeq
             }
         }else{
             if (isConsistent(sequenceAux, delBlock, 2)){
-                delBlock = popBlock(availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
                 blockAux = transferBlock(delBlock);
                 blockAux->prevBlock = sequenceAux->pfirstBlock->prevBlock;
                 sequenceAux->pfirstBlock->prevBlock->pnextBlock = blockAux;
@@ -513,9 +528,241 @@ char *createPattern(GAME *availableBlocks, ALLSEQUENCES allSequences, int maxSeq
         free(delBlock); // freeing the space used by the sequence generated as it goes through all the blocks
     }
     free(sequenceAux);
-    freeGame(availableBlocks);
+    freeGame(&availableBlocks);
     return pattern;
 }
+
+char *createReplacePattern(ALLSEQUENCES allSequences, IDS sequenceIds, char *pattern)
+{
+    GAME availableBlocks = {0,NULL};
+    getGame(&availableBlocks);
+    BLOCK *blockAux = (BLOCK*)malloc(sizeof(BLOCK)), *delBlock = NULL;
+    STRINGSEQ *strSequenceAux = NULL;
+    ID *idAux = sequenceIds.firstId;
+    int i, patternLength = strlen(pattern), sizeOfPattern = 0, blocksLeft = 0, blocksLimit, blockId, index = -1;
+    // runs all the ids of the linked list and for each one gets the respective sequence from where it will be taken
+    // the blocks that are not from the pattern to replace to remove them from the available blocks from wich the user will
+    // choose the replacement pattern
+    while (idAux != NULL) {
+        strSequenceAux = getSequenceOfId(allSequences, *idAux);
+        index = KMP(*strSequenceAux, pattern, 0);
+        for (i = 1; i < index; i+=2) {
+            blockAux->leftSide = (*(strSequenceAux->sequence + (i-1))) - '0';
+            blockAux->rightSide = (*(strSequenceAux->sequence + i)) - '0';
+            // sends the block and the availableBlocks through a function that removes the block from the available ones
+            // since it's already present in the sequence
+            delBlock = removeBlock(&availableBlocks, *blockAux);
+            if(delBlock != NULL){
+                blocksLeft += 1;
+                free(delBlock);
+            }
+        }
+        for (i = (index+patternLength+1); i < (strSequenceAux->sizeOfSequence*2); i+=2) {
+            blockAux->leftSide = (*(strSequenceAux->sequence + (i-1))) - '0';
+            blockAux->rightSide = (*(strSequenceAux->sequence + i)) - '0';
+            delBlock = removeBlock(&availableBlocks, *blockAux);
+            if(delBlock != NULL){
+                blocksLeft += 1;
+                free(delBlock);
+            }
+        }
+        idAux = idAux->nextId;
+    }
+    blocksLeft = 28 - blocksLeft;
+
+    // Outer limits where the new pattern must fit
+    int leftLimit = pattern[0] - '0';
+    int rightLimit = -1;
+    if(index+patternLength < strSequenceAux->sizeOfSequence){
+        rightLimit = pattern[patternLength - 1] - '0';
+    }
+//    int rightLimit = (index+patternLength < strSequenceAux->sizeOfSequence ? pattern[patternLength - 1] - '0' : -1);
+    printf("\n(%d < %d) RIghtLimit: %d", index+patternLength, strSequenceAux->sizeOfSequence, rightLimit);
+//    printf("\nPattern left side: %c | Pattern right side: %c\n", leftLimit, rightLimit);
+
+    while(sizeOfPattern < 1 || sizeOfPattern >  blocksLeft){
+        printf("\nHow many blocks will there be in the pattern? ");
+        scanf("%d", &sizeOfPattern);
+    }
+    char *replace = (char*)malloc( sizeof(char) * (sizeOfPattern*2) + 1 );
+    *replace = '\0'; // initialize the string as empty
+
+    SEQUENCE *sequenceAux = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+    sequenceAux->sizeOfSequence = sizeOfPattern;
+    for (i = 0; i < sizeOfPattern; i++) {
+        blocksLimit = blocksAvailable(availableBlocks);
+        printf("\n\n(insert \'-1\' to return to the menu)");
+        printf("\n%2d block: ", i + 1);
+        scanf("%d", &blockId);
+        if(blockId == -1){
+            free(sequenceAux);
+            freeGame(&availableBlocks);
+            return pattern;
+        }
+        if (blockId < 1 || blockId > blocksLimit) {
+            printf("!!! Choose a valid number !!!");
+            i--;
+            continue;
+        }
+        blockId -= 1;
+        delBlock = peepBlock(&availableBlocks, blockId); // returns the block chosen without removing it from the game because it might not be consistent
+        if (i == 0) { // if it's the first block will verify if any of its 2 values is equal to the right value of the last inserted block on the sequence
+            if(delBlock->leftSide == leftLimit){
+                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from there after its contents are copied
+                blockAux = transferBlock(delBlock);
+                blockAux->prevBlock = blockAux; // doubly linked list
+                sequenceAux->pfirstBlock = blockAux;
+            }else if(delBlock->rightSide == leftLimit){ // needed to invert the block
+                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from there after its contents are copied
+                invertBlock(delBlock);
+                blockAux = transferBlock(delBlock);
+                blockAux->prevBlock = blockAux; // doubly linked list
+                sequenceAux->pfirstBlock = blockAux;
+            }else{
+                printf("\nThe block can't be used in this place. The block must have a side with the value %d", leftLimit);
+                i--;
+                continue;
+            }
+        }else if(i == (sizeOfPattern-1)){ // last block to be inserted
+            if(delBlock->leftSide == rightLimit){
+                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from there after its contents are copied
+                blockAux = transferBlock(delBlock);
+                blockAux->prevBlock = blockAux; // doubly linked list
+                sequenceAux->pfirstBlock = blockAux;
+            }else if(delBlock->rightSide == rightLimit){ // needed to invert the block
+                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from there after its contents are copied
+                invertBlock(delBlock);
+                blockAux = transferBlock(delBlock);
+                blockAux->prevBlock = blockAux; // doubly linked list
+                sequenceAux->pfirstBlock = blockAux;
+            }else{
+                printf("\nThe block can't be used in this place. The block must have a side with the value %d", rightLimit);
+                i--;
+                continue;
+            }
+        }else{
+            if (isConsistent(sequenceAux, delBlock, 2)){
+                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+                blockAux = transferBlock(delBlock);
+                blockAux->prevBlock = sequenceAux->pfirstBlock->prevBlock;
+                sequenceAux->pfirstBlock->prevBlock->pnextBlock = blockAux;
+                sequenceAux->pfirstBlock->prevBlock = blockAux;
+            }else{
+                printf("\nThe block can't be used in this place.");
+                i--;
+                continue;
+            }
+        }
+        printf("\nCurrent pattern: ");
+        printSequence(*sequenceAux);
+    }
+    // creates space for all the values that the pattern will have
+    // the size of the pattern is the ammount of blocks, so the size needed is the double (for each value), each block has 2 values
+    // the + 1 at the end is for the end of the string: '\0'
+    int replaceLength = 0;
+    blockAux = sequenceAux->pfirstBlock;
+    for (i = 0; i < sizeOfPattern && blockAux != NULL; i++) {
+        replaceLength = strlen(replace);
+        *(pattern + replaceLength)     = '0' + blockAux->leftSide; // turns the integer into the correspondent character
+        *(pattern + (replaceLength+1)) = '0' + blockAux->rightSide;
+        *(pattern + (replaceLength+2)) = '\0';
+        delBlock = blockAux;
+        blockAux = blockAux->pnextBlock;
+        free(delBlock); // freeing the space used by the sequence generated as it goes through all the blocks
+    }
+    free(sequenceAux);
+    freeGame(&availableBlocks);
+
+    return replace;
+}
+//    int i, sizeOfPattern = 0, blocksLimit, blockId;
+//    GAME availableBlocks = {0, NULL};
+//    BLOCK *delBlock = NULL, *blockAux = NULL;
+//    char *pattern = (char*)malloc( sizeof(char) * (sizeOfPattern*2) + 1 );
+//    *pattern = '\0'; // initialize the string as empty
+//    // will store all the blocks chosen in the a sequence structure to check consistency and only after that is ready to be transformed to a string
+//    SEQUENCE *sequenceAux = (SEQUENCE*)malloc(sizeof(SEQUENCE));
+//    while(sizeOfPattern < 1 || sizeOfPattern > maxSequenceSize){
+//        printf("\nHow many blocks will there be in the pattern? ");
+//        scanf("%d", &sizeOfPattern);
+//    }
+//    // with the desired size for the pattern now, to avoid problems like the user choosing some block that isn't consistent with any other
+//    // block present in the sequences, it's created in a structure of the type GAME a linked list of the blocks present in all the sequences generated
+//    // of the size of the pattern, this way it's certain that it can always be a pattern made with the given size
+//    getAvailableBlocks(&availableBlocks, allSequences, sizeOfPattern);
+//    if(availableBlocks.availableBlocks == 0){
+//        free(sequenceAux);
+//        return pattern;
+//    }
+//    sequenceAux->sizeOfSequence = sizeOfPattern;
+//    for (i = 0; i < sizeOfPattern; i++) {
+//        blocksLimit = blocksAvailable(availableBlocks);
+//        printf("\n\n(insert \'-1\' to return to the menu)");
+//        printf("\n%2d block: ", i + 1);
+//        scanf("%d", &blockId);
+//        if(blockId == -1){
+//            free(sequenceAux);
+//            freeGame(&availableBlocks);
+//            return pattern;
+//        }
+//        if (blockId < 1 || blockId > blocksLimit) {
+//            printf("!!! Choose a valid number !!!");
+//            i--;
+//            continue;
+//        }
+//        blockId -= 1;
+//        delBlock = peepBlock(&availableBlocks, blockId); // returns the block chosen without removing it from the game because it might not be consistent
+//        if (i == 0) { // if it's the first block will insert it in the sequence, no verification required
+//            delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+//            blockAux = transferBlock(delBlock);
+//            blockAux->prevBlock = blockAux; // doubly linked list
+//            sequenceAux->pfirstBlock = blockAux;
+//        }else if(i == 1){ // the second block to be inserted needs a different verification, that will invert the first block if needed
+//            if (isConsistent(sequenceAux, delBlock, 1)){ // will check the consistency with the block inserted before
+//                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+//                blockAux = transferBlock(delBlock);
+//                blockAux->prevBlock = sequenceAux->pfirstBlock;
+//                sequenceAux->pfirstBlock->pnextBlock = blockAux;
+//                sequenceAux->pfirstBlock->prevBlock = blockAux;
+//            }else{
+//                printf("\nThe block can't be used in this place.");
+//                i--;
+//                continue;
+//            }
+//        }else{
+//            if (isConsistent(sequenceAux, delBlock, 2)){
+//                delBlock = popBlock(&availableBlocks, blockId); // gets the block chosen from the game, removing it from the game after its content is copied
+//                blockAux = transferBlock(delBlock);
+//                blockAux->prevBlock = sequenceAux->pfirstBlock->prevBlock;
+//                sequenceAux->pfirstBlock->prevBlock->pnextBlock = blockAux;
+//                sequenceAux->pfirstBlock->prevBlock = blockAux;
+//            }else{
+//                printf("\nThe block can't be used in this place.");
+//                i--;
+//                continue;
+//            }
+//        }
+//        printf("\nCurrent pattern: ");
+//        printSequence(*sequenceAux);
+//    }
+//    // creates space for all the values that the pattern will have
+//    // the size of the pattern is the ammount of blocks, so the size needed is the double (for each value), each block has 2 values
+//    // the + 1 at the end is for the end of the string: '\0'
+//    int patternLength = 0;
+//    blockAux = sequenceAux->pfirstBlock;
+//    for (i = 0; i < sizeOfPattern && blockAux != NULL; i++) {
+//        patternLength = strlen(pattern);
+//        *(pattern + patternLength)     = '0' + blockAux->leftSide; // turns the integer into the correspondent character
+//        *(pattern + (patternLength+1)) = '0' + blockAux->rightSide;
+//        *(pattern + (patternLength+2)) = '\0';
+//        delBlock = blockAux;
+//        blockAux = blockAux->pnextBlock;
+//        free(delBlock); // freeing the space used by the sequence generated as it goes through all the blocks
+//    }
+//    free(sequenceAux);
+//    freeGame(&availableBlocks);
+//    return pattern;
+//}
 
 void printSequenceMatch(STRINGSEQ text, int index, int length){
     int i,j;

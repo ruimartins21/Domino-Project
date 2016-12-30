@@ -27,10 +27,9 @@ int main(int argc, char *argv[])
     unsigned long cost = 0, costOfGenerate = 0, count = 0;
     int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
     srand((unsigned) time(NULL));
-    char fileName[40], filePath[40] = "data/", *pattern;
+    char fileName[40], filePath[40] = "data/", *pattern, *replace;
 
     GAME game = {0, NULL};
-    GAME allBlocks = {0, NULL};
     HANDS hands = {0, 0, NULL};
     SEQUENCE sequence = {0, NULL};
     ALLSEQUENCES allSequences = {0, NULL};
@@ -46,6 +45,7 @@ int main(int argc, char *argv[])
 //    printf("\n## Hands ##\n");
 //    printHand(hands);
 //
+
 //    long long time_usec_init;
 //    long long time_usec_end;
 //    long elapsed_time, elapsed_time2;
@@ -79,28 +79,16 @@ int main(int argc, char *argv[])
 //    printAllSequence(allsequences);
 //    sortAllSequences(&allsequences);
 
-//    /// Testes KMP Substring Search
-//    STRINGSEQ strSequence = {6, "122443355116", NULL}; // [1,2][2,4][4,3][3,5][5,1][1,6]
-//    char *substring = "335511";
+    /// Testes KMP Substring Search
+//    STRINGSEQ strSequence = {6, 0, "122443355116", NULL}; // [1,2][2,4][4,3][3,5][5,1][1,6]
+//    char *substring = "1";
 //    printf("\nString: %s\nSubstring: %s\n", strSequence.sequence, substring);
-//    printf("\nres: %d", KMP(strSequence, substring));
-
-//    void KMP(char pattern[M_KMP], int dfa[R_KMP][M_KMP]) {
-//        int X,c,j,i;
-//        // reset dfa[][] matrix to zeros
-//        for (i = 0; i < R_KMP; i++)
-//            for (j = 0; j < M_KMP; j++)
-//                dfa[i][j]=0;
-//        // build DFA from a pattern with length M
-//        dfa[pattern[0]-(int)'A'][0] = 1;
-//        for (X = 0, j = 1; j < M_KMP; j++) {
-//            for (c = 0; c < R_KMP; c++){
-//                dfa[c][j] = dfa[c][X];     // Copy mismatch cases.
-//            }
-//            dfa[pattern[j]-(int)'A'][j] = j+1;      // Set match case.
-//            X = dfa[pattern[j]-(int)'A'][X];        // Update restart state.
-//        }
+//    int res = 0;
+//    while(res < strlen(strSequence.sequence)){
+//        res = KMP(strSequence, substring);
+//        printf("\nres: %d", res);
 //    }
+//    return 0;
 
     /// TIMESTAMP
 //    struct timeval tv;
@@ -243,13 +231,14 @@ int main(int argc, char *argv[])
     choice = -1;
     while(choice != 0){ // runs the menu until the user wants to exit
         choice = printMenu(path);
+        STRINGSEQ *sequenceAux;
         if(choice == 1) {
             printf("\n# The biggest sequence generated was:\n");
             printSequences(allSequences, 1);
         }else if(choice == 2){
             printf("\nSize of the sequences to see: ");
             scanf("%d", &size);
-            STRINGSEQ *sequenceAux = findSequenceOfSize(allSequences, size, &cost); // returns the first sequence of the given size
+            sequenceAux = findSequenceOfSize(allSequences, size, &cost); // returns the first sequence of the given size
             if(sequenceAux != NULL){
                 printf("\nSequences of size %d: ", size);
                 printf("(Cost of finding the first sequence: %ld)\n", cost);
@@ -260,14 +249,50 @@ int main(int argc, char *argv[])
         }else if(choice == 3){
             printf("\n# All sequences generated:\n");
             printSequences(allSequences, 0);
-        }else if(choice == 4){ // search a pattern in the sequences
+            printf("Number of completed sequences (using all the blocks): %ld\n", count);
+            printf("Number of saved sequences: %ld\n", allSequences.numberOfSequences);
+        }else if(choice == 4 || choice == 5){ // search a pattern
             int maxSequenceSize = allSequences.pfirstSequence->sizeOfSequence; // size of the biggest sequence (in an ordered list by descending order it's the 1st sequence)
-            pattern = createPattern(&allBlocks, allSequences, maxSequenceSize);
-            if(strlen(pattern) > 0){
-                findPatternInSequences(allSequences, pattern);
-            }
-        }else if(choice == 5){ // Replace a pattern in the sequences
+            printf("\nSelect the pattern to replace:");
+            pattern = createPattern(allSequences, maxSequenceSize);
+            if(strlen(pattern) > 0) {
+                IDS sequenceIds = {NULL};
+                unsigned long numberOfMatches = 0;
+                findPatternInSequences(allSequences, pattern, &sequenceIds, &numberOfMatches);
+                if(numberOfMatches != 0) {
+                    if (choice == 5) { // Replace the chosen pattern in the sequences where it's consistent with the rest of the sequence
+                        while (choice < 1 || choice > 2) {
+                            printf("\n1 - Replace the pattern in a single sequence");
+                            printf("\n2 - Replace the pattern in all the listed sequences\nChoice: ");
+                            scanf("%d", &choice);
+                        }
+                        unsigned long sequenceId = 0;
+                        if (choice == 1) {
+                            printf("\nID of the sequence: ");
+                            scanf("%ld", &sequenceId);
+                            while (!checkId(&sequenceIds, sequenceId)) {
+                                printf("\nID of the sequence: ");
+                                scanf("%ld", &sequenceId);
+                            }
+                        }
+//                        printf("IDS: (%ld)\n", sequenceIds.numberOfIds);
+//                        ID *idAux = sequenceIds.firstId;
+//                        while (idAux != NULL) {
+//                            printf("%ld ", idAux->sequenceId);
+//                            idAux = idAux->nextId;
+//                        }
 
+                        printf("\nSelect the replacement pattern:");
+                        // choose the pattern to replace the previous pattern chosen
+                        replace = createReplacePattern(allSequences, sequenceIds, pattern);
+                        printf("\nSequencia para substituir: %s\n", replace);
+//                        sequenceAux = getSequenceOfId(allSequences, *sequenceIds.firstId);
+//                      para apanhar o index onde começa a pattern a substituir, para uma sequencia envia logo a proxima linha
+//                      para varias sequencias envia dentro de um ciclo de cada sequencia
+//                      printf("\nindex: %d", KMP(*sequenceAux, pattern, 0));
+                    }
+                }
+            }
         }
     }
     return 0;

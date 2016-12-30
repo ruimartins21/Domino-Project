@@ -21,6 +21,7 @@ void invertBlock(BLOCK *pBlock);
 void invertBlockSequence(SEQUENCE *pSequence);
 void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence);
 STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel);
+STRINGSEQ *getSequenceOfId(ALLSEQUENCES allSequences, ID sequenceId);
 void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int sizeOfPattern);
 int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size);
 void sortAllSequences(ALLSEQUENCES *allSequences);
@@ -32,8 +33,8 @@ void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef
 void printSequence(SEQUENCE sequence);
 
 // KMP substring search
-void preKMP(char *pat, int *Pi);
-int KMP(STRINGSEQ text, char *pat);
+void preKMP(char *pat, int dfa[][MAX28]);
+int KMP(STRINGSEQ text, char *pat, int print);
 
 //void mergeSort(ALLSEQUENCES *allsequences, ALLSEQUENCES *paux, int lo, unsigned long hi);
 //void merge(ALLSEQUENCES *allsequences, ALLSEQUENCES *paux, int lo, int mid, int hi);

@@ -282,60 +282,47 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
  * KMP Substring Search Algorithm
  */
 
-void preKMP(char *pat, int *dfa)
+void preKMP(char *pat, int dfa[][MAX28])
 {
-    int m = strlen(pat), k, i;
-    dfa[0] = -1;
-    for (i = 1; i < m; i++)
+    int X,c,j,i, M = strlen(pat);
+    // reset dfa matrix to zeros
+    for (i = 0; i < R; i++)
     {
-        k = dfa[i - 1];
-        while(k >= 0)
+        for (j = 0; j < M; j++)
         {
-            if(pat[k] == pat[i - 1]){
-                break;
-            }else{
-                k = dfa[k];
-            }
+            dfa[i][j]=0;
         }
-        dfa[i] = k + 1;
+    }
+    // build DFA from a pattern with length M
+    dfa[pat[0]-(int)'0'][0] = 1;
+    for (X = 0, j = 1; j < M; j++) {
+        for (c = 0; c < R; c++){
+            dfa[c][j] = dfa[c][X];     // Copy mismatch cases.
+        }
+        dfa[pat[j]-(int)'0'][j] = j+1; // Set match case.
+        X = dfa[pat[j]-(int)'0'][X];   // Update restart state.
     }
 }
 
-int KMP(STRINGSEQ text, char *pat)
+int KMP(STRINGSEQ text, char *pat, int print)
 {
-    int m = strlen(pat);
-    int n = strlen(text.sequence);
-    int dfa[m];
+    int N = strlen(text.sequence);
+    int M = strlen(pat);
+    int dfa[R][MAX28];
     preKMP(pat, dfa);
-    int i = 0;
-    // debug
-//    while(i < m){
-//        printf("Pi[%d] = %d ", i, dfa[i]);
-//        i++;
-//    }
-//    printf("\n");
-//    i = 0;
-    // end-debug
-    int k = 0;
-    while (i < n){
-        if (k == -1){
-            i++;
-            k = 0;
-        }else if (text.sequence[i] == pat[k]){ // a match was found so we move up in the state (k)
-            i++;
-            k++;
-            if(k == m) // when k is equal to the size of the substring it means that all the letters were found, k reached the last state
-            {
-                printSequenceMatch(text, (i-m), m);
-                printf(" - Found at position: %d (cost: %d)\n", (i - m), i);
-                return 1;
-            }
-        }else{
-            // it was not a match so we go back in the state according to the dfa table created before
-            k = dfa[k];
-        }
+    int i, j;
+    for (i = 0, j = 0; i < N && j < M; i++){
+        j = dfa[text.sequence[i]-(int)'0'][j];
     }
-    return 0;
+    if (j == M){
+        if(print){
+            printSequenceMatch(text, (i-M), M);
+            printf(" - Found at position: %d (cost: %d)\n", (i - M), i);
+        }
+        return (i - M); // returns the index of the first letter of the pattern found in the sequence
+    }else {
+        return -1;
+    }
 }
 
 /**
@@ -348,7 +335,7 @@ int KMP(STRINGSEQ text, char *pat)
 void sortAllSequences(ALLSEQUENCES *allSequences) {
     unsigned long cost = 0;
     mergeSort(&allSequences->pfirstSequence, &cost);
-    printf("cost: %ld\n", cost);
+//    printf("cost: %ld\n", cost);
 }
 
 STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel){
@@ -362,6 +349,17 @@ STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long
         if      (size < sequenceAux->sizeOfSequence) hi = mid - 1;
         else if (size > sequenceAux->sizeOfSequence) lo = mid + 1;
         else return sequenceAux;
+        sequenceAux = sequenceAux->pnextStringSeq;
+    }
+    return NULL;
+}
+
+STRINGSEQ *getSequenceOfId(ALLSEQUENCES allSequences, ID sequenceId){
+    STRINGSEQ *sequenceAux = allSequences.pfirstSequence;
+    while(sequenceAux != NULL){
+        if(sequenceAux->idSequence == sequenceId.sequenceId){
+            return sequenceAux;
+        }
         sequenceAux = sequenceAux->pnextStringSeq;
     }
     return NULL;

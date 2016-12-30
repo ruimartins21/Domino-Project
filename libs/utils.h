@@ -74,10 +74,27 @@ typedef struct allSequences{
     STRINGSEQ *pfirstSequence;
 }ALLSEQUENCES;
 
+/**
+ * Structure for utility purpose only, it's a linked list of ids of sequences
+ */
+typedef struct id{
+    unsigned long sequenceId;
+    struct id *nextId;
+}ID;
+
+/**
+ * Structure for utility purpose only, it's used to store the Ids of the sequences that match a pattern, to limit user choice when choosing a sequence to replace
+ */
+typedef struct ids{
+    unsigned long numberOfIds;
+   ID *firstId;
+}IDS;
+
 #define MAX2 2
 #define MAX3 3
 #define MAX28 28
 #define MAX57 57
+#define R 7 // It's the size of the alphabet for the KMP algorithm (0,1,2,3,4,5,6)
 
 #if defined _WIN64 || defined _WIN32
     #include <windows.h>
@@ -92,6 +109,7 @@ void printGame(GAME game);
 void printHand(HANDS hands);
 void printSingleHand(HAND hand, int handSize);
 BLOCK *popBlock(GAME *game, int index);
+BLOCK *removeBlock(GAME *game, BLOCK block);
 BLOCK *peepBlock(GAME *game, int index);
 BLOCK *transferBlock(BLOCK *delBlock);
 void swapBlock(GAME *game, BLOCK *handBlock, int index);
@@ -102,6 +120,7 @@ int compareIntValues(const void * a, const void * b);
 void sortIntArray(int * v, int n);
 void checkExtension(char fileName[], char extension[]);
 int fileExists(char fileName[]);
+int checkId(IDS *sequenceIds, unsigned long id);
 char *createDynamicString(char str[]);
 
 #endif //DOMINO_PROJECT_UTILS_H
