@@ -155,9 +155,9 @@ BLOCK *removeBlock(GAME *game, BLOCK block){
  * @param index position of the block to return
  * @return returns the block that corresponds to the index
  */
-BLOCK *peepBlock(GAME *game, int index){
+BLOCK *peepBlock(GAME game, int index){
     int i = 0;
-    BLOCK *blockAux = game->pfirstBlock;
+    BLOCK *blockAux = game.pfirstBlock;
     while(i != index && blockAux != NULL){
         blockAux = blockAux->pnextBlock;
         i++;

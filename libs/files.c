@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <io.h>
 //#include <dir.h> // this library only works as it should on windows
 
 /**
@@ -141,8 +142,8 @@ void editFile(char fileName[], int type, HANDS hands, GAME game) {
     FILE *file = NULL;
     int auxInt;
     char path[40] = "data/";
-    // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-//    mkdir(path); // creates the folder if it doesn't yet exists
+//    mkdir(path); // creates the folder if it doesn't yet exists on Windows
+//    mkdir(path, 0777); // creates the folder if it doesn't yet exists on MAC
     strcat(path, fileName);
     switch (type) {
         // Text files
@@ -243,8 +244,8 @@ void createGameFile(int type, HANDS hands, GAME game) {
     FILE *file = NULL;
     int auxInt, i;
     char fileName[40], path[40] = "data/";
-    // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-//    mkdir(path); // creates the folder if it doesn't yet exists
+//    mkdir(path); // creates the folder if it doesn't yet exists on Windows
+//    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
     switch (type) {
         // create txt file
         case 1:
@@ -351,7 +352,9 @@ void createGameFile(int type, HANDS hands, GAME game) {
 
 void saveSequencesInFile(ALLSEQUENCES allSequences){
     FILE *file = NULL;
-    char fileName[40], path[40] = "data/sequence-";
+//    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
+//    mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
+    char fileName[40], path[40] = "data/logs/sequence-";
     struct timeval tv;
     gettimeofday(&tv,NULL);
     sprintf(fileName, "%ld",  tv.tv_sec);

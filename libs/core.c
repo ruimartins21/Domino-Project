@@ -4,37 +4,21 @@
 
 #include "core.h"
 #include "interface.h"
-#include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <string.h>
 #include <assert.h>
-
-/**
- * Function that generates player hand randomly
- * -> Runs the number of hands chosen by the user, for each one runs all the blocks of the hand
- * -> Generates a random number confined to the values 0 to 27
- * -> Returns the block positioned at the index generated and copies its content to another place and frees the space on memory of the previous one
- *
- * @param matrix Initial game matrix (all pieces)
- * @param hand Matrix with the player pieces (hand game)
- * @param linesHand Matrix lines of the player hand
- * @param qtSet Number of hands to generate
- */
 
 /***
  * Function that generates player hand randomly
  * -> Runs the number of hands chosen by the user, for each one runs all the blocks of the hand
  * -> Generates a random number confined to the values 0 to 27
- * -> Retira o block da estrutura GAME e coloca na mao pretendida
+ * -> Removes the block from the GAME structure and inserts it into the proper hand
  *
- * @param game Estrutra com todas as peças de jogo
- * @param hands Estrutura que contem todas as maos de jogo e em que cada mao contem as peças de jogo
+ * @param game is the structure with all the unused blocks
+ * @param hands structure that has all the hands created in the game and the respective blocks
  */
 void generateRandomHand(GAME *game, HANDS *hands) {
-
-//  usado para nao gerar sempre o mesmo numero aleatorio
-    long ultime;
+    long ultime;// used to not generate the same random number
     time(&ultime);
     srand((unsigned)ultime);
 
@@ -43,7 +27,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
     BLOCK *delBlock = NULL, *blockAux = NULL;
     hands->pfirstHand = NULL;
     for (i = 0; i < hands->numberOfHands; i++) {
-        handAux = (HAND*)malloc(sizeof(HAND));  // mao atual onde serão colocadas as peças geradas aleatoriamente
+        handAux = (HAND*)malloc(sizeof(HAND));  // current hand that will be filled with the random given blocks
         for (j = 0; j < hands->handSize; j++) {
             if(linesCount < 27){
                 randValue = 0 + rand() % ((MAX28-1) - linesCount); // it needs to be sent MAX28 - 1 because the popBlock function works with numbers between 0 and 27
@@ -65,48 +49,31 @@ void generateRandomHand(GAME *game, HANDS *hands) {
     }
 }
 
-
 /**
-  * Function to generate sequences from one hand
-  * Checks if the block that is inserted in the sequence matrix is consistent, if it is tries to insert the next block
-  * if it's not consistent checks the next blocks for consistency with the last inserted block until a block is considered consistent
-  * than it inserts it in the sequence and each time a block is inserted in the sequence, the 3rd column of the hands matrix is changed to 0
-  * that means the block is currently being used
-  * That way when the algorithm runs again to check another block, it ignores the blocks that have that 3rd column at 0
-  * @param matrix Initial matrix (with the number of blocks existing at the time)
-  * @param handSize size of the hand
-  * @param sequence sequence matrix with the blocks that are consistent
-  * @param allSequences is the matrix that will store all the eligible sequences
-  * @param inserted number of blocks inserted in sequence matrix
-  * @return
-  */
-
-/***
- * Function to generate sequences from hands (one or more)
- * -> Faz o calculo para descobrir qual a mao a ser jogada
- * -> Percore todas as peças da mao e verifica se cada peça está disponivel para ser jogada na sequencia, se estive disponivel verifica se é consistente
- * -> Após verificar a consistencia coloca a peça da estrutura sequencia (insere à cauda). As peças estão duplamente ligadas pois desta forma a partir da primeira peça da
- * sequencia consegue-se aceder à ultima peça inserida.
- * -> se nao for consistente é decrementado o nuemro de peças inseridas na sequencia e retirada a ultima peça da sequencia
- * EX: VARIAS MAOS[4]: mao1 insere, mao2 se tiver peça que encaixe insere, mao3 nao tem peça passa a mao4, mao4 insere, mao1 nao tem peca a inserir, entao recursivamente
- * é retirada a peça colocada pela mao4(substituindo essa peca por outra que possa encaixar), se nao tiver vai fazendo isso para a mao3, mao2, até a mao1, ate que a mão1
- * inseria uma nova peça.
- * Desta forma sequencias de tamanho (1 peça) apenas serão as peças da primeira mao de jogo
+ * Function to generate sequences from the hands (one or more)
+ * -> Finds wich hand has to play by a selected pattern **
+ * -> Runs all the blocks of a hand and checks if each one is available to be played on the sequence, if it is, checks if it's consistent
+ * -> After the consistency checked, the block is used on the sequence structure (Insert at the tail). The blocks are doubly linked because, this way,
+ * from the first block we can access the last one
+ * -> if it's not consistent, the number of blocks inserted in the sequence is decremented and the last block inserted is removed
+ * ** Multiple Hands Game [4]: Hand 1 plays, hand 2 plays if it has a consistent block, hand 3 doesn't have a consistent block and passes to the 4th hand
+ * hand 4 plays, hand 1 doesn't have a block to play then recursively the block played by the 4th hand is removed, replacing it with another that fits.
+ * If it doesn't have, again recursively goes to the hand 3, removes the one played by it, tries again with another, and so on until the 1st hand plays again
+ * This way sequences with size 1 will be only possible with the blocks from the 1st hand
  *
- * @param pHands Esttrutura que tem todas as maos de jogo
- * @param pSequence Estrutra que irá guardar a sequencia gerada a cada jogada
- * @param pAllsequences Estrutura responsável por conter todas as sequencias geradas ao longo do algoritmo
- * @param inserted Número de peças inseridas na sequencia
- * @param count Contador de sequencias maximas geradas (sequencias com tamanho igual ao numeor da mao)
- * @param handId Identificador da mao atual a jogar
- * @param costOfGenerate Variável usada para saber o custo da funcao generateSequence()
- * @return 0 quando testa todas as combinacoes possiveis com todas as peças de cada mao
+ * @param pHands Structure that stores all the games' hands
+ * @param pSequence Structure that will save the sequence at each play
+ * @param pAllsequences Structure responsible for storing all the sequences generated
+ * @param inserted Number of blocks inserted in a sequence
+ * @param count Counter for sequences generated
+ * @param handId Identifier of the current hand playing
+ * @param costOfGenerate used to know the cost for this function
+ * @return returns 0 at the end of the function
  */
 int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, unsigned long *count, int handId, unsigned long *costOfGenerate) {
     int i = 0;
     BLOCK *blockAux = NULL;
     HAND *handAux = NULL;
-
     handId = handId % pHands->numberOfHands; //  To know the current hand that is being played
     handAux = pHands->pfirstHand;
     //    Find hand to be played
@@ -114,14 +81,11 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
         handAux = handAux->pnextHand;
         i++;
     }
-    blockAux = handAux->pfirstBlock;    // primeira peça da mao a jogar
-
+    blockAux = handAux->pfirstBlock;    // first block of the hand to be played
     for (i = 0; i < pHands->handSize; i++) {
-        (*costOfGenerate)++; // Total cost of the function
-
+        (*costOfGenerate)++;
 //         if the block is available
         if (blockAux->available == 1) {
-
 //            new block in the sequence
             BLOCK *pnew = (BLOCK *) malloc(sizeof(BLOCK));
             pnew->leftSide = blockAux->leftSide;
@@ -129,7 +93,6 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
             pnew->available = 0;
             pnew->pnextBlock = NULL;
             pnew->prevBlock = NULL;
-
             if (isConsistent(pSequence, pnew, inserted) == 1) {
                 if(inserted == 0) { // If it's the first block in the sequence
                     pSequence->pfirstBlock = pnew;
@@ -141,43 +104,32 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                     pnew->pnextBlock = pSequence->pfirstBlock;
                     pSequence->pfirstBlock->prevBlock = pnew;
                 }
-
                 inserted++;
                 pSequence->sizeOfSequence++;
                 blockAux->available = 0; // block is now unavailable
-
                 // Count only the max sequences
                 if(pSequence->sizeOfSequence == pHands->handSize)
                     (*count)++;
-
-//                printSequence(*pSequence);
                 saveSequence(pAllsequences, *pSequence);
-
-// se existir mais do que uma mao soma handId para da proxima iteracao ir a proxima mao: EX(3 maos): 0%3 = 0 | 1%3 = 1 | 2%3=2 | 3%3 =0
+//                if it exists more than one hand, adds handId for it to go to the next hand in the next iteration
                 if(pHands->numberOfHands > 1)
                     handId = handId+1;
-
                 generateSequence(pHands, pSequence, pAllsequences, inserted, count, handId, costOfGenerate);
-
                 BLOCK *paux = pSequence->pfirstBlock->prevBlock;
                 blockAux->available = 1; // block is available if it didn't fit
-
-                // colocar a ultima peca da sequencia igual a penultima peça, retirando a ultima peça da sequencia. Ficando a primeira peça ligada a penultima peça
+                // Puts the last block of the sequence equal to the last-but-one block, removing the last block and the first block being linked to the
+                // last-but-one block
                 pSequence->pfirstBlock->prevBlock = pSequence->pfirstBlock->prevBlock->prevBlock;
                 pSequence->pfirstBlock->prevBlock->pnextBlock = pSequence->pfirstBlock;
                 free(paux);
-
-                pSequence->sizeOfSequence --;
+                pSequence->sizeOfSequence--;
                 inserted--;
             }
         }
-
         blockAux = blockAux->pnextBlock;    // next block of the hand
-
     }
     return 0;
 }
-
 
 /**
  * Function responsible for storing all eligible sub-sequences / sequences in the sequences matrix
@@ -190,16 +142,15 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
  * @param handSize is the size of the hands, required for some conditions
  */
 
-/***
- * Função responsável por guardar cada sequencia gerada numa estrutura que contem todas as sequencias
- * -> Converte para string a sequencia recebida (sequencia a ser guardada)
- * -> Guarda na estrutura allSequences a sequencia convertida (inserçao à cabeça)
+/**
+ * Function responsible for storing all eligible sequences generated in a structure
+ * -> Converts the sequence passed to string before storing it
+ * -> Stores on the allSequences structure the converted sequences (Insertion at the head)
  *
- * @param allSequences Estrutura que contem todas as sequencias geradas
- * @param pSequence Sequencia a ser guardada
+ * @param allSequences Structure that stores all the generated sequences
+ * @param pSequence Sequence to be converted and stored
  */
 void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
-
     STRINGSEQ *newSequence = (STRINGSEQ*)malloc(sizeof(STRINGSEQ));
     newSequence->sizeOfSequence = pSequence.sizeOfSequence;
     BLOCK *blockAux = pSequence.pfirstBlock;
@@ -230,17 +181,21 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
     }
     allSequences->numberOfSequences++;
     newSequence->idSequence = allSequences->numberOfSequences; // atribuir um id à sequencia usado para as funcoes de search and replace
-
 }
 
-/**
- * KMP Substring Search Algorithm
- */
 
+/// KMP Substring Search Algorithm
+
+/**
+ * Responsible for the pre-processing of the dfa matrix used to determine for wich state of the algorithm the function goes
+ * according to the pattern
+ * @param pat is the pattern to be searched
+ * @param dfa is the matrix where will be stored the algorithm way of determining the states to give
+ */
 void preKMP(char *pat, int dfa[][MAX28])
 {
     int X,c,j,i, M = strlen(pat);
-    // reset dfa matrix to zeros
+    // reset DFA matrix to zeros
     for (i = 0; i < R; i++)
     {
         for (j = 0; j < M; j++)
@@ -252,13 +207,23 @@ void preKMP(char *pat, int dfa[][MAX28])
     dfa[pat[0]-(int)'0'][0] = 1;
     for (X = 0, j = 1; j < M; j++) {
         for (c = 0; c < R; c++){
-            dfa[c][j] = dfa[c][X];     // Copy mismatch cases.
+            dfa[c][j] = dfa[c][X];     // Copy mismatch cases
         }
-        dfa[pat[j]-(int)'0'][j] = j+1; // Set match case.
-        X = dfa[pat[j]-(int)'0'][X];   // Update restart state.
+        dfa[pat[j]-(int)'0'][j] = j+1; // Set match case
+        X = dfa[pat[j]-(int)'0'][X];   // Update restart state
     }
 }
 
+/**
+ * KMP algorithm using the pre-processement explained before
+ * runs the DFA matrix according to the position of the pattern where it is, depending on the character and on the text position where it is
+ * it will change the state (storing it in the "j" variable) until the pattern is completely scanned or the text is over
+ * if the pattern is found in the text, when the cycle ends, j will be equal to the length of the pattern therefore, matching
+ * @param text is the text where the pattern will be searched
+ * @param pat is the pattern to find
+ * @param print is a variable to determine if it's supposed to print the infos about the match found or not
+ * @return returns the index of the first character where the pattern was found in the text / sequence, or -1 if not found
+ */
 int KMP(STRINGSEQ text, char *pat, int print)
 {
     int N = strlen(text.sequence);
@@ -271,17 +236,22 @@ int KMP(STRINGSEQ text, char *pat, int print)
     }
     if (j == M){
         if(print){
-            printSequenceMatch(text, (i-M), M);
+            printSequenceMatch(text, (i-M), M, 1); // the number 1 is to ask the function to print the sequence id
             printf(" - Found at position: %d (cost: %d)\n", (i - M), i);
         }
-        return (i - M); // returns the index of the first letter of the pattern found in the sequence
+        return (i - M);
     }else {
         return -1;
     }
 }
 
-
-
+/**
+ * Function that uses binary search to find the first sequence of a given size
+ * @param allSequences is the structure that stores all the sequences generated
+ * @param size is the wished size
+ * @param costModel will count the cost of this type of search to find the sequence
+ * @return returns the sequence
+ */
 STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel){
     STRINGSEQ *sequenceAux = allSequences.pfirstSequence;
     *costModel = 0;
@@ -298,6 +268,12 @@ STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long
     return NULL;
 }
 
+/**
+ * Searches in all the sequences the one with the given ID
+ * @param allSequences is the structure that stores all the sequences generated
+ * @param sequenceId is the id of the sequence wanted
+ * @return returns that sequence
+ */
 STRINGSEQ *getSequenceOfId(ALLSEQUENCES allSequences, ID sequenceId){
     STRINGSEQ *sequenceAux = allSequences.pfirstSequence;
     while(sequenceAux != NULL){
@@ -309,6 +285,13 @@ STRINGSEQ *getSequenceOfId(ALLSEQUENCES allSequences, ID sequenceId){
     return NULL;
 }
 
+/**
+ * Using the help of other functions, this one will store in the GAME structure all the blocks available for the user to choose
+ * to create a pattern
+ * @param availableBlocks is the structure where will be stored the available blocks
+ * @param allSequences is the structure that stores all the sequences generated
+ * @param sizeOfPattern is the size of the pattern to choose
+ */
 void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int sizeOfPattern){
     unsigned long test = 0;
     STRINGSEQ *firstSeq = findSequenceOfSize(allSequences, sizeOfPattern, &test); // first sequence of size
@@ -333,6 +316,13 @@ void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int si
     }
 }
 
+/**
+ * Starting at the first sequence of a given size already discovered, this function will get all the other sequences of the same size
+ * @param availableBlocks is the structure where will be stored the available blocks
+ * @param firstSequence is the first sequence of the given size
+ * @param size is the size wanted
+ * @return returns 0 if there's only one sequence of the given size, there's only one way of making the pattern and doesn't make sense to ask for it
+ */
 int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size){
     STRINGSEQ *sequenceAux = &firstSequence;
     int sequenceLen = 0, i;
@@ -360,18 +350,67 @@ int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size)
         count += 1;
         sequenceAux = sequenceAux->pnextStringSeq;
     }
-    if(count == 1){ // if there's only one sequence of the given size, there's only one way of making the pattern and doesn't make sense to ask for it
+    if(count == 1){
         return 0;
     }
     return 1;
 }
 
-
+/**
+ * Function that handles the creation of the replacement pattern incluiding all the limitations needed to avoid any errors
+ * incluiding repetitions and inconsistencies
+ * @param allSequences is the structure that stores all the sequences generated
+ * @param sequenceIds is the structure holding the ids of the sequences matching the pattern to be replaced
+ * @param pattern is the pattern to be replaced
+ * @param replace is the pattern to replace
+ */
+void replacePattern(ALLSEQUENCES *allSequences, IDS *sequenceIds, char *pattern, char *replace){
+    STRINGSEQ *strSequenceAux = NULL;
+    ID *idAux = sequenceIds->firstId, *delId = NULL;
+    int index, i, sequenceLength, len;
+    int patternLength = strlen(pattern);
+    int replaceLength = strlen(replace);
+    char *newSequence;
+    while (idAux != NULL) {
+        len = 0; // resets at each sequence
+        strSequenceAux = getSequenceOfId(*allSequences, *idAux);
+        sequenceLength = strSequenceAux->sizeOfSequence*2;
+        newSequence = (char*)malloc(sizeof(char) * (replaceLength+(sequenceLength-patternLength))); // size of the new sequence removing the old pattern and inserting the new one
+        index = KMP(*strSequenceAux, pattern, 0);
+        printf("\nOld Sequence ");
+        printSequenceMatch(*strSequenceAux, index, patternLength, 0); // the number 0 is to ask the function to NOT print the sequence id
+        // sequence until the pattern position
+        for (i = 1; i < index; i+=2) {
+            *(newSequence + len++) = (*(strSequenceAux->sequence + (i-1)));
+            *(newSequence + len++) = (*(strSequenceAux->sequence + i));
+        }
+        // insert the new pattern
+        for (i = 0; i < replaceLength; i++) {
+            *(newSequence + len++) = (*(replace + i));
+        }
+        // sequence after the pattern ends
+        for (i = (index+patternLength+1); i < sequenceLength; i+=2) {
+            *(newSequence + len++) = (*(strSequenceAux->sequence + (i-1)));
+            *(newSequence + len++) = (*(strSequenceAux->sequence + i));
+        }
+        *(newSequence + len) = '\0';
+        strSequenceAux->sequence = createDynamicString(newSequence);
+        strSequenceAux->sizeOfSequence = len / 2;
+        printf("\nNew Sequence ");
+        printSequenceMatch(*strSequenceAux, index, replaceLength, 0);
+        printf("\n----------------------------");
+        free(newSequence); // space allocated before only fits the current sequence
+        delId = idAux;
+        idAux = idAux->nextId;
+        free(delId); // frees each id because they are no longer needed
+    }
+    free(sequenceIds);
+}
 
 /***
  * Function responsible for sorting the allSequences in descending order of the size of each sequences
- * -> é usado o algoritmo mergeSort para ordernar todas as sequencias
- * @param allSequences Estrutura que contem todas as sequencias a serem ordenadas
+ * -> merge sort algorithm is used for this sorting
+ * @param allSequences is the structure that stores all the sequences to be sorted
  */
 void sortAllSequences(ALLSEQUENCES *allSequences) {
     unsigned long cost = 0;
@@ -379,14 +418,13 @@ void sortAllSequences(ALLSEQUENCES *allSequences) {
     printf("cost: %ld\n", cost);
 }
 
+/**
+* Function responsible for sorting all the sequences
+* Sequences are sorted by its size and it's length, in descending order
+* @param headRef structure that has all the sequences to be sorted
+* @param costModel variable used to know the cost of this function
+*/
 /* sorts the linked list by changing pnextSequence pointers (not sizeOfSequence) */
-/***
- * Funcao responsavel por ordenar a todas as sequencias.
- * As sequencias serão ordenadas por seu comprimento e ainda serão ordenadas pelo seu tamanho. (ordem decrescente)
- *
- * @param headRef Estrutura que contem o allSequences que contem todas as sequencias a serem ordenadas
- * @param costModel Variavel usada para saber o custo da funcao mergeSort()
- */
 void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel)
 {
     *costModel += 1;
@@ -399,14 +437,11 @@ void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel)
     {
         return;
     }
-
     /* Split head into 'a' and 'b' sublists */
     frontBackSplit(head, &a, &b);
-
     /* Recursively sort the sublists */
     mergeSort(&a, costModel);
     mergeSort(&b, costModel);
-
     /* answer = merge the two sorted lists together */
     *headRef = sortedMerge(a, b, costModel);
 }

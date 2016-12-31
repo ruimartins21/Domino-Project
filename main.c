@@ -7,14 +7,10 @@
 #include "libs/core.h"
 #include "libs/files.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/time.h>
 #include <math.h>
-#include <sys/stat.h>
-//#include <io.h>
-//#include <dir.h>
-#include "libs/teste-merge.h"
+#include <sys/stat.h> // library for the mkdir for Mac
+#include <io.h> // library for the mkdir for Windows
 
 /**
  * Project main function
@@ -35,91 +31,6 @@ int main(int argc, char *argv[])
     HANDS hands = {0, 0, NULL};
     SEQUENCE sequence = {0, NULL};
     ALLSEQUENCES allSequences = {0, NULL};
-
-//    BLOCK *pblock = NULL;
-//    getGame(&game);
-//    hands.handSize = 14;
-//
-//    hands.numberOfHands = 1;
-//    generateRandomHand(&game, &hands);
-//    generateManualHand(&game, &hands);
-////    printf("\n## Game (%d) ##\n", game.availableBlocks);
-////    printGame(game);
-//    printf("\n## Hands ##\n");
-//    printHand(hands);
-//
-
-//    long long time_usec_init;
-//    long long time_usec_end;
-//    long elapsed_time, elapsed_time2;
-//    gettimeuseconds(&time_usec_init); // init time
-//    generateSequence(&hands, &sequence, &allSequences, 0, &count);
-//    generateSequence(&hands, &sequence, &allSequences, 0, &count, 0, &costOfGenerate);
-//    gettimeuseconds(&time_usec_end); // end time
-//    elapsed_time = (long) (time_usec_end - time_usec_init);
-//
-
-
-
-//    printf("\nData of generateSequence()");
-//    printf("\nN Complete sequences: %ld\n", count);
-//    printf("N Saved sequences: %ld\n", allSequences.numberOfSequences);
-//    printf("Total cost of generateSequence(): %ld iteracoes\n", costOfGenerate);
-//    printf("Elapsed time (usec) of generateSequence(): %ld\n", elapsed_time);
-//    printf("elapsed time (sec) of generateSequence(): %lf \n", (elapsed_time * pow(10, -6)));
-//
-//    gettimeuseconds(&time_usec_init); // init time
-//    sortAllSequences(&allSequences);
-//    gettimeuseconds(&time_usec_end); // end time
-//    elapsed_time2 = (long) (time_usec_end - time_usec_init);
-//    printf("\nData of sortAllSequences()");
-//    printf("\nElapsed time (usec) of sortAllSequences(): %ld\n", elapsed_time2);
-//    printf("elapsed time (sec) of sortAllSequences(): %lf \n", (elapsed_time2 * pow(10, -6)));
-//    printSequences(allSequences,0);
-
-    //printf("N sequencias: %d\n", count);
-    //printf("N sequencias saved: %ld\n", allsequences.numberOfSequences);
-//    printAllSequence(allsequences);
-//    sortAllSequences(&allsequences);
-
-    /// Testes KMP Substring Search
-//    STRINGSEQ strSequence = {6, 0, "122443355116", NULL}; // [1,2][2,4][4,3][3,5][5,1][1,6]
-//    char *substring = "1";
-//    printf("\nString: %s\nSubstring: %s\n", strSequence.sequence, substring);
-//    int res = 0;
-//    while(res < strlen(strSequence.sequence)){
-//        res = KMP(strSequence, substring);
-//        printf("\nres: %d", res);
-//    }
-//    return 0;
-
-    /// TIMESTAMP
-//    struct timeval tv;
-//    gettimeofday(&tv,NULL);
-//    tv.tv_sec; // seconds
-//    printf("timestamp: %ld", tv.tv_sec);
-//    time_t t = time(NULL);
-//    struct tm tm = *localtime(&t);
-//
-//    printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-
-//    main_merge();
-//    return 0;
-//}
-
-//    client_Merge_Sort_td();
-
-//    free(blockAux);
-//    generateRandomHand(&game, &hands);
-//    openFile("teste.bin", 2, &hands, &game);
-//    printf("\n## Game ##\n");
-//    printGame(game);
-//    printf("\n## Hands ##\n");
-//    printHand(hands);
-//    pblock = popBlock(&game, 30);
-//    if(pblock != NULL){
-//        printf("[%d,%d]", pblock->leftSide, pblock->rightSide);
-//    }
 
     // First iteration of the menu is for the user to choose between starting a new game or loading a saved game from a file
     choice = printMenu(0);
@@ -170,7 +81,6 @@ int main(int argc, char *argv[])
     }else if(choice == 2){
         // load a game from file
         path = 5;
-        // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
 //        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
 //        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
         printf("\nFiles existing (.txt):\n");
@@ -229,7 +139,6 @@ int main(int argc, char *argv[])
     printf("Elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
     printf("Number of completed sequences (using all the blocks): %ld\n", count);
     printf("Number of saved sequences: %ld\n", allSequences.numberOfSequences);
-//    printSequences(allSequences, 0);
     saveSequencesInFile(allSequences);
     path = 8;
     choice = -1;
@@ -279,21 +188,12 @@ int main(int argc, char *argv[])
                                 scanf("%ld", &sequenceId);
                             }
                         }
-//                        printf("IDS: (%ld)\n", sequenceIds.numberOfIds);
-//                        ID *idAux = sequenceIds.firstId;
-//                        while (idAux != NULL) {
-//                            printf("%ld ", idAux->sequenceId);
-//                            idAux = idAux->nextId;
-//                        }
-
                         printf("\nSelect the replacement pattern:");
                         // choose the pattern to replace the previous pattern chosen
                         replace = createReplacePattern(allSequences, sequenceIds, pattern);
-                        printf("\nSequencia para substituir: %s\n", replace);
-//                        sequenceAux = getSequenceOfId(allSequences, *sequenceIds.firstId);
-//                      para apanhar o index onde começa a pattern a substituir, para uma sequencia envia logo a proxima linha
-//                      para varias sequencias envia dentro de um ciclo de cada sequencia
-//                      printf("\nindex: %d", KMP(*sequenceAux, pattern, 0));
+                        if(strlen(replace) > 0){
+                            replacePattern(&allSequences, &sequenceIds, pattern, replace);
+                        }
                     }
                 }
             }

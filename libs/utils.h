@@ -110,7 +110,7 @@ void printHand(HANDS hands);
 void printSingleHand(HAND hand, int handSize);
 BLOCK *popBlock(GAME *game, int index);
 BLOCK *removeBlock(GAME *game, BLOCK block);
-BLOCK *peepBlock(GAME *game, int index);
+BLOCK *peepBlock(GAME game, int index);
 BLOCK *transferBlock(BLOCK *delBlock);
 void swapBlock(GAME *game, BLOCK *handBlock, int index);
 int blockIsPresent(GAME game, BLOCK block);

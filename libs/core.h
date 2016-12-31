@@ -5,8 +5,6 @@
 #ifndef DOMINO_PROJECT_CORE_H
 #define DOMINO_PROJECT_CORE_H
 
-#define MAX2 2
-#define MAX3 3
 #define MAX28 28
 #define MAX57 57
 
@@ -21,6 +19,7 @@ void invertBlockSequence(SEQUENCE *pSequence);
 void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence);
 STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel);
 STRINGSEQ *getSequenceOfId(ALLSEQUENCES allSequences, ID sequenceId);
+void replacePattern(ALLSEQUENCES *allSequences, IDS *sequenceIds, char *pattern, char *replace);
 void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int sizeOfPattern);
 int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size);
 void printSequence(SEQUENCE sequence);
