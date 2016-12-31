@@ -4,6 +4,8 @@
 
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef WIN32
 int gettimeuseconds(long long * time_usec) {

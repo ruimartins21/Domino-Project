@@ -11,8 +11,10 @@
 #include <string.h>
 #include <sys/time.h>
 #include <math.h>
+#include <sys/stat.h>
 //#include <io.h>
 //#include <dir.h>
+#include "libs/teste-merge.h"
 
 /**
  * Project main function
@@ -33,6 +35,7 @@ int main(int argc, char *argv[])
     HANDS hands = {0, 0, NULL};
     SEQUENCE sequence = {0, NULL};
     ALLSEQUENCES allSequences = {0, NULL};
+
 //    BLOCK *pblock = NULL;
 //    getGame(&game);
 //    hands.handSize = 14;
@@ -100,10 +103,10 @@ int main(int argc, char *argv[])
 //
 //    printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 
+//    main_merge();
 //    return 0;
 //}
 
-//    main_merge();
 //    client_Merge_Sort_td();
 
 //    free(blockAux);
@@ -168,7 +171,8 @@ int main(int argc, char *argv[])
         // load a game from file
         path = 5;
         // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-//        mkdir("data/"); // creates the folder if it doesn't yet exists
+//        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
+//        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
         printf("\nFiles existing (.txt):\n");
         system("dir/b data\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
         printf("\nFiles existing (.bin):\n");
@@ -225,7 +229,7 @@ int main(int argc, char *argv[])
     printf("Elapsed time (sec) = %lf \n",(elapsed_time * pow(10, -6)));
     printf("Number of completed sequences (using all the blocks): %ld\n", count);
     printf("Number of saved sequences: %ld\n", allSequences.numberOfSequences);
-    printSequences(allSequences, 0);
+//    printSequences(allSequences, 0);
     saveSequencesInFile(allSequences);
     path = 8;
     choice = -1;

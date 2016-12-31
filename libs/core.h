@@ -14,7 +14,6 @@
 
 
 void generateRandomHand(GAME *pGame, HANDS *pHands);
-//int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, int *count);
 int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, unsigned long *count, int handId, unsigned long *costOfGenerate);
 int isConsistent(SEQUENCE *pSequence, BLOCK *newBlock, int inserted);
 void invertBlock(BLOCK *pBlock);
@@ -24,19 +23,18 @@ STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long
 STRINGSEQ *getSequenceOfId(ALLSEQUENCES allSequences, ID sequenceId);
 void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int sizeOfPattern);
 int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size);
+void printSequence(SEQUENCE sequence);
+
+// MERGESORT sorting
 void sortAllSequences(ALLSEQUENCES *allSequences);
-//SEQUENCE *sortedMerge(SEQUENCE *a, SEQUENCE *b);
 STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel);
-//void mergeSort(struct sequence** headRef);
 void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel);
 void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef);
-void printSequence(SEQUENCE sequence);
+void moveNode(STRINGSEQ **destRef, STRINGSEQ **sourceRef);
 
 // KMP substring search
 void preKMP(char *pat, int dfa[][MAX28]);
 int KMP(STRINGSEQ text, char *pat, int print);
 
-//void mergeSort(ALLSEQUENCES *allsequences, ALLSEQUENCES *paux, int lo, unsigned long hi);
-//void merge(ALLSEQUENCES *allsequences, ALLSEQUENCES *paux, int lo, int mid, int hi);
 
 #endif //DOMINO_PROJECT_CORE_H
