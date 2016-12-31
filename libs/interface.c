@@ -731,3 +731,18 @@ void printSequenceMatch(STRINGSEQ text, int index, int length, int withId){
         }
     }
 }
+
+
+/**
+ * Prints a certain sequence
+ * @param sequence is the sequence to be printed
+ */
+void printSequence(SEQUENCE sequence){
+    BLOCK *blockAux = sequence.pfirstBlock;
+    int i;
+    for (i = 0; i < sequence.sizeOfSequence && blockAux != NULL; i++) {
+        printf("[%d, %d] ", blockAux->leftSide, blockAux->rightSide);
+        blockAux = blockAux->pnextBlock;
+    }
+    printf("\n");
+}

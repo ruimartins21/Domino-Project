@@ -446,217 +446,140 @@ void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel)
     *headRef = sortedMerge(a, b, costModel);
 }
 
-/***
- * Funcao responsavel por ordenar os indices (tamanho de cada sequencia). As sequencias são ordenadas a partir do seu tamanho.
- * Ordena e faz merge com a proxima menor. Se a proxima tiver o mesmo valor da atual o algoritmo tem um critério de selecao de qual escolher.
- * Escolhe o que tiver a string da sequencia maior, isto é, fica ordenado por tamanho de sequencia e ainda ordenado por sequencias.
+/**
+ * Function responsible for sorting the indexes (size of the sequence). Sequences are sorted by their size
+ * It sorts them and merge them with the next lower one. If the next has the same value the algorithm has a criteria of wich to select
+ * At the end, the sequences will be sorted by their size and between each other by their values
  *
- * @param a Valor a ser ordenado, da lista a
- * @param b Valor a ser ordenado, da lista b
- * @param costModel Variavel usada para saber o custo da funcao sortedMerge()
- * @return STRINGSEQ ordenado e com merge (entre a lista a e b)
- */
-//STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel)
-//{
-//    *costModel += 1;
-//    STRINGSEQ *result = NULL;
-//
-//    /* Base cases */
-//    if (a == NULL)
-//        return(b);
-//    else if (b==NULL)
-//        return(a);
-//
-//    /* Pick either a or b, and recur */
-////    if (a->sizeOfSequence <= b->sizeOfSequence) // ascending order
-//    if (a->sizeOfSequence > b->sizeOfSequence)    // descending order
-//    {
-//        result = a;
-//        result->pnextStringSeq = sortedMerge(a->pnextStringSeq, b, costModel);
-//    }
-////  criterio de selecao para eleger que uma sequencia de tamanho 4 é maior que outra de tamnho igual (se o string SEQUENCE da primeira > string SEQUENCE da segunda)
-//    else if(a->sizeOfSequence == b->sizeOfSequence && strcmp(a->sequence, b->sequence) > 0)
-//    {
-//        result = a;
-//        result->pnextStringSeq = sortedMerge(a->pnextStringSeq, b, costModel);
-//
-//    }
-//    else
-//    {
-//        result = b;
-//        result->pnextStringSeq = sortedMerge(a, b->pnextStringSeq, costModel);
-//    }
-//    return(result);
-//}
-
-/***
- * Funcao responsavel por ordenar os indices (tamanho de cada sequencia). As sequencias são ordenadas a partir do seu tamanho.
- * Ordena e faz merge com a proxima menor. Se a proxima tiver o mesmo valor da atual o algoritmo tem um critério de selecao de qual escolher.
- * Escolhe o que tiver a string da sequencia maior, isto é, fica ordenado por tamanho de sequencia e ainda ordenado por sequencias.
- *
- * @param a Valor a ser ordenado, da lista a
- * @param b Valor a ser ordenado, da lista b
- * @param costModel Variavel usada para saber o custo da funcao sortedMerge()
- * @return STRINGSEQ ordenado e com merge (entre a lista a e b)
+ * @param a value to be sorted from list a
+ * @param b value to be sorted from list b
+ * @param costModel variable used to check the cost of sortedMerge function
+ * @return returns the sequence in order between list a and b
  */
 STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel)
 {
     *costModel += 1;
     STRINGSEQ *result = NULL;
-
     /* point to the last result pointer */
     STRINGSEQ* *lastPtrRef = &result;
-
-    while(1)
-    {
-        if (a == NULL)
-        {
+    while(1){
+        if (a == NULL){
             *lastPtrRef = b;
             break;
-        }
-        else if (b==NULL)
-        {
+        }else if (b==NULL){
             *lastPtrRef = a;
             break;
         }
-        //    if (a->sizeOfSequence <= b->sizeOfSequence) // ascending order
-        if (a->sizeOfSequence > b->sizeOfSequence)    // descending order
-        {
+        if (a->sizeOfSequence > b->sizeOfSequence){    // descending order
             moveNode(lastPtrRef, &a);
         }
-//      criterio de selecao para eleger que uma sequencia de tamanho 4 é maior que outra de tamnho igual (se o string SEQUENCE da primeira > string SEQUENCE da segunda)
-        else if(a->sizeOfSequence == b->sizeOfSequence && strcmp(a->sequence, b->sequence) > 0)
-        {
+        // selection criteria between two sequences of the same size. If the string length of the first is greater than the second one, the first one will go first.
+        else if(a->sizeOfSequence == b->sizeOfSequence && strcmp(a->sequence, b->sequence) > 0){
             moveNode(lastPtrRef, &a);
-        }
-        else
-        {
+        } else {
             moveNode(lastPtrRef, &b);
         }
-
         /* tricky: advance to point to the next ".pnextStringSeq" field */
         lastPtrRef = &((*lastPtrRef)->pnextStringSeq);
     }
     return(result);
 }
 
-
-
-/***
- * Divide as sequencias da lista de sequencias em duas metades (frente e tras) e retorna duas listas atras de parametros
+//* Divide as sequencias da lista de sequencias em duas metades (frente e tras) e retorna duas listas atras de parametros
+/**
+ * Divides the sequences from the list of sequences in two halves (front and back)
  * If the length is odd, the extra sequence2 should go in the front list.
  * Uses the fast/slow pointer strategy.
- * @param source lista com todas as sequencias
- * @param frontRef lista a do merge: primeira metade da lista original
- * @param backRef lista b do merge: ultima metade da lista original
+ * @param source list with all the sequences
+ * @param frontRef list a from the merge: first half
+ * @param backRef list b from the merge: second half
  */
 void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef)
 {
     STRINGSEQ *fast = NULL;
     STRINGSEQ *slow = NULL;
-    if (source==NULL || source->pnextStringSeq==NULL)
-    {
+    if (source==NULL || source->pnextStringSeq==NULL) {
         /* length < 2 cases */
         *frontRef = source;
         *backRef = NULL;
-    }
-    else
-    {
+    } else {
         slow = source;
         fast = source->pnextStringSeq;
-
-
-//        fast: avanca o dobro do que avanca o slow, desta forma quando fast chegar a null (fim), slow está na metade
-//        ao estar na metade consegue-se dividir entre a lista da frente (lista a) e a lista de tras (lista b)
-        while (fast != NULL)
-        {
+        // fast: runs the double than slow does, this way when fast reaches NULL, slow is at half
+        // being at the middle allows us to divide between list a and list b
+        while (fast != NULL) {
             fast = fast->pnextStringSeq;
-            if (fast != NULL)
-            {
+            if (fast != NULL) {
                 slow = slow->pnextStringSeq;
                 fast = fast->pnextStringSeq;
             }
         }
-
         /* 'slow' is before the midpoint in the list, so split it in two at that point. */
-        *frontRef = source; // lista da frente(lista a) fica com a primeira metade dos valores da lista source
-        *backRef = slow->pnextStringSeq; // lista de tras (lista b) fica com a segunda metade dos valores da lista source
+        *frontRef = source; // the front list (list a) gets the first half of the values from source list
+        *backRef = slow->pnextStringSeq; // the back list (list b) gets the second half of the values from source list
         slow->pnextStringSeq = NULL; // curte para limite da lista a
     }
 }
 
-
-
-/***
- * Funcao responsavel por mover o endereço da parte frontal da fonte(sourceRef) para a frente do destino(destRef)
+/**
+ * Function responsible for moving the address from the frontal part of sourceRef to the front of the destiny (destRef)
  * Before calling MoveNode():
  *  source == {1, 2, 3}
  *  dest == {1, 2, 3}
  *
- *  Affter calling MoveNode():
+ *  After calling MoveNode():
  *  source == {2, 3}
  *  dest == {1, 1, 2, 3}
  *
- * @param destRef Endereço da sequencia de destino
- * @param sourceRef Endereço da sequencia de origem
+ * @param destRef Destiny sequence address
+ * @param sourceRef Source sequence address
  */
 void moveNode(STRINGSEQ **destRef, STRINGSEQ **sourceRef)
 {
-    /* the front source node  */
+    // the front source node
     STRINGSEQ* newSeq = *sourceRef;
-
-    /* Advance the source pointer */
+    // Advance the source pointer
     *sourceRef = newSeq->pnextStringSeq;
-
-    /* Link the old dest off the newSeq */
+    // Link the old dest off the newSeq
     newSeq->pnextStringSeq = *destRef;
-
-    /* Move dest to point to the newSeq */
+    // Move dest to point to the newSeq
     *destRef = newSeq;
 }
 
-
-
-/***
+/**
  * Checks if a block is consistent with the last placed block on the sequence
- * @param pSequence Sequencia que contem as peças
- * @param newBlock peça a ser testada com a ultima peça inserida na sequencia
- * @param inserted Numero de paças inseridas
+ * @param pSequence Sequence with the blocks
+ * @param newBlock block to be tested with the last inserted block on the sequence
+ * @param inserted Number of inserted blocks
  * @return 0 if block is not consistent or 1 if block is consistent
  */
 int isConsistent(SEQUENCE *pSequence, BLOCK *newBlock, int inserted) {
     // first block is always consistent
     if (inserted == 0) {
         return 1;
-    }
-        // if the left side of the block to insert is equal to the right side of the last block
+    }// if the left side of the block to insert is equal to the right side of the last block
     else if (newBlock->leftSide == pSequence->pfirstBlock->prevBlock->rightSide) {
         return 1;
-    }
-        // if the right side of the block to insert is equal to the right side of the last block then invert the block and inserts it
+    }// if the right side of the block to insert is equal to the right side of the last block then invert the block and inserts it
     else if (newBlock->rightSide == pSequence->pfirstBlock->prevBlock->rightSide) {
         invertBlock(newBlock);
         return 1;
-    }
-        // if it's the second block to be inserted and if it's not consistent, it's tested inverting the first block inserted
+    }// if it's the second block to be inserted and if it's not consistent, it's tested inverting the first block inserted
     else if (inserted == 1 && newBlock->leftSide == pSequence->pfirstBlock->leftSide ) {
         invertBlockSequence(pSequence);
         return 1;
-    }
-        // if the right side of the block is equal to the left side of the last block
+    }// if the right side of the block is equal to the left side of the last block
     else if (inserted == 1 && newBlock->rightSide == pSequence->pfirstBlock->leftSide ) {
         invertBlockSequence(pSequence);
         invertBlock(newBlock);
         return 1;
-    }
-        // if it's not consistent
+    }// if it's not consistent
     else {
         return 0;
     }
 }
 
-
-/***
+/**
  * Inverts a block
  * @param pBlock is the block to be inverted
  */
@@ -667,28 +590,15 @@ void invertBlock(BLOCK *pBlock) {
     pBlock->rightSide = aux;
 }
 
-/***
+/**
  * Inverts a block on sequence
  * -> Only used when its the first block
- * @param pSequence Sequencia que contem o bloco a ser invertido
+ * @param pSequence Sequence that holds the block to be inverted
  */
 void invertBlockSequence(SEQUENCE *pSequence) {
     int aux = 0;
     aux = pSequence->pfirstBlock->leftSide;
     pSequence->pfirstBlock->leftSide = pSequence->pfirstBlock->rightSide;
     pSequence->pfirstBlock->rightSide = aux;
-}
-
-
-
-
-void printSequence(SEQUENCE sequence){
-    BLOCK *blockAux = sequence.pfirstBlock;
-    int i;
-    for (i = 0; i < sequence.sizeOfSequence && blockAux != NULL; i++) {
-        printf("[%d, %d] ", blockAux->leftSide, blockAux->rightSide);
-        blockAux = blockAux->pnextBlock;
-    }
-    printf("\n");
 }
 

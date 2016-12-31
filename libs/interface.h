@@ -20,6 +20,6 @@ void printSequenceOfSize(STRINGSEQ sequence, int size);
 char *createPattern(ALLSEQUENCES allSequences, int maxSequenceSize);
 char *createReplacePattern(ALLSEQUENCES allSequences, IDS sequenceIds, char *pattern);
 void printSequenceMatch(STRINGSEQ text, int index, int length, int withId);
-
+void printSequence(SEQUENCE sequence);
 
 #endif //DOMINO_PROJECT_INTERFACE_H

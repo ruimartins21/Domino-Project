@@ -22,7 +22,6 @@ STRINGSEQ *getSequenceOfId(ALLSEQUENCES allSequences, ID sequenceId);
 void replacePattern(ALLSEQUENCES *allSequences, IDS *sequenceIds, char *pattern, char *replace);
 void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int sizeOfPattern);
 int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size);
-void printSequence(SEQUENCE sequence);
 
 // MERGESORT sorting
 void sortAllSequences(ALLSEQUENCES *allSequences);
