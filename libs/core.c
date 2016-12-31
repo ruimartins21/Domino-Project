@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <assert.h>
 
 /**
  * Function that generates player hand randomly
@@ -20,8 +21,19 @@
  * @param linesHand Matrix lines of the player hand
  * @param qtSet Number of hands to generate
  */
+
+/***
+ * Function that generates player hand randomly
+ * -> Runs the number of hands chosen by the user, for each one runs all the blocks of the hand
+ * -> Generates a random number confined to the values 0 to 27
+ * -> Retira o block da estrutura GAME e coloca na mao pretendida
+ *
+ * @param game Estrutra com todas as peças de jogo
+ * @param hands Estrutura que contem todas as maos de jogo e em que cada mao contem as peças de jogo
+ */
 void generateRandomHand(GAME *game, HANDS *hands) {
 
+//  usado para nao gerar sempre o mesmo numero aleatorio
     long ultime;
     time(&ultime);
     srand((unsigned)ultime);
@@ -31,7 +43,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
     BLOCK *delBlock = NULL, *blockAux = NULL;
     hands->pfirstHand = NULL;
     for (i = 0; i < hands->numberOfHands; i++) {
-        handAux = (HAND*)malloc(sizeof(HAND));
+        handAux = (HAND*)malloc(sizeof(HAND));  // mao atual onde serão colocadas as peças geradas aleatoriamente
         for (j = 0; j < hands->handSize; j++) {
             if(linesCount < 27){
                 randValue = 0 + rand() % ((MAX28-1) - linesCount); // it needs to be sent MAX28 - 1 because the popBlock function works with numbers between 0 and 27
@@ -53,6 +65,7 @@ void generateRandomHand(GAME *game, HANDS *hands) {
     }
 }
 
+
 /**
   * Function to generate sequences from one hand
   * Checks if the block that is inserted in the sequence matrix is consistent, if it is tries to insert the next block
@@ -70,15 +83,24 @@ void generateRandomHand(GAME *game, HANDS *hands) {
 
 /***
  * Function to generate sequences from hands (one or more)
+ * -> Faz o calculo para descobrir qual a mao a ser jogada
+ * -> Percore todas as peças da mao e verifica se cada peça está disponivel para ser jogada na sequencia, se estive disponivel verifica se é consistente
+ * -> Após verificar a consistencia coloca a peça da estrutura sequencia (insere à cauda). As peças estão duplamente ligadas pois desta forma a partir da primeira peça da
+ * sequencia consegue-se aceder à ultima peça inserida.
+ * -> se nao for consistente é decrementado o nuemro de peças inseridas na sequencia e retirada a ultima peça da sequencia
+ * EX: VARIAS MAOS[4]: mao1 insere, mao2 se tiver peça que encaixe insere, mao3 nao tem peça passa a mao4, mao4 insere, mao1 nao tem peca a inserir, entao recursivamente
+ * é retirada a peça colocada pela mao4(substituindo essa peca por outra que possa encaixar), se nao tiver vai fazendo isso para a mao3, mao2, até a mao1, ate que a mão1
+ * inseria uma nova peça.
+ * Desta forma sequencias de tamanho (1 peça) apenas serão as peças da primeira mao de jogo
  *
- * @param pHands
- * @param pSequence
- * @param pAllsequences
- * @param inserted
- * @param count
- * @param handId
- * @param costOfGenerate
- * @return
+ * @param pHands Esttrutura que tem todas as maos de jogo
+ * @param pSequence Estrutra que irá guardar a sequencia gerada a cada jogada
+ * @param pAllsequences Estrutura responsável por conter todas as sequencias geradas ao longo do algoritmo
+ * @param inserted Número de peças inseridas na sequencia
+ * @param count Contador de sequencias maximas geradas (sequencias com tamanho igual ao numeor da mao)
+ * @param handId Identificador da mao atual a jogar
+ * @param costOfGenerate Variável usada para saber o custo da funcao generateSequence()
+ * @return 0 quando testa todas as combinacoes possiveis com todas as peças de cada mao
  */
 int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, unsigned long *count, int handId, unsigned long *costOfGenerate) {
     int i = 0;
@@ -92,7 +114,7 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
         handAux = handAux->pnextHand;
         i++;
     }
-    blockAux = handAux->pfirstBlock;
+    blockAux = handAux->pfirstBlock;    // primeira peça da mao a jogar
 
     for (i = 0; i < pHands->handSize; i++) {
         (*costOfGenerate)++; // Total cost of the function
@@ -140,7 +162,7 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                 BLOCK *paux = pSequence->pfirstBlock->prevBlock;
                 blockAux->available = 1; // block is available if it didn't fit
 
-                // colocar a ultima peca da sequencia igual a penultima peça, retirando a ultima peça da sequencia
+                // colocar a ultima peca da sequencia igual a penultima peça, retirando a ultima peça da sequencia. Ficando a primeira peça ligada a penultima peça
                 pSequence->pfirstBlock->prevBlock = pSequence->pfirstBlock->prevBlock->prevBlock;
                 pSequence->pfirstBlock->prevBlock->pnextBlock = pSequence->pfirstBlock;
                 free(paux);
@@ -167,46 +189,17 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
  * @param sizeOfSequence the size of the sequence to store
  * @param handSize is the size of the hands, required for some conditions
  */
+
+/***
+ * Função responsável por guardar cada sequencia gerada numa estrutura que contem todas as sequencias
+ * -> Converte para string a sequencia recebida (sequencia a ser guardada)
+ * -> Guarda na estrutura allSequences a sequencia convertida (inserçao à cabeça)
+ *
+ * @param allSequences Estrutura que contem todas as sequencias geradas
+ * @param pSequence Sequencia a ser guardada
+ */
 void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
-    // Soluçao Ricardo - INTS
 
-//    SEQUENCE *newSequence = (SEQUENCE*)malloc(sizeof(SEQUENCE));
-//    *newSequence = pSequence;
-//    newSequence->pfirstBlock = NULL;
-//    BLOCK *newBlock = NULL, *blockAux = pSequence.pfirstBlock, *lastBlock = NULL;
-//    int i;
-//    // creates new memory spaces for the sequence blocks
-//    // because the ones generated and passed through pSequence will be modified in generateSequence function
-//    for (i = 0; i < newSequence->sizeOfSequence && blockAux != NULL; i++) {
-//        newBlock = (BLOCK*)malloc(sizeof(BLOCK));
-//        *newBlock = *blockAux;
-//        newBlock->pnextBlock = NULL; // it will always be the last block
-//        if(newSequence->pfirstBlock == NULL){
-//            newBlock->prevBlock  = newBlock;
-//            newSequence->pfirstBlock = newBlock;
-//        }else{
-//            // insertion at the tail in a doubly linked list
-//            lastBlock = newSequence->pfirstBlock;
-//            while(lastBlock->pnextBlock != NULL){
-//                lastBlock = lastBlock->pnextBlock;
-//            }
-//            newSequence->pfirstBlock->prevBlock = newBlock; // first block pointing to the last one
-//            lastBlock->pnextBlock = newBlock; // previous last block pointing to the new last block
-//            newBlock->prevBlock = lastBlock; // last block pointing to the previous block
-//        }
-//        blockAux = blockAux->pnextBlock;
-//    }
-//    // insert new sequences at the head
-//    if(allSequences->pfirstSequence == NULL){
-//        newSequence->pnextSequence = NULL;
-//        allSequences->pfirstSequence = newSequence;
-//    }else{
-//        newSequence->pnextSequence = allSequences->pfirstSequence;
-//        allSequences->pfirstSequence = newSequence;
-//    }
-//    allSequences->numberOfSequences++;
-
-    // Solucao Ricardo - STRINGS
     STRINGSEQ *newSequence = (STRINGSEQ*)malloc(sizeof(STRINGSEQ));
     newSequence->sizeOfSequence = pSequence.sizeOfSequence;
     BLOCK *blockAux = pSequence.pfirstBlock;
@@ -236,45 +229,7 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
         allSequences->pfirstSequence = newSequence;
     }
     allSequences->numberOfSequences++;
-    newSequence->idSequence = allSequences->numberOfSequences;
-
-
-    // Soluçao Rui
-//    int i =0;
-//    SEQUENCE *pnew = (SEQUENCE*)malloc(sizeof(SEQUENCE));
-//    pnew->sizeOfSequence = pSequence->sizeOfSequence;
-//    BLOCK *pnewB = (BLOCK*)malloc(sizeof(BLOCK));
-//    pnewB = pSequence->pfirstBlock;
-//    pnewB->pnextBlock = NULL;
-//    pnewB->prevBlock = NULL;
-//    pnew->pfirstBlock = pnewB;
-//
-//
-//
-//    for(i=1;i<pSequence->sizeOfSequence;i++){
-//        BLOCK *pnewBaux = (BLOCK*)malloc(sizeof(BLOCK));
-//        *pnewBaux = *pSequence->pfirstBlock->pnextBlock;
-//        pnewB->pnextBlock = pnewBaux;
-//        pnewB->prevBlock = pnewBaux;
-//        pnewBaux->prevBlock = pnewB;
-//        pnewBaux->pnextBlock = pnew->pfirstBlock;
-//        pnewB = pnewB->pnextBlock;
-//        pSequence->pfirstBlock = pSequence->pfirstBlock->pnextBlock;
-//
-//    }
-//
-//    pnew->pnextSequence = NULL;
-//
-//
-//    if(allSequences->pfirstSequence == NULL){
-//        allSequences->pfirstSequence = pnew;
-//        allSequences->numberOfSequences++;
-//        return;
-//    }
-//    pnew->pnextSequence = allSequences->pfirstSequence;
-//    allSequences->pfirstSequence = pnew;
-//    allSequences->numberOfSequences++;
-
+    newSequence->idSequence = allSequences->numberOfSequences; // atribuir um id à sequencia usado para as funcoes de search and replace
 
 }
 
@@ -338,18 +293,7 @@ int KMP(STRINGSEQ text, char *pat)
     return 0;
 }
 
-/**
-  * Function responsible for sorting the allSequences matrix in descending order of the size of each sequences
-  * Orders by an ordered array that has the size of each hand, and searches in the first column of the allSequences matrix that size
-  * @param allSequences matrix that has all the sequences and sub-sequences
-  */
-//
 
-void sortAllSequences(ALLSEQUENCES *allSequences) {
-    unsigned long cost = 0;
-    mergeSort(&allSequences->pfirstSequence, &cost);
-    printf("cost: %ld\n", cost);
-}
 
 STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel){
     STRINGSEQ *sequenceAux = allSequences.pfirstSequence;
@@ -424,8 +368,27 @@ int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size)
     return 1;
 }
 
+
+
+/***
+ * Function responsible for sorting the allSequences in descending order of the size of each sequences
+ * -> é usado o algoritmo mergeSort para ordernar todas as sequencias
+ * @param allSequences Estrutura que contem todas as sequencias a serem ordenadas
+ */
+void sortAllSequences(ALLSEQUENCES *allSequences) {
+    unsigned long cost = 0;
+    mergeSort(&allSequences->pfirstSequence, &cost);
+    printf("cost: %ld\n", cost);
+}
+
 /* sorts the linked list by changing pnextSequence pointers (not sizeOfSequence) */
-//void mergeSort(struct sequence* *headRef)
+/***
+ * Funcao responsavel por ordenar a todas as sequencias.
+ * As sequencias serão ordenadas por seu comprimento e ainda serão ordenadas pelo seu tamanho. (ordem decrescente)
+ *
+ * @param headRef Estrutura que contem o allSequences que contem todas as sequencias a serem ordenadas
+ * @param costModel Variavel usada para saber o custo da funcao mergeSort()
+ */
 void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel)
 {
     *costModel += 1;
@@ -450,37 +413,110 @@ void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel)
     *headRef = sortedMerge(a, b, costModel);
 }
 
+/***
+ * Funcao responsavel por ordenar os indices (tamanho de cada sequencia). As sequencias são ordenadas a partir do seu tamanho.
+ * Ordena e faz merge com a proxima menor. Se a proxima tiver o mesmo valor da atual o algoritmo tem um critério de selecao de qual escolher.
+ * Escolhe o que tiver a string da sequencia maior, isto é, fica ordenado por tamanho de sequencia e ainda ordenado por sequencias.
+ *
+ * @param a Valor a ser ordenado, da lista a
+ * @param b Valor a ser ordenado, da lista b
+ * @param costModel Variavel usada para saber o custo da funcao sortedMerge()
+ * @return STRINGSEQ ordenado e com merge (entre a lista a e b)
+ */
+//STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel)
+//{
+//    *costModel += 1;
+//    STRINGSEQ *result = NULL;
+//
+//    /* Base cases */
+//    if (a == NULL)
+//        return(b);
+//    else if (b==NULL)
+//        return(a);
+//
+//    /* Pick either a or b, and recur */
+////    if (a->sizeOfSequence <= b->sizeOfSequence) // ascending order
+//    if (a->sizeOfSequence > b->sizeOfSequence)    // descending order
+//    {
+//        result = a;
+//        result->pnextStringSeq = sortedMerge(a->pnextStringSeq, b, costModel);
+//    }
+////  criterio de selecao para eleger que uma sequencia de tamanho 4 é maior que outra de tamnho igual (se o string SEQUENCE da primeira > string SEQUENCE da segunda)
+//    else if(a->sizeOfSequence == b->sizeOfSequence && strcmp(a->sequence, b->sequence) > 0)
+//    {
+//        result = a;
+//        result->pnextStringSeq = sortedMerge(a->pnextStringSeq, b, costModel);
+//
+//    }
+//    else
+//    {
+//        result = b;
+//        result->pnextStringSeq = sortedMerge(a, b->pnextStringSeq, costModel);
+//    }
+//    return(result);
+//}
+
+/***
+ * Funcao responsavel por ordenar os indices (tamanho de cada sequencia). As sequencias são ordenadas a partir do seu tamanho.
+ * Ordena e faz merge com a proxima menor. Se a proxima tiver o mesmo valor da atual o algoritmo tem um critério de selecao de qual escolher.
+ * Escolhe o que tiver a string da sequencia maior, isto é, fica ordenado por tamanho de sequencia e ainda ordenado por sequencias.
+ *
+ * @param a Valor a ser ordenado, da lista a
+ * @param b Valor a ser ordenado, da lista b
+ * @param costModel Variavel usada para saber o custo da funcao sortedMerge()
+ * @return STRINGSEQ ordenado e com merge (entre a lista a e b)
+ */
 STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel)
 {
     *costModel += 1;
     STRINGSEQ *result = NULL;
 
-    /* Base cases */
-    if (a == NULL)
-        return(b);
-    else if (b==NULL)
-        return(a);
+    /* point to the last result pointer */
+    STRINGSEQ* *lastPtrRef = &result;
 
-    /* Pick either a or b, and recur */
-//    if (a->sizeOfSequence <= b->sizeOfSequence) // ascending order
-    if (a->sizeOfSequence > b->sizeOfSequence)    // descending order
+    while(1)
     {
-        result = a;
-        result->pnextStringSeq = sortedMerge(a->pnextStringSeq, b, costModel);
-    }
-    else
-    {
-        result = b;
-        result->pnextStringSeq = sortedMerge(a, b->pnextStringSeq, costModel);
+        if (a == NULL)
+        {
+            *lastPtrRef = b;
+            break;
+        }
+        else if (b==NULL)
+        {
+            *lastPtrRef = a;
+            break;
+        }
+        //    if (a->sizeOfSequence <= b->sizeOfSequence) // ascending order
+        if (a->sizeOfSequence > b->sizeOfSequence)    // descending order
+        {
+            moveNode(lastPtrRef, &a);
+        }
+//      criterio de selecao para eleger que uma sequencia de tamanho 4 é maior que outra de tamnho igual (se o string SEQUENCE da primeira > string SEQUENCE da segunda)
+        else if(a->sizeOfSequence == b->sizeOfSequence && strcmp(a->sequence, b->sequence) > 0)
+        {
+            moveNode(lastPtrRef, &a);
+        }
+        else
+        {
+            moveNode(lastPtrRef, &b);
+        }
+
+        /* tricky: advance to point to the next ".pnextStringSeq" field */
+        lastPtrRef = &((*lastPtrRef)->pnextStringSeq);
     }
     return(result);
 }
 
-/* UTILITY FUNCTIONS */
-/* Split the nodes of the given list into front and back halves,
-     and return the two lists using the reference parameters.
-     If the length is odd, the extra sequence2 should go in the front list.
-     Uses the fast/slow pointer strategy.  */
+
+
+/***
+ * Divide as sequencias da lista de sequencias em duas metades (frente e tras) e retorna duas listas atras de parametros
+ * If the length is odd, the extra sequence2 should go in the front list.
+ * Uses the fast/slow pointer strategy.
+ * @param source lista com todas as sequencias
+ * @param frontRef lista a do merge: primeira metade da lista original
+ * @param backRef lista b do merge: ultima metade da lista original
+ */
 void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef)
 {
     STRINGSEQ *fast = NULL;
@@ -496,7 +532,9 @@ void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef
         slow = source;
         fast = source->pnextStringSeq;
 
-        /* Advance 'fast' two nodes, and advance 'slow' one sequence2 */
+
+//        fast: avanca o dobro do que avanca o slow, desta forma quando fast chegar a null (fim), slow está na metade
+//        ao estar na metade consegue-se dividir entre a lista da frente (lista a) e a lista de tras (lista b)
         while (fast != NULL)
         {
             fast = fast->pnextStringSeq;
@@ -507,32 +545,59 @@ void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef
             }
         }
 
-        /* 'slow' is before the midpoint in the list, so split it in two
-          at that point. */
-        *frontRef = source;
-        *backRef = slow->pnextStringSeq;
-        slow->pnextStringSeq = NULL;
+        /* 'slow' is before the midpoint in the list, so split it in two at that point. */
+        *frontRef = source; // lista da frente(lista a) fica com a primeira metade dos valores da lista source
+        *backRef = slow->pnextStringSeq; // lista de tras (lista b) fica com a segunda metade dos valores da lista source
+        slow->pnextStringSeq = NULL; // curte para limite da lista a
     }
-
-//    free(slow);
-//    free(fast);
 }
 
 
-/**
- * Checks if a block is consistent with the last placed block on the sequence matrix
- * @param sequence is the matrix of the current sequence
- * @param index is the index of the block to insert
- * @return returns 1 if it is consistent, and 0 if not
-// */
+
+/***
+ * Funcao responsavel por mover o endereço da parte frontal da fonte(sourceRef) para a frente do destino(destRef)
+ * Before calling MoveNode():
+ *  source == {1, 2, 3}
+ *  dest == {1, 2, 3}
+ *
+ *  Affter calling MoveNode():
+ *  source == {2, 3}
+ *  dest == {1, 1, 2, 3}
+ *
+ * @param destRef Endereço da sequencia de destino
+ * @param sourceRef Endereço da sequencia de origem
+ */
+void moveNode(STRINGSEQ **destRef, STRINGSEQ **sourceRef)
+{
+    /* the front source node  */
+    STRINGSEQ* newSeq = *sourceRef;
+
+    /* Advance the source pointer */
+    *sourceRef = newSeq->pnextStringSeq;
+
+    /* Link the old dest off the newSeq */
+    newSeq->pnextStringSeq = *destRef;
+
+    /* Move dest to point to the newSeq */
+    *destRef = newSeq;
+}
+
+
+
+/***
+ * Checks if a block is consistent with the last placed block on the sequence
+ * @param pSequence Sequencia que contem as peças
+ * @param newBlock peça a ser testada com a ultima peça inserida na sequencia
+ * @param inserted Numero de paças inseridas
+ * @return 0 if block is not consistent or 1 if block is consistent
+ */
 int isConsistent(SEQUENCE *pSequence, BLOCK *newBlock, int inserted) {
     // first block is always consistent
     if (inserted == 0) {
         return 1;
     }
-
         // if the left side of the block to insert is equal to the right side of the last block
-    if (newBlock->leftSide == pSequence->pfirstBlock->prevBlock->rightSide) {
+    else if (newBlock->leftSide == pSequence->pfirstBlock->prevBlock->rightSide) {
         return 1;
     }
         // if the right side of the block to insert is equal to the right side of the last block then invert the block and inserts it
@@ -557,12 +622,11 @@ int isConsistent(SEQUENCE *pSequence, BLOCK *newBlock, int inserted) {
     }
 }
 
-/**
- * Inverts a block
- * @param block is the block to be inverted
- * @param index is the blocks' index on the matrix passed
- */
 
+/***
+ * Inverts a block
+ * @param pBlock is the block to be inverted
+ */
 void invertBlock(BLOCK *pBlock) {
     int aux = 0;
     aux = pBlock->leftSide;
@@ -570,12 +634,19 @@ void invertBlock(BLOCK *pBlock) {
     pBlock->rightSide = aux;
 }
 
+/***
+ * Inverts a block on sequence
+ * -> Only used when its the first block
+ * @param pSequence Sequencia que contem o bloco a ser invertido
+ */
 void invertBlockSequence(SEQUENCE *pSequence) {
     int aux = 0;
     aux = pSequence->pfirstBlock->leftSide;
     pSequence->pfirstBlock->leftSide = pSequence->pfirstBlock->rightSide;
     pSequence->pfirstBlock->rightSide = aux;
 }
+
+
 
 
 void printSequence(SEQUENCE sequence){

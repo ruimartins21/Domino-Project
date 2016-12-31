@@ -397,6 +397,7 @@ void printSequences(ALLSEQUENCES allSequences, int size){
                     printf("]");
                 }
             }
+//            printf(" size: %d",pauxSequence->sizeOfSequence);
             printf("\n");
             pauxSequence = pauxSequence->pnextStringSeq;
         }
