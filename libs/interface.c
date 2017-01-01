@@ -5,6 +5,8 @@
 #include "interface.h"
 #include "core.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * Prints the multiple menus that are needed
@@ -420,7 +422,7 @@ char *createPattern(ALLSEQUENCES allSequences, int maxSequenceSize){
         scanf("%d", &blockId);
         if(blockId == -1){
             free(sequenceAux);
-            freeGame(&availableBlocks);
+//            freeGame(&availableBlocks);
             return pattern;
         }
         if (blockId < 1 || blockId > blocksLimit) {
@@ -478,7 +480,7 @@ char *createPattern(ALLSEQUENCES allSequences, int maxSequenceSize){
         free(delBlock); // freeing the space used by the sequence generated as it goes through all the blocks
     }
     free(sequenceAux);
-    freeGame(&availableBlocks);
+//    freeGame(&availableBlocks);
     return pattern;
 }
 
@@ -562,7 +564,7 @@ char *createReplacePattern(ALLSEQUENCES allSequences, IDS sequenceIds, char *pat
         scanf("%d", &blockId);
         if(blockId == -1){
             free(sequenceAux);
-            freeGame(&availableBlocks);
+//            freeGame(&availableBlocks);
             return replace;
         }
         if (blockId < 1 || blockId > blocksLimit) {

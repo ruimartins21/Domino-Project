@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <sys/stat.h> // library for the mkdir for Mac
-#include <io.h> // library for the mkdir for Windows
+#include <string.h>
+#include <stdlib.h>
+//#include <io.h> // library for the mkdir for Windows
 
 /**
  * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
@@ -141,7 +143,7 @@ void editFile(char fileName[], int type, HANDS hands, GAME game) {
     int auxInt;
     char path[40] = "data/";
 //    mkdir(path); // creates the folder if it doesn't yet exists on Windows
-//    mkdir(path, 0777); // creates the folder if it doesn't yet exists on MAC
+    mkdir(path, 0777); // creates the folder if it doesn't yet exists on MAC
     strcat(path, fileName);
     switch (type) {
         // Text files
@@ -243,7 +245,7 @@ void createGameFile(int type, HANDS hands, GAME game) {
     int auxInt, i;
     char fileName[40], path[40] = "data/";
 //    mkdir(path); // creates the folder if it doesn't yet exists on Windows
-//    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
+    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
     switch (type) {
         // create txt file
         case 1:
@@ -353,7 +355,7 @@ void createGameFile(int type, HANDS hands, GAME game) {
 void saveSequencesInFile(ALLSEQUENCES allSequences){
     FILE *file = NULL;
 //    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
-//    mkdir("data/logs",0777); // creates the folder if it doesn't yet exists on MAC
+    mkdir("data/logs",0777); // creates the folder if it doesn't yet exists on MAC
     char fileName[40], path[40] = "data/logs/sequence-";
     struct timeval tv;
     gettimeofday(&tv,NULL);

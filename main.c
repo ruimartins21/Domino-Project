@@ -10,7 +10,10 @@
 #include <sys/time.h>
 #include <math.h>
 #include <sys/stat.h> // library for the mkdir for Mac
-#include <io.h> // library for the mkdir for Windows
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h> // for opendir function
+//#include <io.h> // library for the mkdir for Windows
 
 /**
  * Project main function
@@ -82,11 +85,14 @@ int main(int argc, char *argv[])
         // load a game from file
         path = 5;
 //        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
-//        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
-        printf("\nFiles existing (.txt):\n");
-        system("dir/b data\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
-        printf("\nFiles existing (.bin):\n");
-        system("dir/b data\\*.bin"); // scans all files with the extension "bin" in the root of the folder where the program executable is and prints them
+        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
+//        printf("\nFiles existing (.txt):\n");
+        // scans all files with the proper extension in the root of the folder where the program executable is and prints them
+//        system("dir/b data\\*.txt"); // on windows
+//        opendir("./"); // on mac
+//        printf("\nFiles existing (.bin):\n");
+//        system("dir/b data\\*.bin"); // on windows
+//        opendir("./"); // on mac
         typeOfFile = printMenu(path); // choose between text file or binary file
         while(fileExists(filePath) != 1){
             strcpy(filePath, "data/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
@@ -169,7 +175,7 @@ int main(int argc, char *argv[])
             printf("\nSelect the pattern to replace:");
             pattern = createPattern(allSequences, maxSequenceSize);
             if(strlen(pattern) > 0) {
-                IDS sequenceIds = {NULL};
+                IDS sequenceIds = {0,NULL};
                 unsigned long numberOfMatches = 0;
                 findPatternInSequences(allSequences, pattern, &sequenceIds, &numberOfMatches);
                 if(numberOfMatches != 0) {

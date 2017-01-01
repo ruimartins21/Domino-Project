@@ -4,6 +4,8 @@
 
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef WIN32
 int gettimeuseconds(long long * time_usec) {
@@ -123,8 +125,8 @@ BLOCK *popBlock(GAME *game, int index){
 BLOCK *removeBlock(GAME *game, BLOCK block){
     BLOCK *blockAux = game->pfirstBlock, *blockPrev = NULL;
     while(blockAux != NULL){
-        if(blockAux->leftSide == block.leftSide && blockAux->rightSide == block.rightSide
-           || blockAux->leftSide == block.rightSide && blockAux->rightSide == block.leftSide){
+        if( ((blockAux->leftSide == block.leftSide) && (blockAux->rightSide == block.rightSide))
+           || ((blockAux->leftSide == block.rightSide) && (blockAux->rightSide == block.leftSide)) ){
             if(blockPrev == NULL){
                 game->pfirstBlock = blockAux->pnextBlock;
             }else{
@@ -212,8 +214,8 @@ void swapBlock(GAME *game, BLOCK *handBlock, int index){
 int blockIsPresent(GAME game, BLOCK block){
     BLOCK *blockAux = game.pfirstBlock;
     while(blockAux != NULL){
-        if(block.leftSide == blockAux->leftSide && block.rightSide == blockAux->rightSide
-           || block.leftSide == blockAux->rightSide && block.rightSide == blockAux->leftSide){
+        if( ((blockAux->leftSide == block.leftSide) && (blockAux->rightSide == block.rightSide))
+            || ((blockAux->leftSide == block.rightSide) && (blockAux->rightSide == block.leftSide)) ){
             return 1;
         }
         blockAux = blockAux->pnextBlock;
@@ -263,7 +265,7 @@ int checkId(IDS *sequenceIds, unsigned long id){
             continue;
         }
         delId = idAux->nextId;
-        free(idAux);
+//        free(idAux);
         idAux = delId;
     }
     if(toReturn) sequenceIds->firstId->nextId = NULL;

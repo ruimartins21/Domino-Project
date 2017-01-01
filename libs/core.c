@@ -6,6 +6,8 @@
 #include "interface.h"
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * Function that generates player hand randomly
