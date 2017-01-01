@@ -90,10 +90,7 @@ typedef struct ids{
    ID *firstId;
 }IDS;
 
-#define MAX2 2
-#define MAX3 3
 #define MAX28 28
-#define MAX57 57
 #define R 7 // It's the size of the alphabet for the KMP algorithm (0,1,2,3,4,5,6)
 
 #if defined _WIN64 || defined _WIN32
@@ -105,8 +102,6 @@ typedef struct ids{
 int gettimeuseconds(long long * time_usec);
 void getGame(GAME *game);
 void freeGame(GAME *game);
-void printGame(GAME game);
-void printHand(HANDS hands);
 void printSingleHand(HAND hand, int handSize);
 BLOCK *popBlock(GAME *game, int index);
 BLOCK *removeBlock(GAME *game, BLOCK block);
@@ -114,10 +109,6 @@ BLOCK *peepBlock(GAME game, int index);
 BLOCK *transferBlock(BLOCK *delBlock);
 void swapBlock(GAME *game, BLOCK *handBlock, int index);
 int blockIsPresent(GAME game, BLOCK block);
-void initMat(int m[][MAX57], int lines, int cols);
-void initArray(int array[MAX57]);
-int compareIntValues(const void * a, const void * b);
-void sortIntArray(int * v, int n);
 void checkExtension(char fileName[], char extension[]);
 int fileExists(char fileName[]);
 int checkId(IDS *sequenceIds, unsigned long id);

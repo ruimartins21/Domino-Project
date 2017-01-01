@@ -6,9 +6,8 @@
 #include "interface.h"
 #include <stdio.h>
 #include <time.h>
-#include <assert.h>
 
-/***
+/**
  * Function that generates player hand randomly
  * -> Runs the number of hands chosen by the user, for each one runs all the blocks of the hand
  * -> Generates a random number confined to the values 0 to 27
@@ -76,7 +75,7 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
     HAND *handAux = NULL;
     handId = handId % pHands->numberOfHands; //  To know the current hand that is being played
     handAux = pHands->pfirstHand;
-    //    Find hand to be played
+    // Find hand to be played
     while (i != handId){
         handAux = handAux->pnextHand;
         i++;
@@ -84,9 +83,9 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
     blockAux = handAux->pfirstBlock;    // first block of the hand to be played
     for (i = 0; i < pHands->handSize; i++) {
         (*costOfGenerate)++;
-//         if the block is available
+        // if the block is available
         if (blockAux->available == 1) {
-//            new block in the sequence
+            // new block in the sequence
             BLOCK *pnew = (BLOCK *) malloc(sizeof(BLOCK));
             pnew->leftSide = blockAux->leftSide;
             pnew->rightSide = blockAux->rightSide;
@@ -111,7 +110,7 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                 if(pSequence->sizeOfSequence == pHands->handSize)
                     (*count)++;
                 saveSequence(pAllsequences, *pSequence);
-//                if it exists more than one hand, adds handId for it to go to the next hand in the next iteration
+                // if it exists more than one hand, adds handId for it to go to the next hand in the next iteration
                 if(pHands->numberOfHands > 1)
                     handId = handId+1;
                 generateSequence(pHands, pSequence, pAllsequences, inserted, count, handId, costOfGenerate);
@@ -130,17 +129,6 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
     }
     return 0;
 }
-
-/**
- * Function responsible for storing all eligible sub-sequences / sequences in the sequences matrix
- * Inserts in the first column of all sequences the size of it
- * All the columns not used for a certain sequence (since the matrix that is storing them has to have a maximum size)
- * are going to be "-1" to be considered "empty" spaces
- * @param sequence is the sequence that is going to be stored
- * @param allSequences is the matrix that stores all the sequences
- * @param sizeOfSequence the size of the sequence to store
- * @param handSize is the size of the hands, required for some conditions
- */
 
 /**
  * Function responsible for storing all eligible sequences generated in a structure
@@ -182,7 +170,6 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
     allSequences->numberOfSequences++;
     newSequence->idSequence = allSequences->numberOfSequences; // atribuir um id à sequencia usado para as funcoes de search and replace
 }
-
 
 /// KMP Substring Search Algorithm
 
@@ -407,6 +394,8 @@ void replacePattern(ALLSEQUENCES *allSequences, IDS *sequenceIds, char *pattern,
     free(sequenceIds);
 }
 
+/// Merge Sort Algorithm
+
 /***
  * Function responsible for sorting the allSequences in descending order of the size of each sequences
  * -> merge sort algorithm is used for this sorting
@@ -415,7 +404,7 @@ void replacePattern(ALLSEQUENCES *allSequences, IDS *sequenceIds, char *pattern,
 void sortAllSequences(ALLSEQUENCES *allSequences) {
     unsigned long cost = 0;
     mergeSort(&allSequences->pfirstSequence, &cost);
-    printf("cost: %ld\n", cost);
+//    printf("Cost of mergeSort: %ld\n", cost); // tells the cost of the merge sort algorithm
 }
 
 /**
@@ -424,25 +413,20 @@ void sortAllSequences(ALLSEQUENCES *allSequences) {
 * @param headRef structure that has all the sequences to be sorted
 * @param costModel variable used to know the cost of this function
 */
-/* sorts the linked list by changing pnextSequence pointers (not sizeOfSequence) */
 void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel)
 {
     *costModel += 1;
     STRINGSEQ *head = *headRef;
     STRINGSEQ *a = NULL;
     STRINGSEQ *b = NULL;
-
-    /* Base case -- length 0 or 1 */
-    if ((head == NULL) || (head->pnextStringSeq == NULL))
-    {
-        return;
-    }
-    /* Split head into 'a' and 'b' sublists */
+    // Base case -- length 0 or 1
+    if ((head == NULL) || (head->pnextStringSeq == NULL)) return;
+    // Split head into 'a' and 'b' sublists
     frontBackSplit(head, &a, &b);
-    /* Recursively sort the sublists */
+    // Recursively sort the sublists
     mergeSort(&a, costModel);
     mergeSort(&b, costModel);
-    /* answer = merge the two sorted lists together */
+    // answer = merge the two sorted lists together
     *headRef = sortedMerge(a, b, costModel);
 }
 
@@ -460,7 +444,7 @@ STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel)
 {
     *costModel += 1;
     STRINGSEQ *result = NULL;
-    /* point to the last result pointer */
+    // point to the last result pointer
     STRINGSEQ* *lastPtrRef = &result;
     while(1){
         if (a == NULL){
@@ -479,15 +463,14 @@ STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel)
         } else {
             moveNode(lastPtrRef, &b);
         }
-        /* tricky: advance to point to the next ".pnextStringSeq" field */
+        // tricky: advance to point to the next ".pnextStringSeq" field
         lastPtrRef = &((*lastPtrRef)->pnextStringSeq);
     }
     return(result);
 }
 
-//* Divide as sequencias da lista de sequencias em duas metades (frente e tras) e retorna duas listas atras de parametros
 /**
- * Divides the sequences from the list of sequences in two halves (front and back)
+ * Divides the sequences from the list of sequences in two halves (front and back) and updates the lists
  * If the length is odd, the extra sequence2 should go in the front list.
  * Uses the fast/slow pointer strategy.
  * @param source list with all the sequences
@@ -498,8 +481,7 @@ void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef
 {
     STRINGSEQ *fast = NULL;
     STRINGSEQ *slow = NULL;
-    if (source==NULL || source->pnextStringSeq==NULL) {
-        /* length < 2 cases */
+    if (source==NULL || source->pnextStringSeq==NULL) { // if the length of the source is equal to 1, 1 sequence only
         *frontRef = source;
         *backRef = NULL;
     } else {
@@ -514,10 +496,9 @@ void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef
                 fast = fast->pnextStringSeq;
             }
         }
-        /* 'slow' is before the midpoint in the list, so split it in two at that point. */
         *frontRef = source; // the front list (list a) gets the first half of the values from source list
         *backRef = slow->pnextStringSeq; // the back list (list b) gets the second half of the values from source list
-        slow->pnextStringSeq = NULL; // curte para limite da lista a
+        slow->pnextStringSeq = NULL; // limit of the list a
     }
 }
 

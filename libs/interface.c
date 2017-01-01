@@ -732,7 +732,6 @@ void printSequenceMatch(STRINGSEQ text, int index, int length, int withId){
     }
 }
 
-
 /**
  * Prints a certain sequence
  * @param sequence is the sequence to be printed

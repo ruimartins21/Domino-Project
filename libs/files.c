@@ -4,11 +4,9 @@
 
 #include "files.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/time.h>
-#include <io.h>
-//#include <dir.h> // this library only works as it should on windows
+#include <sys/stat.h> // library for the mkdir for Mac
+#include <io.h> // library for the mkdir for Windows
 
 /**
  * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name
@@ -343,17 +341,19 @@ void createGameFile(int type, HANDS hands, GAME game) {
             }
             fclose(file);
             break;
-
         default:
             break;
     }
 }
 
-
+/**
+ * Saves the generated sequences in a file for logs
+ * @param allSequences is the structure that holds all the generated sequences
+ */
 void saveSequencesInFile(ALLSEQUENCES allSequences){
     FILE *file = NULL;
 //    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
-//    mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
+//    mkdir("data/logs",0777); // creates the folder if it doesn't yet exists on MAC
     char fileName[40], path[40] = "data/logs/sequence-";
     struct timeval tv;
     gettimeofday(&tv,NULL);

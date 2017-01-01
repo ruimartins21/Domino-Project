@@ -10,6 +10,6 @@
 void openFile(char fileName[], int type, HANDS *hands, GAME *game);
 void editFile(char fileName[], int type, HANDS hands, GAME game);
 void createGameFile(int type, HANDS hands, GAME game);
-void saveSequencesInFile(ALLSEQUENCES allsequences);
+void saveSequencesInFile(ALLSEQUENCES allSequences);
 
 #endif //DOMINO_PROJECT_FILES_H

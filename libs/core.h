@@ -5,11 +5,7 @@
 #ifndef DOMINO_PROJECT_CORE_H
 #define DOMINO_PROJECT_CORE_H
 
-#define MAX28 28
-#define MAX57 57
-
 #include "utils.h"
-
 
 void generateRandomHand(GAME *pGame, HANDS *pHands);
 int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllsequences, int inserted, unsigned long *count, int handId, unsigned long *costOfGenerate);
@@ -22,17 +18,14 @@ STRINGSEQ *getSequenceOfId(ALLSEQUENCES allSequences, ID sequenceId);
 void replacePattern(ALLSEQUENCES *allSequences, IDS *sequenceIds, char *pattern, char *replace);
 void getAvailableBlocks(GAME *availableBlocks, ALLSEQUENCES allSequences, int sizeOfPattern);
 int getSequencesOfSize(GAME *availableBlocks, STRINGSEQ firstSequence, int size);
-
 // MERGESORT sorting
 void sortAllSequences(ALLSEQUENCES *allSequences);
 STRINGSEQ *sortedMerge(STRINGSEQ *a, STRINGSEQ *b, unsigned long *costModel);
 void mergeSort(STRINGSEQ * *headRef, unsigned long *costModel);
 void frontBackSplit(STRINGSEQ *source, STRINGSEQ* *frontRef, STRINGSEQ* *backRef);
 void moveNode(STRINGSEQ **destRef, STRINGSEQ **sourceRef);
-
 // KMP substring search
 void preKMP(char *pat, int dfa[][MAX28]);
 int KMP(STRINGSEQ text, char *pat, int print);
-
 
 #endif //DOMINO_PROJECT_CORE_H

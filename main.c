@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    // at this point the game is ready to be played so we move on to generating the sequences
+    // at this point the game is ready to be played so we move on to generating the sequences and sorting them
     long long time_usec_init;
     long long time_usec_end;
     long elapsed_time;
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
         }else if(choice == 2){
             printf("\nSize of the sequences to see: ");
             scanf("%d", &size);
-            sequenceAux = findSequenceOfSize(allSequences, size, &cost); // returns the first sequence of the given size
+            sequenceAux = findSequenceOfSize(allSequences, size, &cost);
             if(sequenceAux != NULL){
                 printf("\nSequences of size %d: ", size);
                 printf("(Cost of finding the first sequence: %ld)\n", cost);

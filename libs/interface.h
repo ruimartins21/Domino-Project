@@ -7,9 +7,6 @@
 
 #include "utils.h"
 
-#define MAX28 28
-#define MAX57 57
-
 int printMenu(int path);
 int blocksAvailable(GAME game);
 void generateManualHand(GAME *game, HANDS *hands);

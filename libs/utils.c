@@ -4,8 +4,6 @@
 
 #include "utils.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #ifdef WIN32
 int gettimeuseconds(long long * time_usec) {
@@ -29,9 +27,8 @@ int gettimeuseconds(long long * time_usec) {
 #endif
 
 /**
- * Generates initial game matrix
- * @param pieces matrix to store the generated numbers
- * @return default (0): filled matrix is stored via its addresses so it isn't needed to return anything
+ * Generates initial game filling a linked list with all the blocks needed
+ * @param game is the structure that will store all the blocks created
  */
 void getGame(GAME *game) {
     int l, c, i = 0;
@@ -56,6 +53,10 @@ void getGame(GAME *game) {
     }
 }
 
+/**
+ * Frees the memory of a generated game structure and its blocks
+ * @param game is the structure that will store all the blocks created
+ */
 void freeGame(GAME *game){
     BLOCK *blockAux = game->pfirstBlock, *delBlock = NULL;
     while(blockAux != NULL){
@@ -66,29 +67,11 @@ void freeGame(GAME *game){
     free(game);
 }
 
-void printGame(GAME game){
-    BLOCK *blockAux = game.pfirstBlock;
-    while(blockAux != NULL){
-        printf("[%d, %d]\n", blockAux->leftSide, blockAux->rightSide);
-        blockAux = blockAux->pnextBlock;
-    }
-}
-
-void printHand(HANDS hands){
-    HAND  *handAux  = hands.pfirstHand;
-    BLOCK *blockAux = NULL;
-    int i,j;
-    for (i = 0; i < hands.numberOfHands && handAux != NULL; i++) {
-        blockAux = handAux->pfirstBlock;
-        for (j = 0; j < hands.handSize; j++) {
-            printf("[%d, %d] [%d]\n", blockAux->leftSide, blockAux->rightSide, blockAux->available);
-            blockAux = blockAux->pnextBlock;
-        }
-        printf("\n");
-        handAux = handAux->pnextHand;
-    }
-}
-
+/**
+ * Prints a certain given hand
+ * @param hand is the hand to print
+ * @param handSize is the size of the hand to print for limits porpuses
+ */
 void printSingleHand(HAND hand, int handSize){
     BLOCK *pblock = hand.pfirstBlock;
     int i;
@@ -130,6 +113,13 @@ BLOCK *popBlock(GAME *game, int index){
     return blockAux;
 }
 
+/**
+ * Gets a certain block from the game structure and returns it to free it after
+ * Updates the pointers to not include the block to remove
+ * @param game is the structure that stores all the unused blocks
+ * @param block is the block to return
+ * @return returns the block
+ */
 BLOCK *removeBlock(GAME *game, BLOCK block){
     BLOCK *blockAux = game->pfirstBlock, *blockPrev = NULL;
     while(blockAux != NULL){
@@ -213,6 +203,12 @@ void swapBlock(GAME *game, BLOCK *handBlock, int index){
     free(blockTemp);
 }
 
+/**
+ * Check if a certain block is present in the game
+ * @param game is the structure that has the unused blocks of the game
+ * @param block is the block to search
+ * @return returns 1 if the block is found and 0 if not
+ */
 int blockIsPresent(GAME game, BLOCK block){
     BLOCK *blockAux = game.pfirstBlock;
     while(blockAux != NULL){
@@ -226,54 +222,7 @@ int blockIsPresent(GAME game, BLOCK block){
 }
 
 /**
- * Fills a matrix with "-1" that we defined as the number that means the matrix is empty on that place
- * @param m is the matrix passed
- * @param lines are the lines of that matrix
- * @param cols are the columns of the matrix
- */
-void initMat(int m[][MAX57], int lines, int cols) {
-    int l = 0, c = 0;
-
-    for (l = 0; l < lines; l++) {
-        for (c = 0; c < cols; c++) {
-            m[l][c] = -1;
-        }
-    }
-
-}
-
-/**
- *  Fills an array with "-1" that we defined as the number that means the matrix is empty on that place
- * @param array is the array passed
- */
-void initArray(int array[MAX57]) {
-    int i = 0;
-    for (i = 0; i < MAX57; i++) {
-        array[i] = -1;
-    }
-}
-
-/***
- * Function used by the qsort algorithm
- * @param a
- * @param b
- * @return
- */
-int compareIntValues(const void *a, const void *b) {
-    return (*(int *) a - *(int *) b);
-}
-
-/**
- *  Sorts integer arrays using the quick sort algorithm from the C library
- *  @param v integer array to sort
- *  @param n size of the array
- */
-void sortIntArray(int *v, int n) {
-    qsort(v, n, sizeof(int), compareIntValues);
-}
-
-/**
- * checks the filename the user inputted for the extension and if it doesn't exist adds it at the end
+ * Checks the filename the user inputted for the extension and if it doesn't exist adds it at the end
  * @param fileName name of the file requested by the user
  */
 void checkExtension(char fileName[], char extension[]) {
@@ -285,7 +234,7 @@ void checkExtension(char fileName[], char extension[]) {
 /**
  * tries to open a file with the name inputted to check if it exists before writing on it
  * prevents rewriting on an existing file with the name the user wrote
- * @param fileName
+ * @param fileName the name of the file
  * @return returns 0 if there's no file with that name and 1 if there is
  */
 int fileExists(char fileName[]) {
@@ -295,8 +244,8 @@ int fileExists(char fileName[]) {
 }
 
 /**
- * Runs the structure that has the id of all sequences matching a certain pattern to check if the id the user chose
- * exists
+ * Runs the structure that has the id of all sequences matching a certain pattern to check if the id the user
+ * chose exists
  * @param sequenceIds is the structure with all the matching sequences' ids
  * @param id is the id the user chose
  * @return returns true if the id is present and false if not
