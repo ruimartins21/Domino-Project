@@ -86,13 +86,14 @@ int main(int argc, char *argv[])
         path = 5;
 //        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
         mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
-//        printf("\nFiles existing (.txt):\n");
+        printf("\nFiles existing (.txt):\n");
         // scans all files with the proper extension in the root of the folder where the program executable is and prints them
 //        system("dir/b data\\*.txt"); // on windows
-//        opendir("./"); // on mac
-//        printf("\nFiles existing (.bin):\n");
+        system("ls data/*.txt"); // on windows
+//        opendir("ls *.txt"); // on mac
+        printf("\nFiles existing (.bin):\n");
 //        system("dir/b data\\*.bin"); // on windows
-//        opendir("./"); // on mac
+        system("ls data/*.bin"); // on windows // on mac
         typeOfFile = printMenu(path); // choose between text file or binary file
         while(fileExists(filePath) != 1){
             strcpy(filePath, "data/"); // restores the string to its original string after some concatenation that might have occurred inside the loop

@@ -393,7 +393,7 @@ void replacePattern(ALLSEQUENCES *allSequences, IDS *sequenceIds, char *pattern,
         idAux = idAux->nextId;
         free(delId); // frees each id because they are no longer needed
     }
-    free(sequenceIds);
+//    free(sequenceIds);
 }
 
 /// Merge Sort Algorithm

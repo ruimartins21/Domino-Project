@@ -66,7 +66,7 @@ void freeGame(GAME *game){
         blockAux = blockAux->pnextBlock;
         free(delBlock);
     }
-    free(game);
+//    free(game);
 }
 
 /**
@@ -131,7 +131,7 @@ BLOCK *removeBlock(GAME *game, BLOCK block){
                 game->pfirstBlock = blockAux->pnextBlock;
             }else{
                 blockPrev->pnextBlock = blockAux->pnextBlock;
-                free(blockPrev);
+//                free(blockPrev);
             }
             return blockAux;
         }
