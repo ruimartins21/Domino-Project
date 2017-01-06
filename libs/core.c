@@ -115,6 +115,8 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                 // if it exists more than one hand, adds handId for it to go to the next hand in the next iteration
                 if(pHands->numberOfHands > 1)
                     handId = handId+1;
+                printf("\nsequencia:");
+                printSequence(*pSequence);
                 generateSequence(pHands, pSequence, pAllsequences, inserted, count, handId, costOfGenerate);
                 BLOCK *paux = pSequence->pfirstBlock->prevBlock;
                 blockAux->available = 1; // block is available if it didn't fit
