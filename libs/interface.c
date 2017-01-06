@@ -175,10 +175,12 @@ int blocksAvailable(GAME game) {
 void generateManualHand(GAME *game, HANDS *hands) {
     int i, j, blocksLimit, blockId;
     hands->pfirstHand = NULL;
-    HAND *handAux = NULL;
+    HAND *handAux = NULL, *handAux2 = NULL;
     BLOCK *delBlock = NULL, *blockAux = NULL;
     for (i = 0; i < hands->numberOfHands; i++) {
         handAux = (HAND*)malloc(sizeof(HAND));
+        handAux->pnextHand = NULL;
+        handAux->pfirstBlock = NULL;
         printf("\n## %2d hand ##\n", i + 1);
         for (j = 0; j < hands->handSize; j++) {
             blocksLimit = blocksAvailable(*game);
@@ -193,15 +195,24 @@ void generateManualHand(GAME *game, HANDS *hands) {
             // gets the block chosen from the game, removing it from there, and inserting it in the respective hand
             delBlock = popBlock(game, blockId);
             blockAux = transferBlock(delBlock);
-            if(handAux->pfirstBlock == NULL){ // it's the first block to be inserted in the hand
-                blockAux->pnextBlock = NULL; // it will be used the insertion at the head, so the first block to be inserted will be the one at the tail
+            blockAux->pnextBlock = NULL;
+            if(handAux->pfirstBlock == NULL){ // first block of the hand
+                blockAux->prevBlock = blockAux;
+                handAux->pfirstBlock = blockAux;
             }else{
-                blockAux->pnextBlock = handAux->pfirstBlock;
+                handAux->pfirstBlock->prevBlock->pnextBlock = blockAux; // inserts at the tail
+                handAux->pfirstBlock->prevBlock = blockAux; // links the first and the last block inserted
             }
-            handAux->pfirstBlock = blockAux;
         }
-        handAux->pnextHand = hands->pfirstHand;
-        hands->pfirstHand = handAux;
+        if(hands->pfirstHand == NULL){
+            hands->pfirstHand  = handAux;
+        }else{
+            handAux2 = hands->pfirstHand;
+            while(handAux2->pnextHand != NULL){
+                handAux2 = handAux2->pnextHand;
+            }
+            handAux2->pnextHand = handAux;
+        }
     }
 }
 

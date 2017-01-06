@@ -21,7 +21,8 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
     FILE *file = NULL;
     int i = 0, auxInt = 0, auxInt2 = 0;
     char fOut[30];
-    char path[40] = "data/";
+//    char path[40] = "data/";
+    char path[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"; // on mac it needs to be an absolute path
     strcat(path, fileName);
     HAND *handAux   = NULL;
     BLOCK *blockAux = NULL;
@@ -46,17 +47,32 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
                         if(auxInt < hands->handSize && auxInt != 0){ // enters here while it's the same hand, otherwise it changes the hand and adds it to the new one
                             auxInt++;
                         }else{
-                            handAux = (HAND*)malloc(sizeof(HAND));
-                            handAux->pnextHand = hands->pfirstHand;
-                            hands->pfirstHand = handAux;
+                            if(hands->pfirstHand == NULL){ // first hand to be inserted
+                                handAux = (HAND*)malloc(sizeof(HAND));
+                                handAux->pnextHand = NULL;
+                                hands->pfirstHand = handAux;
+                            }else{
+                                while(handAux->pnextHand != NULL){ // gets the last inserted hand
+                                    handAux = handAux->pnextHand;
+                                }
+                                handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
+                                handAux = handAux->pnextHand;
+                                handAux->pnextHand = NULL; // last hand points to null
+                            }
                             handAux->pfirstBlock = NULL;
                             auxInt = 1; // restarts the counter with 1 block already inserted
                         }
                         blockAux->leftSide   = fOut[0] - '0';
                         blockAux->rightSide  = fOut[1] - '0';
                         blockAux->available  = 1;
-                        blockAux->pnextBlock = handAux->pfirstBlock;
-                        handAux->pfirstBlock = blockAux;
+                        blockAux->pnextBlock = NULL;
+                        if(handAux->pfirstBlock == NULL){ // first block of the hand
+                            blockAux->prevBlock = blockAux;
+                            handAux->pfirstBlock = blockAux;
+                        }else{
+                            handAux->pfirstBlock->prevBlock->pnextBlock = blockAux; // inserts at the tail
+                            handAux->pfirstBlock->prevBlock = blockAux; // links the first and the last block inserted
+                        }
                     } else {
                         if(i == (hands->numberOfHands * hands->handSize) + 1) { // first time it enters here
                             // available blocks are the number of total blocks subtracted by the blocks already used by the hands
@@ -88,9 +104,18 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
                         if(auxInt2 < hands->handSize && auxInt2 != 0){
                             auxInt2++;
                         }else{
-                            handAux = (HAND*)malloc(sizeof(HAND));
-                            handAux->pnextHand = hands->pfirstHand;
-                            hands->pfirstHand = handAux;
+                            if(hands->pfirstHand == NULL){ // first hand to be inserted
+                                handAux = (HAND*)malloc(sizeof(HAND));
+                                handAux->pnextHand = NULL;
+                                hands->pfirstHand = handAux;
+                            }else{
+                                while(handAux->pnextHand != NULL){ // gets the last inserted hand
+                                    handAux = handAux->pnextHand;
+                                }
+                                handAux->pnextHand = (HAND*)malloc(sizeof(HAND));
+                                handAux = handAux->pnextHand;
+                                handAux->pnextHand = NULL; // last hand points to null
+                            }
                             handAux->pfirstBlock = NULL;
                             auxInt2 = 1; // restarts the counter with 1 block already inserted
                         }
@@ -99,8 +124,14 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
                         fread(&auxInt, sizeof(int), 1, file);
                         blockAux->rightSide = auxInt;
                         blockAux->available  = 1;
-                        blockAux->pnextBlock = handAux->pfirstBlock;
-                        handAux->pfirstBlock = blockAux;
+                        blockAux->pnextBlock = NULL;
+                        if(handAux->pfirstBlock == NULL){ // first block of the hand
+                            blockAux->prevBlock = blockAux;
+                            handAux->pfirstBlock = blockAux;
+                        }else{
+                            handAux->pfirstBlock->prevBlock->pnextBlock = blockAux; // inserts at the tail
+                            handAux->pfirstBlock->prevBlock = blockAux; // links the first and the last block inserted
+                        }
                     } else {
                         if(i == (hands->numberOfHands * hands->handSize) + 1){ // first time it enters here
                             // available blocks are the number of total blocks subtracted by the blocks already used by the hands
@@ -141,9 +172,10 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
 void editFile(char fileName[], int type, HANDS hands, GAME game) {
     FILE *file = NULL;
     int auxInt;
-    char path[40] = "data/";
-    mkdir(path); // creates the folder if it doesn't yet exists on Windows
-//    mkdir(path, 0777); // creates the folder if it doesn't yet exists on MAC
+//    char path[40] = "data/";
+    char path[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"; // on mac it needs to be an absolute path
+//    mkdir(path); // creates the folder if it doesn't yet exists on Windows
+    mkdir(path, 0777); // creates the folder if it doesn't yet exists on MAC
     strcat(path, fileName);
     switch (type) {
         // Text files
@@ -243,9 +275,11 @@ void editFile(char fileName[], int type, HANDS hands, GAME game) {
 void createGameFile(int type, HANDS hands, GAME game) {
     FILE *file = NULL;
     int auxInt, i;
-    char fileName[40], path[40] = "data/";
-    mkdir(path); // creates the folder if it doesn't yet exists on Windows
-//    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
+    char fileName[40];
+//    char path[40] = "data/";
+    char path[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"; // on mac it needs to be an absolute path
+//    mkdir(path); // creates the folder if it doesn't yet exists on Windows
+    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
     switch (type) {
         // create txt file
         case 1:
@@ -354,9 +388,11 @@ void createGameFile(int type, HANDS hands, GAME game) {
  */
 void saveSequencesInFile(ALLSEQUENCES allSequences){
     FILE *file = NULL;
-    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
-//    mkdir("data/logs",0777); // creates the folder if it doesn't yet exists on MAC
-    char fileName[40], path[40] = "data/logs/sequence-";
+//    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
+    mkdir("data/logs", 0777); // creates the folder if it doesn't yet exists on MAC
+    char fileName[40];
+//    char path[40] = "data/logs/sequence-";
+    char path[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/logs/sequence-"; // on mac it needs to be an absolute path
     struct timeval tv;
     gettimeofday(&tv,NULL);
     sprintf(fileName, "%ld",  tv.tv_sec);

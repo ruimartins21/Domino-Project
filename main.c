@@ -27,7 +27,9 @@ int main(int argc, char *argv[])
     unsigned long cost = 0, costOfGenerate = 0, count = 0;
     int validated = 0, maxSize = 0; // variables needed for more than one hand conditions commented below because it's not yet working
     srand((unsigned) time(NULL));
-    char fileName[40], filePath[40] = "data/", *pattern, *replace;
+    char fileName[40], *pattern, *replace;
+//    char filePath[40] = "data/";
+    char filePath[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"; // filePath needs to be absolute path on Mac
 
     GAME game = {0, NULL};
     HANDS hands = {0, 0, NULL};
@@ -83,20 +85,20 @@ int main(int argc, char *argv[])
     }else if(choice == 2){
         // load a game from file
         path = 5;
-        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
-//        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
+//        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
+        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
         printf("\nFiles existing (.txt):\n");
         // scans all files with the proper extension in the root of the folder where the program executable is and prints them
-        system("dir/b data\\*.txt"); // on windows
-//        opendir("./"); // on mac
+//        system("dir/b data\\*.txt"); // on windows
+        system("ls data/*.txt"); // on mac
         printf("\nFiles existing (.bin):\n");
-        system("dir/b data\\*.bin"); // on windows
-//        opendir("./"); // on mac
-//        system("ls data/*.txt"); // on windows
-//        opendir("ls *.txt"); // on mac
+//        system("dir/b data\\*.bin"); // on windows
+        system("ls data/*.bin"); // on mac
         typeOfFile = printMenu(path); // choose between text file or binary file
         while(fileExists(filePath) != 1){
-            strcpy(filePath, "data/"); // restores the string to its original string after some concatenation that might have occurred inside the loop
+            // restores the string to its original string after some concatenation that might have occurred inside the loop
+//            strcpy(filePath, "data/"); // on windows the folder path only needs to point to the folder inside debug one
+            strcpy(filePath, "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"); // on mac it needs the absolute path
             printf("\nFile name: ");
             scanf("%s", fileName);
             if(typeOfFile == 1){

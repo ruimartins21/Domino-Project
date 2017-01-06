@@ -24,11 +24,13 @@ void generateRandomHand(GAME *game, HANDS *hands) {
     srand((unsigned)ultime);
 
     int i = 0, j = 0, randValue = 0, linesCount = 0;
-    HAND *handAux = NULL;
+    HAND *handAux = NULL, *handAux2 = NULL;
     BLOCK *delBlock = NULL, *blockAux = NULL;
     hands->pfirstHand = NULL;
     for (i = 0; i < hands->numberOfHands; i++) {
         handAux = (HAND*)malloc(sizeof(HAND));  // current hand that will be filled with the random given blocks
+        handAux->pnextHand = NULL;
+        handAux->pfirstBlock = NULL;
         for (j = 0; j < hands->handSize; j++) {
             if(linesCount < 27){
                 randValue = 0 + rand() % ((MAX28-1) - linesCount); // it needs to be sent MAX28 - 1 because the popBlock function works with numbers between 0 and 27
@@ -37,16 +39,25 @@ void generateRandomHand(GAME *game, HANDS *hands) {
             }
             delBlock = popBlock(game, randValue); // retrieves the block to pass it to the hand and remove from the game structure
             blockAux = transferBlock(delBlock);
-            if(handAux->pfirstBlock == NULL){ // it's the first block to be inserted in the hand
-                blockAux->pnextBlock = NULL; // it will be used the insertion at the head, so the first block to be inserted will be the one at the tail
+            blockAux->pnextBlock = NULL;
+            if(handAux->pfirstBlock == NULL){ // first block of the hand
+                blockAux->prevBlock = blockAux;
+                handAux->pfirstBlock = blockAux;
             }else{
-                blockAux->pnextBlock = handAux->pfirstBlock;
+                handAux->pfirstBlock->prevBlock->pnextBlock = blockAux; // inserts at the tail
+                handAux->pfirstBlock->prevBlock = blockAux; // links the first and the last block inserted
             }
-            handAux->pfirstBlock = blockAux;
             linesCount++;
         }
-        handAux->pnextHand = hands->pfirstHand;
-        hands->pfirstHand  = handAux;
+        if(hands->pfirstHand == NULL){
+            hands->pfirstHand  = handAux;
+        }else{
+            handAux2 = hands->pfirstHand;
+            while(handAux2->pnextHand != NULL){
+                handAux2 = handAux2->pnextHand;
+            }
+            handAux2->pnextHand = handAux;
+        }
     }
 }
 
@@ -115,8 +126,6 @@ int generateSequence(HANDS *pHands, SEQUENCE *pSequence, ALLSEQUENCES *pAllseque
                 // if it exists more than one hand, adds handId for it to go to the next hand in the next iteration
                 if(pHands->numberOfHands > 1)
                     handId = handId+1;
-                printf("\nsequencia:");
-                printSequence(*pSequence);
                 generateSequence(pHands, pSequence, pAllsequences, inserted, count, handId, costOfGenerate);
                 BLOCK *paux = pSequence->pfirstBlock->prevBlock;
                 blockAux->available = 1; // block is available if it didn't fit
