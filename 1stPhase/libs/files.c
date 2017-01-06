@@ -6,6 +6,7 @@
 #include "utils.h"
 #include <stdio.h>
 #include <string.h>
+#include <io.h>
 //#include <dir.h>
 
 /**
@@ -59,6 +60,8 @@ void openFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
             // Binary files
         case 2:
             if ((file = fopen(path, "rb")) != NULL) {
+                j=0;
+                i=0;
                 while (!feof(file)) {
                     if (i == 0) {
                         fread(numberOfHands, sizeof(int), 1, file);
@@ -103,7 +106,7 @@ void editFile(char fileName[], int type, int hand[][MAX3], int gameMat[][MAX2], 
     int i = 0, auxInt;
     char path[40] = "data/";
     // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-//    mkdir(path); // creates the folder if it doesn't yet exists
+    mkdir(path); // creates the folder if it doesn't yet exists
     strcat(path, fileName);
     switch (type) {
         // Text files
@@ -190,7 +193,7 @@ void createGameFile(int type, int hand[][MAX3], int gameMat[][MAX2], int numberO
     int i = 0, auxInt;
     char fileName[40], path[40] = "data/";
     // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-//    mkdir(path); // creates the folder if it doesn't yet exists
+    mkdir(path); // creates the folder if it doesn't yet exists
     switch (type) {
         // create txt file
         case 1:

@@ -472,8 +472,8 @@ char *createPattern(ALLSEQUENCES allSequences, int maxSequenceSize){
     blockAux = sequenceAux->pfirstBlock;
     for (i = 0; i < sizeOfPattern && blockAux != NULL; i++) {
         patternLength = strlen(pattern);
-        *(pattern + patternLength)     = '0' + blockAux->leftSide; // turns the integer into the correspondent character
-        *(pattern + (patternLength+1)) = '0' + blockAux->rightSide;
+        *(pattern + patternLength)     = (char) ('0' + blockAux->leftSide); // turns the integer into the correspondent character
+        *(pattern + (patternLength+1)) = (char) ('0' + blockAux->rightSide);
         *(pattern + (patternLength+2)) = '\0';
         delBlock = blockAux;
         blockAux = blockAux->pnextBlock;
@@ -697,8 +697,8 @@ char *createReplacePattern(ALLSEQUENCES allSequences, IDS sequenceIds, char *pat
     blockAux = sequenceAux->pfirstBlock;
     for (i = 0; i < sizeOfPattern && blockAux != NULL; i++) {
         replaceLength = strlen(replace);
-        *(replace + replaceLength)     = '0' + blockAux->leftSide; // turns the integer into the correspondent character
-        *(replace + (replaceLength+1)) = '0' + blockAux->rightSide;
+        *(replace + replaceLength)     = (char) ('0' + blockAux->leftSide); // turns the integer into the correspondent character
+        *(replace + (replaceLength+1)) = (char) ('0' + blockAux->rightSide);
         *(replace + (replaceLength+2)) = '\0';
         delBlock = blockAux;
         blockAux = blockAux->pnextBlock;

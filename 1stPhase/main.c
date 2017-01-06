@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <io.h>
 //#include <dir.h>
 
 /**
@@ -86,7 +87,7 @@ int main(int argc, char *argv[])
         // load a game from file
         path = 5;
         // not sure if it works cross-systems, not working in linux since it's needed 2 parameters
-//        mkdir("data/"); // creates the folder if it doesn't yet exists
+        mkdir("data/"); // creates the folder if it doesn't yet exists
         printf("\nFiles existing (.txt):\n");
         system("dir/b data\\*.txt"); // scans all files with the extension "txt" in the root of the folder where the program executable is and prints them
         printf("\nFiles existing (.bin):\n");

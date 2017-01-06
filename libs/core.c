@@ -153,8 +153,8 @@ void saveSequence(ALLSEQUENCES *allSequences, SEQUENCE pSequence) {
     int blockStringLen = 0;
     for (i = 0; i < newSequence->sizeOfSequence && blockAux != NULL; i++) {
         blockStringLen = strlen(blockString);
-        *(blockString + blockStringLen)     = '0' + blockAux->leftSide;
-        *(blockString + (blockStringLen+1)) = '0' + blockAux->rightSide;
+        *(blockString + blockStringLen)     = (char) ('0' + blockAux->leftSide);
+        *(blockString + (blockStringLen+1)) = (char) ('0' + blockAux->rightSide);
         *(blockString + (blockStringLen+2)) = '\0';
         blockAux = blockAux->pnextBlock;
     }
@@ -244,14 +244,11 @@ int KMP(STRINGSEQ text, char *pat, int print)
 STRINGSEQ *findSequenceOfSize(ALLSEQUENCES allSequences, int size, unsigned long *costModel){
     STRINGSEQ *sequenceAux = allSequences.pfirstSequence;
     *costModel = 0;
-    unsigned long lo = 0, hi = allSequences.numberOfSequences-1;
     if(size <= 0) return NULL;
-    while (lo <= hi || sequenceAux != NULL) {
+    while (sequenceAux != NULL) {
         *costModel += 1;
-        unsigned long mid = (lo + hi) / 2;
-        if      (size < sequenceAux->sizeOfSequence) hi = mid - 1;
-        else if (size > sequenceAux->sizeOfSequence) lo = mid + 1;
-        else return sequenceAux;
+        if(sequenceAux->sizeOfSequence == size)
+            return sequenceAux;
         sequenceAux = sequenceAux->pnextStringSeq;
     }
     return NULL;
