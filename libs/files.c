@@ -8,7 +8,7 @@
 #include <sys/stat.h> // library for the mkdir for Mac
 #include <string.h>
 #include <stdlib.h>
-#include <io.h> // library for the mkdir for Windows
+//#include <io.h> // library for the mkdir for Windows
 
 /**
  * Opens the file with the name the user inputs if it exists, if not, keeps asking for a valid name

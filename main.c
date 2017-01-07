@@ -95,9 +95,9 @@ int main(int argc, char *argv[])
 //        system("dir/b data\\*.bin"); // on windows
         system("ls data/*.bin"); // on mac
         typeOfFile = printMenu(path); // choose between text file or binary file
-        while(fileExists(filePath) != 1){
-            // restores the string to its original string after some concatenation that might have occurred inside the loop
-//            strcpy(filePath, "data/"); // on windows the folder path only needs to point to the folder inside debug one
+
+//        starts by asking the file name, and only then checks if the file exists
+        do{
             strcpy(filePath, "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"); // on mac it needs the absolute path
             printf("\nFile name: ");
             scanf("%s", fileName);
@@ -107,10 +107,8 @@ int main(int argc, char *argv[])
                 checkExtension(fileName, ".bin");
             }
             strcat(filePath, fileName);
-        }
-        if(fileExists(filePath)) {
-            openFile(fileName, typeOfFile, &hands, &game);
-        }
+        }while(fileExists(filePath) != 1);
+        openFile(fileName, typeOfFile, &hands, &game);
     }
     // if the game has no blocks, it's not possible to edit
     if(game.availableBlocks > 0){
