@@ -8,6 +8,7 @@
 #include <sys/stat.h> // library for the mkdir for Mac
 #include <string.h>
 #include <stdlib.h>
+#include <io.h>
 //#include <io.h> // library for the mkdir for Windows
 
 /**
@@ -22,7 +23,7 @@ void openFile(char fileName[], int type, HANDS *hands, GAME *game){
     int i = 0, auxInt = 0, auxInt2 = 0;
     char fOut[30];
 //    char path[40] = "data/";
-    char path[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"; // on mac it needs to be an absolute path
+    char path[100] = PATH; // on mac it needs to be an absolute path
     strcat(path, fileName);
     HAND *handAux   = NULL;
     BLOCK *blockAux = NULL;
@@ -173,7 +174,7 @@ void editFile(char fileName[], int type, HANDS hands, GAME game) {
     FILE *file = NULL;
     int auxInt;
 //    char path[40] = "data/";
-    char path[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"; // on mac it needs to be an absolute path
+    char path[100] = PATH; // on mac it needs to be an absolute path
 //    mkdir(path); // creates the folder if it doesn't yet exists on Windows
     mkdir(path, 0777); // creates the folder if it doesn't yet exists on MAC
     strcat(path, fileName);
@@ -277,9 +278,9 @@ void createGameFile(int type, HANDS hands, GAME game) {
     int auxInt, i;
     char fileName[40];
 //    char path[40] = "data/";
-    char path[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"; // on mac it needs to be an absolute path
-//    mkdir(path); // creates the folder if it doesn't yet exists on Windows
-    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
+    char path[100] = PATH; // on mac it needs to be an absolute path
+    mkdir(path); // creates the folder if it doesn't yet exists on Windows
+//    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
     switch (type) {
         // create txt file
         case 1:
@@ -388,11 +389,12 @@ void createGameFile(int type, HANDS hands, GAME game) {
  */
 void saveSequencesInFile(ALLSEQUENCES allSequences){
     FILE *file = NULL;
-//    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
-    mkdir("data/logs", 0777); // creates the folder if it doesn't yet exists on MAC
+    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
+//    mkdir("data/logs", 0777); // creates the folder if it doesn't yet exists on MAC
     char fileName[40];
 //    char path[40] = "data/logs/sequence-";
-    char path[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/logs/sequence-"; // on mac it needs to be an absolute path
+    char path[100] = PATH; // on mac it needs to be an absolute path
+    strcat(path, "logs/sequence-");
     struct timeval tv;
     gettimeofday(&tv,NULL);
     sprintf(fileName, "%ld",  tv.tv_sec);

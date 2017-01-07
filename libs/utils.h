@@ -91,6 +91,7 @@ typedef struct ids{
 }IDS;
 
 #define MAX28 28
+#define PATH "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"
 #define R 7 // It's the size of the alphabet for the KMP algorithm (0,1,2,3,4,5,6)
 
 #if defined _WIN64 || defined _WIN32

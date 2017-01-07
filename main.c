@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     srand((unsigned) time(NULL));
     char fileName[40], *pattern, *replace;
 //    char filePath[40] = "data/";
-    char filePath[100] = "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"; // filePath needs to be absolute path on Mac
+    char filePath[100] = PATH; // filePath needs to be absolute path on Mac
 
     GAME game = {0, NULL};
     HANDS hands = {0, 0, NULL};
@@ -85,8 +85,8 @@ int main(int argc, char *argv[])
     }else if(choice == 2){
         // load a game from file
         path = 5;
-//        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
-        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
+        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
+//        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
         printf("\nFiles existing (.txt):\n");
         // scans all files with the proper extension in the root of the folder where the program executable is and prints them
 //        system("dir/b data\\*.txt"); // on windows
@@ -95,10 +95,10 @@ int main(int argc, char *argv[])
 //        system("dir/b data\\*.bin"); // on windows
         system("ls data/*.bin"); // on mac
         typeOfFile = printMenu(path); // choose between text file or binary file
-
 //        starts by asking the file name, and only then checks if the file exists
         do{
-            strcpy(filePath, "/Users/ruimartins/ClionProjects/Domino-Project/cmake-build-debug/data/"); // on mac it needs the absolute path
+//            strcpy(filePath, "data/");
+            strcpy(filePath, PATH); // on mac it needs the absolute path
             printf("\nFile name: ");
             scanf("%s", fileName);
             if(typeOfFile == 1){
