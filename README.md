@@ -27,8 +27,13 @@ Screenshots
 
 
 
-#Collaborators
+# Collaborators
 
 ### Ricardo Pereira Barbosa
 
 ### Rui Miguel Martins
+
+# Licence
+Made with ❤️ in Portugal
+
+Software livre! ✌️
