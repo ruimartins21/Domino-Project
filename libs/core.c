@@ -592,4 +592,3 @@ void invertBlockSequence(SEQUENCE *pSequence) {
     pSequence->pfirstBlock->leftSide = pSequence->pfirstBlock->rightSide;
     pSequence->pfirstBlock->rightSide = aux;
 }
-
