@@ -12,8 +12,18 @@ Faculty of Science and Technology
 ![Screenshot](screenshot-1.png)
 ![Screenshot](screenshot-2.png)
 ![Screenshot](screenshot-3.png)
+
+Demonstration
+
+![Screenshot](demo.gif)
+
+
+Screenshots
+
 ![Screenshot](screenshot-4.png)
 ![Screenshot](screenshot-5.png)
+
+
 
 
 #Collaborators
