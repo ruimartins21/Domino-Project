@@ -85,8 +85,8 @@ int main(int argc, char *argv[])
     }else if(choice == 2){
         // load a game from file
         path = 5;
-//        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
-        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
+        mkdir("data/"); // creates the folder if it doesn't yet exists on Windows
+//        mkdir("data/",0777); // creates the folder if it doesn't yet exists on MAC
         printf("\nFiles existing (.txt):\n");
         // scans all files with the proper extension in the root of the folder where the program executable is and prints them
 //        system("dir/b data\\*.txt"); // on windows

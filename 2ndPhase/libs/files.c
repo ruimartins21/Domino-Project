@@ -8,6 +8,7 @@
 #include <sys/stat.h> // library for the mkdir for Mac
 #include <string.h>
 #include <stdlib.h>
+#include <io.h>
 //#include <io.h> // library for the mkdir for Windows
 
 /**
@@ -278,8 +279,8 @@ void createGameFile(int type, HANDS hands, GAME game) {
     char fileName[40];
 //    char path[40] = "data/";
     char path[100] = PATH; // on mac it needs to be an absolute path
-//    mkdir(path); // creates the folder if it doesn't yet exists on Windows
-    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
+    mkdir(path); // creates the folder if it doesn't yet exists on Windows
+//    mkdir(path,0777); // creates the folder if it doesn't yet exists on MAC
     switch (type) {
         // create txt file
         case 1:
@@ -388,8 +389,8 @@ void createGameFile(int type, HANDS hands, GAME game) {
  */
 void saveSequencesInFile(ALLSEQUENCES allSequences){
     FILE *file = NULL;
-//    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
-    mkdir("data/logs", 0777); // creates the folder if it doesn't yet exists on MAC
+    mkdir("data/logs"); // creates the folder if it doesn't yet exists on Windows
+//    mkdir("data/logs", 0777); // creates the folder if it doesn't yet exists on MAC
     char fileName[40];
 //    char path[40] = "data/logs/sequence-";
     char path[100] = PATH; // on mac it needs to be an absolute path
