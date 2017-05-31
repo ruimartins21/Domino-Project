@@ -11,13 +11,28 @@ Faculty of Science and Technology
 
 ![Screenshot](screenshot-1.png)
 ![Screenshot](screenshot-2.png)
+
+
+Demonstration
+
+![Screenshot](demo.gif)
+
+
+Screenshots
+
+
 ![Screenshot](screenshot-3.png)
 ![Screenshot](screenshot-4.png)
-![Screenshot](screenshot-5.png)
 
 
-#Collaborators
+
+
+# Collaborators
 
 ### Ricardo Pereira Barbosa
 
 ### Rui Miguel Martins
+
+# Licence
+Made with ❤️ in Portugal
+
